@@ -1,0 +1,31 @@
+# Rename this file to .gitignore (with the leading dot, no extension)
+
+# Salesforce CLI cache and local state
+.sf/
+.sfdx/
+.localdevserver/
+deploy-options.json
+
+# Never commit credentials
+.env
+*.key
+*.pem
+server.key
+auth-url.txt
+sfdx-auth-url.txt
+
+# Dependencies and build output
+node_modules/
+coverage/
+*.log
+logs/
+
+# Editor and OS noise
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# LWC tooling
+**/lwc/jsconfig.json
