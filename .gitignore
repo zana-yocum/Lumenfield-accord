@@ -1,5 +1,3 @@
-# Rename this file to .gitignore (with the leading dot, no extension)
-
 # Salesforce CLI cache and local state
 .sf/
 .sfdx/
