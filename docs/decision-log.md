@@ -48,3 +48,132 @@ Every entry uses the same format: context, options considered, decision, rationa
 **Revisit if.** Sales cycle friction shows up in the numbers, or concessions start being approved after close often enough that the Opportunity is the wrong home for them.
 
 **Decided by / date.** Zana Yocum, 2026-09-24.
+
+---
+
+## D-03 — Disputes are Cases with a record type, not a custom object
+
+**Context.** Billing disputes are the center of this build. They need queues, assignment and escalation rules, SLA tracking, a way to pull other people in temporarily, and an activity history. The choice is whether they live on the standard Case object or on a custom Dispute object built for the purpose.
+
+**Options considered.**
+
+1. **Case with a Billing Dispute record type.** Standard object, standard everything around it.
+2. **Custom `Dispute__c` object.** A data model shaped exactly to disputes, with nothing inherited that doesn't apply.
+
+**Decision.** Case, with Billing Dispute and Default Review record types, each with its own support process and page layout.
+
+**Rationale.** Entitlements and milestones only work on Case, and the SLA requirements in US-09 and US-14 are built entirely on them. Case teams — the mechanism behind the expiring sales rep access in US-08 — also only exist on Case. Queues, assignment rules, escalation rules, and email-to-case all come free. A custom object would mean rebuilding every one of those, and rebuilding an SLA engine in flow is the kind of decision that looks clever for a month and expensive for years.
+
+**Consequences.** Cases carry fields that don't apply to a billing dispute, so page layouts and record types do the work of hiding them. Two very different processes now share one object, which means reporting has to filter by record type consistently or the numbers mix. Anyone with broad Case access sees disputes too, which is why org-wide default on Case is Private rather than Read.
+
+**Revisit if.** Dispute volume or field count grows past what record types can keep clean, or a future process needs dispute records visible to people who shouldn't see cases at all.
+
+**Decided by / date.** Zana Yocum, 2026-09-24.
+
+---
+
+## D-04 — Declarative only: no custom Lightning components in this build
+
+**Context.** Three requirements pointed naturally at custom components: a prioritized work queue with auto-advance, a live SLA countdown on the dispute, and a unified approval context screen for supervisors. All three would be nicer with code than without.
+
+**Options considered.**
+
+1. **Build the three components.** Best user experience, most control.
+2. **Use standard equivalents.** A formula field and console list views for the queue, the standard milestone tracker for the SLA clock, a compact layout and related lists for approval context.
+3. **Build one component** where the standard equivalent is weakest, and use standard for the other two.
+
+**Decision.** Option 2. Nothing custom in this build.
+
+**Rationale.** The platform already does all three acceptably. Every custom component becomes something to test on each release and something the next admin has to understand, and the guidance is to exhaust standard functionality before building. There's also a scope reason: this project demonstrates configuration judgment, and the next project is where Apex and Lightning web components are the point. Choosing not to build is part of the work.
+
+**Consequences.** The rep queue doesn't auto-advance, so reps move through list views in split view instead. The SLA display is the standard tracker rather than a color-changing countdown, which is a cosmetic loss. Supervisors get approval context through layout design rather than a purpose-built screen, which is the weakest of the three trade-offs and the one to revisit first.
+
+**Revisit if.** Reps report that list views are slowing them down measurably, or approval decisions are being made without the context because it takes too many clicks to find.
+
+**Decided by / date.** Zana Yocum, 2026-09-24.
+
+---
+
+## D-05 — Consent gates promotional messages, not servicing messages
+
+**Context.** Every outreach flow in the build has to check consent before sending. The question is what consent covers. The first pass would have suppressed all automated communication — including past-due notices — whenever a marketing opt-in was missing.
+
+**Options considered.**
+
+1. **One consent flag governs everything.** Simplest to build, easiest to explain.
+2. **Split by message purpose.** Promotional messages require recorded consent for that channel. Servicing messages — statement ready, payment past due, dispute resolution — send regardless, and stop only on an explicit do-not-contact request.
+
+**Decision.** Option 2, using the standard consent objects rather than a checkbox on Contact.
+
+**Rationale.** Option 1 would mean the company couldn't tell a customer their payment is late unless they'd opted into marketing, which breaks the business and isn't what consent regimes actually require. The standard consent data model carries an effective date and capture source per channel, so the org can show what someone agreed to and when — which is the part that matters if it's ever questioned. A checkbox can't do that.
+
+**Consequences.** Every outreach flow calls a shared consent subflow and passes a message purpose, so the rule is enforced in one place rather than copied into each flow. Someone has to classify every message as promotional or servicing, and that classification is a business decision, not an admin one. In a real org the line would be confirmed with compliance rather than assumed.
+
+**Revisit if.** Lumenfield adds a channel with different rules, like SMS, or a jurisdiction requires consent for servicing messages too.
+
+**Decided by / date.** Zana Yocum, 2026-09-24.
+
+---
+
+## D-06 — Billing statements are master-detail to Account, not to Service Contract
+
+**Context.** A billing statement logically belongs to the agreement it bills for. But collections reps work accounts, and US-01 requires balance, days past due, and aging visible on the account without navigating. Roll-up summaries only work across master-detail relationships, and a custom object can only have one master.
+
+**Options considered.**
+
+1. **Master-detail to Service Contract**, with Account balance derived some other way — a scheduled flow stamping totals, or a report.
+2. **Master-detail to Account**, with Service Contract as a lookup on the statement.
+
+**Decision.** Option 2. Statements are master-detail to Account with a lookup to Service Contract.
+
+**Rationale.** The account is where the work happens and where the numbers need to be, and roll-ups are the platform's own answer for that — accurate on every save, no automation to maintain, no timing gap. Deriving account balance with a scheduled flow would mean the rep's screen is accurate as of last night, which is not acceptable when someone is on the phone about a payment they made this morning. The Service Contract lookup preserves everything reporting needs.
+
+**Consequences.** A household with two agreements sees one combined balance at the account level, and contract-level totals require a report grouped by the lookup rather than a field. Statements inherit the account's sharing, which is what keeps the Phase 4 security model simple. It also forces a related decision: statement status has to be a stamped picklist rather than a formula, because roll-up filter criteria can't reference formulas containing `TODAY()`.
+
+**Revisit if.** Multi-agreement households become common enough that a combined balance misleads reps, or contract-level roll-ups become a real requirement rather than a reporting preference.
+
+**Decided by / date.** Zana Yocum, 2026-09-24.
+
+---
+
+## D-07 — Minimum Access profile plus permission set groups, no custom profiles
+
+**Context.** Four personas need four different levels of access. The org has to grant it somehow, and profiles are the traditional answer.
+
+**Options considered.**
+
+1. **Custom profiles per persona.** One profile each, carrying object and field permissions directly.
+2. **Minimum Access - Salesforce for everyone, with permission set groups.** Profiles hold almost nothing; every grant lives in a permission set.
+3. **A hybrid** — a base custom profile with permission sets layered on top.
+
+**Decision.** Option 2. Everyone sits on Minimum Access - Salesforce. All access comes from permission sets assembled into persona groups, with muting used where a persona needs slightly less than the group provides.
+
+**Rationale.** A user has exactly one profile and can have many permission sets, so profile-based access forces a new profile every time a persona varies slightly, and orgs end up with a dozen near-identical profiles nobody dares consolidate. Permission sets are additive and reusable — `PS_Collections_Core` serves three personas here instead of being copied three times. Salesforce's own direction is away from profiles for access, and starting on that path costs nothing now and saves a migration later. Auditing is also simpler: "what can a dispute specialist do" is answered by opening one group rather than diffing profiles.
+
+**Consequences.** Some settings still live only on the profile — login hours, IP ranges, default record types, page layout assignment — so the profile isn't empty and can't be ignored. Permission set groups add an indirection: troubleshooting "why can this person see that" means checking the group, its member sets, and any muting set rather than one page. Muting is powerful and easy to misuse; it's used exactly once here, for delete on Promise to Pay, and that use is documented.
+
+**Revisit if.** The number of permission sets grows past what's readable, or a persona needs something only a profile can carry.
+
+**Decided by / date.** Zana Yocum, 2026-09-26.
+
+---
+
+## D-08 — Collections reaches accounts through a sharing rule, not ownership
+
+**Context.** Sales owns the account. Collections has to work it once it goes past due. Account org-wide default is Private, collections reps aren't above sales in the role hierarchy, and a delinquent account still belongs to the rep who sold it.
+
+**Options considered.**
+
+1. **Transfer ownership to collections** when an account goes delinquent, and back when it cures.
+2. **Criteria-based sharing rule** granting the collections team read/write on accounts in a delinquent status.
+3. **Open the org-wide default** to Public Read/Write and control access with page layouts and field-level security.
+
+**Decision.** Option 2. A criteria-based rule shares accounts with Account Status of Delinquent, Hardship Review, or Default Review with the Collections Team public group, read/write. A second rule shares Closed Won opportunities read-only, because commitments are master-detail children and are otherwise invisible to collections.
+
+**Rationale.** Option 1 breaks the sales relationship — the rep loses their own customer from their views and reports the moment a payment is late, and ownership churns every time an account cures and relapses. Option 3 is the common shortcut and it means every user in the org can see every customer's balance, which is exactly the exposure the field-level security design is trying to prevent. A criteria-based rule grants access on the condition that justifies it and withdraws it automatically when the condition ends.
+
+**Consequences.** Access depends on Account Status being accurate, which makes a status-stamping flow a security control rather than a convenience — worth calling out in the Phase 7 automation notes. Sharing recalculation on criteria-based rules isn't instant at scale, so in a large org there's a lag between an account going delinquent and collections seeing it. Restriction rules were considered for tightening dispute visibility further and left out as more than this build needs; that's a documented omission, not an oversight.
+
+**Revisit if.** Account volume makes sharing recalculation slow enough to affect reps, or a compliance requirement demands collections access be logged per record rather than granted by rule.
+
+**Decided by / date.** Zana Yocum, 2026-09-26.
