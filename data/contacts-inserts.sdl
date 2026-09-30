@@ -1,0 +1,14 @@
+#Mapping values
+#Tue Sep 29 08:28:57 CDT 2026
+Email=Email
+Role_on_Agreement=Role_on_Agreement__c
+Phone=Phone
+MailingPostalCode=MailingPostalCode
+FirstName=FirstName
+MailingCity=MailingCity
+Legacy_Id=Legacy_Id__c
+MailingStateCode=MailingStateCode
+MailingCountryCode=MailingCountryCode
+LastName=LastName
+Account_Legacy_Id=Account\:Account-Legacy_Id__c
+MailingStreet=MailingStreet

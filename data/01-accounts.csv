@@ -1,0 +1,101 @@
+Legacy_Id__c,Name,BillingStreet,BillingCity,BillingStateCode,BillingCountryCode,BillingPostalCode,Phone,Account_Status__c,High_Value__c,Do_Not_Contact__c
+ACC-0001,Boone Household,2035 Fegenbush Ln,Sellersburg,IN,US,47172,502-264-5574,Current,FALSE,FALSE
+ACC-0002,Okafor Household,6049 Veterans Pkwy,New Albany,IN,US,47150,502-462-8336,Current,FALSE,FALSE
+ACC-0003,Vogel Household,7287 Poplar Level Rd,Shelbyville,KY,US,40065,502-643-8366,Current,FALSE,FALSE
+ACC-0004,Mercer Household,4495 Cane Run Rd,Shepherdsville,KY,US,40165,502-524-9421,Current,FALSE,FALSE
+ACC-0005,Coffey Household,9090 Cane Run Rd,Bardstown,KY,US,40004,502-686-4979,Current,FALSE,FALSE
+ACC-0006,Coffey Household,3781 Veterans Pkwy,Louisville,KY,US,40299,502-271-6726,Delinquent,FALSE,FALSE
+ACC-0007,Mercer Household,3977 Veterans Pkwy,Shepherdsville,KY,US,40165,502-327-1943,Current,FALSE,FALSE
+ACC-0008,Radcliff Household,1655 Hurstbourne Pkwy,Elizabethtown,KY,US,42701,502-278-9345,Delinquent,FALSE,FALSE
+ACC-0009,Radcliff Household,6402 Bardstown Rd,Louisville,KY,US,40204,502-905-8555,Delinquent,FALSE,FALSE
+ACC-0010,Rojas Household,8234 Westport Rd,Louisville,KY,US,40204,502-238-7591,Current,FALSE,FALSE
+ACC-0011,Ramsey Household,826 Grant Line Rd,Elizabethtown,KY,US,42701,502-248-8174,Delinquent,FALSE,FALSE
+ACC-0012,Grissom Household,5979 Veterans Pkwy,Louisville,KY,US,40299,502-851-1024,Current,FALSE,FALSE
+ACC-0013,Delgado Household,3189 Veterans Pkwy,La Grange,KY,US,40031,502-610-7385,Current,FALSE,FALSE
+ACC-0014,Ortega Household,3060 Charlestown Rd,Sellersburg,IN,US,47172,502-513-1169,Current,FALSE,FALSE
+ACC-0015,Dorsey Household,7517 Preston Hwy,Elizabethtown,KY,US,42701,502-618-3120,Current,FALSE,FALSE
+ACC-0016,Okafor Household,7189 Cane Run Rd,Shelbyville,KY,US,40065,502-780-6095,Current,FALSE,FALSE
+ACC-0017,Coffey Household,4178 Breckenridge Ln,Jeffersonville,IN,US,47130,502-363-5943,Current,FALSE,FALSE
+ACC-0018,Coffey Household,9393 Fegenbush Ln,Bardstown,KY,US,40004,502-278-1406,Current,FALSE,FALSE
+ACC-0019,Coleman Household,4935 Frankfort Ave,Louisville,KY,US,40204,502-630-8472,Current,FALSE,FALSE
+ACC-0020,Stiles Household,426 Six Mile Ln,Elizabethtown,KY,US,42701,502-497-4581,Current,FALSE,FALSE
+ACC-0021,Mabry Household,1320 Charlestown Rd,Louisville,KY,US,40299,502-530-2340,Delinquent,FALSE,FALSE
+ACC-0022,Stinson Household,9092 Fegenbush Ln,Mount Washington,KY,US,40047,502-259-1347,Delinquent,FALSE,FALSE
+ACC-0023,Naylor Household,5511 Dixie Hwy,Louisville,KY,US,40219,502-612-6293,Delinquent,FALSE,FALSE
+ACC-0024,Okafor Household,1770 Cane Run Rd,Jeffersonville,IN,US,47130,502-215-3561,Current,FALSE,FALSE
+ACC-0025,Bruner Household,1046 Fegenbush Ln,La Grange,KY,US,40031,502-468-8916,Current,FALSE,FALSE
+ACC-0026,Abernathy Household,7268 Grant Line Rd,Shelbyville,KY,US,40065,502-792-2941,Delinquent,FALSE,FALSE
+ACC-0027,Mercer Household,8757 Fegenbush Ln,New Albany,IN,US,47150,502-744-8499,Current,FALSE,FALSE
+ACC-0028,Okafor Household,5928 Shelbyville Rd,Bardstown,KY,US,40004,502-607-7675,Delinquent,FALSE,FALSE
+ACC-0029,Mundy Household,5208 Taylorsville Rd,Shelbyville,KY,US,40065,502-425-9942,Current,FALSE,FALSE
+ACC-0030,Lattimore Household,867 Outer Loop,Shelbyville,KY,US,40065,502-568-2971,Default Review,FALSE,FALSE
+ACC-0031,Stinson Household,6697 Outer Loop,Mount Washington,KY,US,40047,502-794-9124,Current,FALSE,FALSE
+ACC-0032,Stiles Household,4040 Bardstown Rd,Louisville,KY,US,40204,502-871-7396,Current,FALSE,FALSE
+ACC-0033,Kessler Household,8587 Bardstown Rd,New Albany,IN,US,47150,502-510-7126,Current,FALSE,FALSE
+ACC-0034,Coffey Household,6327 Grant Line Rd,Shepherdsville,KY,US,40165,502-857-7587,Current,FALSE,FALSE
+ACC-0035,Hargrove Household,7387 Hurstbourne Pkwy,Louisville,KY,US,40204,502-989-8444,Current,FALSE,FALSE
+ACC-0036,Coffey Household,5404 Fegenbush Ln,Louisville,KY,US,40299,502-360-9205,Current,FALSE,FALSE
+ACC-0037,Naylor Household,8724 Bardstown Rd,Louisville,KY,US,40219,502-931-6420,Current,FALSE,FALSE
+ACC-0038,Stiles Household,301 Preston Hwy,Sellersburg,IN,US,47172,502-718-2576,Current,FALSE,FALSE
+ACC-0039,Stinson Household,8837 Brownsboro Rd,Shelbyville,KY,US,40065,502-686-5961,Delinquent,FALSE,FALSE
+ACC-0040,Ballard Household,8996 Bardstown Rd,Jeffersonville,IN,US,47130,502-619-3178,Default Review,FALSE,FALSE
+ACC-0041,Fitch Household,6746 Frankfort Ave,New Albany,IN,US,47150,502-366-1608,Current,FALSE,FALSE
+ACC-0042,Bruner Household,1931 Outer Loop,La Grange,KY,US,40031,502-455-2173,Current,FALSE,FALSE
+ACC-0043,Quintero Household,7187 Outer Loop,Mount Washington,KY,US,40047,502-965-5599,Delinquent,FALSE,FALSE
+ACC-0044,Radcliff Household,2177 Taylorsville Rd,Shelbyville,KY,US,40065,502-240-7528,Current,FALSE,FALSE
+ACC-0045,Lattimore Household,6258 Brownsboro Rd,Shepherdsville,KY,US,40165,502-579-1830,Current,FALSE,FALSE
+ACC-0046,Barnett Household,1805 Cane Run Rd,Shelbyville,KY,US,40065,502-734-3019,Delinquent,FALSE,FALSE
+ACC-0047,Vance Household,9719 Bardstown Rd,Sellersburg,IN,US,47172,502-878-7879,Current,FALSE,FALSE
+ACC-0048,Cavanaugh Household,5274 Hurstbourne Pkwy,Sellersburg,IN,US,47172,502-553-3809,Current,FALSE,FALSE
+ACC-0049,Barnett Household,3248 Frankfort Ave,Sellersburg,IN,US,47172,502-904-9429,Current,FALSE,FALSE
+ACC-0050,Vance Household,1271 Preston Hwy,Bardstown,KY,US,40004,502-650-9357,Current,FALSE,FALSE
+ACC-0051,Sanders Household,1615 Shelbyville Rd,New Albany,IN,US,47150,502-989-7374,Delinquent,FALSE,FALSE
+ACC-0052,Mabry Household,5560 Outer Loop,Elizabethtown,KY,US,42701,502-601-9655,Delinquent,FALSE,FALSE
+ACC-0053,Hutchinson Household,1715 Breckenridge Ln,Mount Washington,KY,US,40047,502-220-4841,Default Review,FALSE,FALSE
+ACC-0054,Okafor Household,8022 Fegenbush Ln,Shepherdsville,KY,US,40165,502-952-3399,Current,FALSE,FALSE
+ACC-0055,Stinson Household,1239 Cane Run Rd,Mount Washington,KY,US,40047,502-741-3924,Current,FALSE,FALSE
+ACC-0056,Prather Household,2038 Preston Hwy,Shepherdsville,KY,US,40165,502-696-2650,Current,FALSE,FALSE
+ACC-0057,Ortega Household,2613 Hurstbourne Pkwy,Mount Washington,KY,US,40047,502-689-3325,Current,FALSE,FALSE
+ACC-0058,Trimble Household,3305 Outer Loop,Louisville,KY,US,40204,502-305-6400,Delinquent,FALSE,FALSE
+ACC-0059,Bruner Household,4291 Westport Rd,Bardstown,KY,US,40004,502-857-3159,Default Review,FALSE,FALSE
+ACC-0060,Boone Household,4499 Cane Run Rd,Shepherdsville,KY,US,40165,502-773-4821,Current,FALSE,FALSE
+ACC-0061,Mabry Household,3712 Grant Line Rd,New Albany,IN,US,47150,502-255-9994,Current,FALSE,FALSE
+ACC-0062,Fitch Household,4719 Poplar Level Rd,Elizabethtown,KY,US,42701,502-276-4430,Current,FALSE,FALSE
+ACC-0063,Nakamura Household,4898 Veterans Pkwy,Elizabethtown,KY,US,42701,502-467-6057,Current,FALSE,FALSE
+ACC-0064,Hutchinson Household,2371 Fegenbush Ln,Bardstown,KY,US,40004,502-416-2411,Delinquent,FALSE,FALSE
+ACC-0065,Fitch Household,5298 Poplar Level Rd,Jeffersonville,IN,US,47130,502-591-8562,Delinquent,FALSE,FALSE
+ACC-0066,Naylor Household,7289 Frankfort Ave,Shepherdsville,KY,US,40165,502-251-5851,Current,FALSE,FALSE
+ACC-0067,Barnett Household,1534 Poplar Level Rd,Louisville,KY,US,40204,502-501-8479,Delinquent,FALSE,FALSE
+ACC-0068,Coleman Household,2777 Six Mile Ln,Jeffersonville,IN,US,47130,502-304-6702,Current,FALSE,FALSE
+ACC-0069,Grissom Household,4214 Fegenbush Ln,La Grange,KY,US,40031,502-632-2513,Current,FALSE,FALSE
+ACC-0070,Tillman Household,2297 Outer Loop,La Grange,KY,US,40031,502-948-1602,Current,FALSE,FALSE
+ACC-0071,Hutchinson Household,1364 Dixie Hwy,Louisville,KY,US,40299,502-929-1856,Current,FALSE,FALSE
+ACC-0072,Bruner Household,9092 Veterans Pkwy,Shelbyville,KY,US,40065,502-210-9247,Current,FALSE,FALSE
+ACC-0073,Coffey Household,6081 Six Mile Ln,La Grange,KY,US,40031,502-777-9525,Delinquent,FALSE,FALSE
+ACC-0074,Vogel Household,2374 Frankfort Ave,Mount Washington,KY,US,40047,502-814-7407,Current,FALSE,FALSE
+ACC-0075,Sanders Household,1632 Brownsboro Rd,Shepherdsville,KY,US,40165,502-979-6629,Current,FALSE,FALSE
+ACC-0076,Ballard Household,6729 Grant Line Rd,Elizabethtown,KY,US,42701,502-405-3975,Current,FALSE,FALSE
+ACC-0077,Shelton Household,5762 Brownsboro Rd,Shelbyville,KY,US,40065,502-884-3272,Current,FALSE,FALSE
+ACC-0078,Okafor Household,7542 Charlestown Rd,Mount Washington,KY,US,40047,502-355-5597,Current,FALSE,FALSE
+ACC-0079,Bruner Household,6900 Cane Run Rd,Louisville,KY,US,40299,502-570-9347,Current,FALSE,FALSE
+ACC-0080,Naylor Household,8235 Breckenridge Ln,Shepherdsville,KY,US,40165,502-791-6594,Current,FALSE,FALSE
+ACC-0081,Ballard Household,4031 Breckenridge Ln,Louisville,KY,US,40299,502-981-5712,Current,FALSE,FALSE
+ACC-0082,Boone Household,866 Dixie Hwy,Shelbyville,KY,US,40065,502-306-3005,Delinquent,FALSE,FALSE
+ACC-0083,Delgado Household,4715 Westport Rd,Louisville,KY,US,40299,502-369-7255,Delinquent,FALSE,FALSE
+ACC-0084,Trimble Household,8699 Outer Loop,Shepherdsville,KY,US,40165,502-214-3989,Delinquent,FALSE,FALSE
+ACC-0085,Hargrove Household,383 Brownsboro Rd,Mount Washington,KY,US,40047,502-778-6214,Current,FALSE,FALSE
+ACC-0086,Rojas Household,6030 Bardstown Rd,Mount Washington,KY,US,40047,502-727-9666,Current,FALSE,FALSE
+ACC-0087,Abernathy Household,7713 Brownsboro Rd,Clarksville,IN,US,47129,502-331-1214,Delinquent,FALSE,FALSE
+ACC-0088,Stinson Household,6429 Preston Hwy,Jeffersonville,IN,US,47130,502-885-6242,Current,FALSE,FALSE
+ACC-0089,Fernwood Commons HOA,6980 Bardstown Rd,Elizabethtown,KY,US,42701,502-908-2694,Current,TRUE,FALSE
+ACC-0090,Beckley Station Property Group,8686 Breckenridge Ln,Louisville,KY,US,40204,502-761-9952,Current,TRUE,FALSE
+ACC-0091,Oak Meadow Homeowners Association,5542 Dixie Hwy,La Grange,KY,US,40031,502-357-5817,Current,TRUE,FALSE
+ACC-0092,Riverbend Residences LLC,8715 Hurstbourne Pkwy,Mount Washington,KY,US,40047,502-359-5413,Current,TRUE,FALSE
+ACC-0093,Highland Park Property Management,9763 Outer Loop,Louisville,KY,US,40219,502-579-8452,Current,FALSE,FALSE
+ACC-0094,Cedar Trace HOA,6732 Taylorsville Rd,La Grange,KY,US,40031,502-374-1328,Current,FALSE,FALSE
+ACC-0095,Southpoint Rentals LLC,8736 Cane Run Rd,Elizabethtown,KY,US,42701,502-584-8329,Current,FALSE,FALSE
+ACC-0096,Wooded Glen Community Association,4732 Poplar Level Rd,Bardstown,KY,US,40004,502-349-1041,Current,FALSE,FALSE
+ACC-0097,Prospect Ridge HOA,7019 Grant Line Rd,Mount Washington,KY,US,40047,502-505-7470,Current,FALSE,FALSE
+ACC-0098,Silver Creek Property Co,4692 Breckenridge Ln,Shepherdsville,KY,US,40165,502-829-2665,Current,FALSE,FALSE
+ACC-0099,Hunters Gate HOA,8361 Frankfort Ave,Shelbyville,KY,US,40065,502-347-8391,Current,FALSE,FALSE
+ACC-0100,Mill Creek Residential Group,5901 Hurstbourne Pkwy,Bardstown,KY,US,40004,502-610-1572,Current,FALSE,FALSE

@@ -1,0 +1,13 @@
+#Mapping values
+#Sun Sep 27 16:38:29 CDT 2026
+BillingCity=BillingCity
+BillingCountryCode=BillingCountryCode
+Do_Not_Contact=Do_Not_Contact__c
+Name=Name
+Phone=Phone
+BillingPostalCode=BillingPostalCode
+Legacy_Id=Legacy_Id__c
+BillingStreet=BillingStreet
+High_Value=High_Value__c
+BillingStateCode=BillingStateCode
+Account_Status=Account_Status__c

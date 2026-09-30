@@ -1,0 +1,136 @@
+Legacy_Id__c,Account_Legacy_Id,FirstName,LastName,Email,Phone,MailingStreet,MailingCity,MailingStateCode,MailingCountryCode,MailingPostalCode,Role_on_Agreement__c
+CON-0001,ACC-0001,Patrick,Boone,patrick.boone@example.com,502-264-5574,2035 Fegenbush Ln,Sellersburg,IN,US,47172,
+CON-0002,ACC-0001,Stephanie,Boone,stephanie.boone@example.com,502-264-5574,2035 Fegenbush Ln,Sellersburg,IN,US,47172,Co-signer
+CON-0003,ACC-0002,Jason,Okafor,jason.okafor@example.com,502-462-8336,6049 Veterans Pkwy,New Albany,IN,US,47150,Primary
+CON-0004,ACC-0002,Maria,Okafor,maria.okafor@example.com,502-462-8336,6049 Veterans Pkwy,New Albany,IN,US,47150,Co-signer
+CON-0005,ACC-0003,Travis,Vogel,travis.vogel@example.com,502-643-8366,7287 Poplar Level Rd,Shelbyville,KY,US,40065,Primary
+CON-0006,ACC-0004,Vanessa,Mercer,vanessa.mercer@example.com,502-524-9421,4495 Cane Run Rd,Shepherdsville,KY,US,40165,Primary
+CON-0007,ACC-0004,Yvonne,Mercer,yvonne.mercer@example.com,502-524-9421,4495 Cane Run Rd,Shepherdsville,KY,US,40165,Co-signer
+CON-0008,ACC-0005,Brian,Coffey,brian.coffey@example.com,502-686-4979,9090 Cane Run Rd,Bardstown,KY,US,40004,Primary
+CON-0009,ACC-0005,Christopher,Coffey,christopher.coffey@example.com,502-686-4979,9090 Cane Run Rd,Bardstown,KY,US,40004,Co-signer
+CON-0010,ACC-0006,Anthony,Coffey,anthony.coffey@example.com,502-271-6726,3781 Veterans Pkwy,Louisville,KY,US,40299,Primary
+CON-0011,ACC-0006,Tonya,Coffey,tonya.coffey@example.com,502-271-6726,3781 Veterans Pkwy,Louisville,KY,US,40299,Co-signer
+CON-0012,ACC-0007,Keith,Mercer,keith.mercer@example.cm,502-327-1943,3977 Veterans Pkwy,Shepherdsville,KY,US,40165,
+CON-0013,ACC-0008,William,Radcliff,william.radcliff@example.com,502-278-9345,1655 Hurstbourne Pkwy,Elizabethtown,KY,US,42701,
+CON-0014,ACC-0009,Andre,Radcliff,andre.radcliff@example.com,502-905-8555,6402 Bardstown Rd,Louisville,KY,US,40204,Primary
+CON-0015,ACC-0010,Kevin,Rojas,kevin.rojas@example.com,502-238-7591,8234 Westport Rd,Louisville,KY,US,40204,Primary
+CON-0016,ACC-0011,Heather,Ramsey,heather.ramsey@example.com,502-248-8174,826 Grant Line Rd,Elizabethtown,KY,US,42701,Primary
+CON-0017,ACC-0012,Brian,Grissom,brian.grissom@example.com,502-851-1024,5979 Veterans Pkwy,Louisville,KY,US,40299,Primary
+CON-0018,ACC-0012,Vanessa,Grissom,vanessa.grissom@example.com,502-851-1024,5979 Veterans Pkwy,Louisville,KY,US,40299,
+CON-0019,ACC-0013,Jeffrey,Delgado,jeffrey.delgado@example.com,502-610-7385,3189 Veterans Pkwy,La Grange,KY,US,40031,Primary
+CON-0020,ACC-0014,Keith,Ortega,keith.ortega@example.com,502-513-1169,3060 Charlestown Rd,Sellersburg,IN,US,47172,Primary
+CON-0021,ACC-0015,Regina,Dorsey,regina.dorsey@example.com,502-618-3120,7517 Preston Hwy,Elizabethtown,KY,US,42701,Primary
+CON-0022,ACC-0015,Latoya,Dorsey,latoya.dorsey@example.com,502-618-3120,7517 Preston Hwy,Elizabethtown,KY,US,42701,Co-signer
+CON-0023,ACC-0016,Tonya,Okafor,tonya.okafor@example.com,502-780-6095,7189 Cane Run Rd,Shelbyville,KY,US,40065,Primary
+CON-0024,ACC-0016,Christopher,Okafor,christopher.okafor@example.com,502-780-6095,7189 Cane Run Rd,Shelbyville,KY,US,40065,Co-signer
+CON-0025,ACC-0017,Michael,Coffey,michael.coffey@example.com,502-363-5943,4178 Breckenridge Ln,Jeffersonville,IN,US,47130,Primary
+CON-0026,ACC-0017,Vanessa,Coffey,vanessa.coffey@example.com,502-363-5943,4178 Breckenridge Ln,Jeffersonville,IN,US,47130,Co-signer
+CON-0027,ACC-0018,Douglas,Coffey,douglas.coffey@example.com,502-278-1406,9393 Fegenbush Ln,Bardstown,KY,US,40004,Primary
+CON-0028,ACC-0019,Tanya,Coleman,tanya.coleman@example.com,502-630-8472,4935 Frankfort Ave,Louisville,KY,US,40204,Primary
+CON-0029,ACC-0020,Kimberly,Stiles,kimberly.stiles@example.com,502-497-4581,426 Six Mile Ln,Elizabethtown,KY,US,42701,
+CON-0030,ACC-0020,Michael,Stiles,michael.stiles@example.com,502-497-4581,426 Six Mile Ln,Elizabethtown,KY,US,42701,Co-signer
+CON-0031,ACC-0021,Brian,Mabry,brian.mabry@example.com,502-530-2340,1320 Charlestown Rd,Louisville,KY,US,40299,Primary
+CON-0032,ACC-0022,Keith,Stinson,keith.stinson@example.com,502-259-1347,9092 Fegenbush Ln,Mount Washington,KY,US,40047,Primary
+CON-0033,ACC-0023,William,Naylor,william.naylor@example.com,502-612-6293,5511 Dixie Hwy,Louisville,KY,US,40219,Primary
+CON-0034,ACC-0023,Stephanie,Naylor,stephanie.naylor@example.com,502-612-6293,5511 Dixie Hwy,Louisville,KY,US,40219,
+CON-0035,ACC-0024,William,Okafor,noemail@example.com,502-215-3561,1770 Cane Run Rd,Jeffersonville,IN,US,47130,Primary
+CON-0036,ACC-0025,James,Bruner,james.bruner@example.com,502-468-8916,1046 Fegenbush Ln,La Grange,KY,US,40031,Primary
+CON-0037,ACC-0026,Brittany,Abernathy,brittany.abernathy@example.com,502-792-2941,7268 Grant Line Rd,Shelbyville,KY,US,40065,Primary
+CON-0038,ACC-0026,Nicole,Abernathy,nicole.abernathy@example.com,502-792-2941,7268 Grant Line Rd,Shelbyville,KY,US,40065,Co-signer
+CON-0039,ACC-0027,Anthony,Mercer,anthony.mercer@example.com,502-744-8499,8757 Fegenbush Ln,New Albany,IN,US,47150,Primary
+CON-0040,ACC-0028,Stephanie,Okafor,stephanie.okafor@example.com,502-607-7675,5928 Shelbyville Rd,Bardstown,KY,US,40004,Primary
+CON-0041,ACC-0029,Regina,Mundy,regina.mundy@example.com,502-425-9942,5208 Taylorsville Rd,Shelbyville,KY,US,40065,Primary
+CON-0042,ACC-0029,Tanya,Mundy,tanya.mundy@example.com,502-425-9942,5208 Taylorsville Rd,Shelbyville,KY,US,40065,Co-signer
+CON-0043,ACC-0030,Derek,Lattimore,derek.lattimore@example.com,502-568-2971,867 Outer Loop,Shelbyville,KY,US,40065,Primary
+CON-0044,ACC-0030,Vanessa,Lattimore,vanessa.lattimore@example.com,502-568-2971,867 Outer Loop,Shelbyville,KY,US,40065,Co-signer
+CON-0045,ACC-0031,Stephanie,Stinson,stephanie.stinson@example.com,502-794-9124,6697 Outer Loop,Mount Washington,KY,US,40047,Primary
+CON-0046,ACC-0031,Derek,Stinson,derek.stinson@example.com,502-794-9124,6697 Outer Loop,Mount Washington,KY,US,40047,Co-signer
+CON-0047,ACC-0032,Marcus,Stiles,marcus.stiles@example.com,502-871-7396,4040 Bardstown Rd,Louisville,KY,US,40204,Primary
+CON-0048,ACC-0032,Monica,Stiles,monica.stiles@example.com,502-871-7396,4040 Bardstown Rd,Louisville,KY,US,40204,Co-signer
+CON-0049,ACC-0033,Jason,Kessler,jason.kessler@example.com,502-510-7126,8587 Bardstown Rd,New Albany,IN,US,47150,Primary
+CON-0050,ACC-0034,Rachel,Coffey,rachel.coffey@example.com,502-857-7587,6327 Grant Line Rd,Shepherdsville,KY,US,40165,
+CON-0051,ACC-0035,Sandra,Hargrove,sandra.hargrove@example.com,502-989-8444,7387 Hurstbourne Pkwy,Louisville,KY,US,40204,Primary
+CON-0052,ACC-0036,Angela,Coffey,angela.coffey@example.com,502-360-9205,5404 Fegenbush Ln,Louisville,KY,US,40299,Primary
+CON-0053,ACC-0037,Nicole,Naylor,nicole.naylor@example.com,502-931-6420,8724 Bardstown Rd,Louisville,KY,US,40219,Primary
+CON-0054,ACC-0038,Ryan,Stiles,ryan.stiles@example.com,502-718-2576,301 Preston Hwy,Sellersburg,IN,US,47172,Primary
+CON-0055,ACC-0039,Crystal,Stinson,crystal.stinson@example.com,502-686-5961,8837 Brownsboro Rd,Shelbyville,KY,US,40065,Primary
+CON-0056,ACC-0040,Sandra,Ballard,sandra.ballard@example.com,502-619-3178,8996 Bardstown Rd,Jeffersonville,IN,US,47130,
+CON-0057,ACC-0041,Eric,Fitch,eric.fitch@example.com,502-366-1608,6746 Frankfort Ave,New Albany,IN,US,47150,Primary
+CON-0058,ACC-0041,Travis,Fitch,travis.fitch@example.com,502-366-1608,6746 Frankfort Ave,New Albany,IN,US,47150,Co-signer
+CON-0059,ACC-0042,Carla,Bruner,carla.bruner@example.com,502-455-2173,1931 Outer Loop,La Grange,KY,US,40031,Primary
+CON-0060,ACC-0043,Derek,Quintero,derek.quintero@example.com,502-965-5599,7187 Outer Loop,Mount Washington,KY,US,40047,Primary
+CON-0061,ACC-0044,Brittany,Radcliff,brittany.radcliff@example.com,502-240-7528,2177 Taylorsville Rd,Shelbyville,KY,US,40065,Primary
+CON-0062,ACC-0045,Tanya,Lattimore,tanya.lattimore@example.com,502-579-1830,6258 Brownsboro Rd,Shepherdsville,KY,US,40165,Primary
+CON-0063,ACC-0045,Joshua,Lattimore,joshua.lattimore@example.com,502-579-1830,6258 Brownsboro Rd,Shepherdsville,KY,US,40165,Co-signer
+CON-0064,ACC-0046,Keith,Barnett,keith.barnett@example.com,502-734-3019,1805 Cane Run Rd,Shelbyville,KY,US,40065,Primary
+CON-0065,ACC-0047,Carla,Vance,carla.vance@example.com,502-878-7879,9719 Bardstown Rd,Sellersburg,IN,US,47172,Primary
+CON-0066,ACC-0047,Yvonne,Vance,yvonne.vance@example.com,502-878-7879,9719 Bardstown Rd,Sellersburg,IN,US,47172,Co-signer
+CON-0067,ACC-0048,Denise,Cavanaugh,denise.cavanaugh@example.com,502-553-3809,5274 Hurstbourne Pkwy,Sellersburg,IN,US,47172,Primary
+CON-0068,ACC-0049,Gregory,Barnett,gregory.barnett@example.com,502-904-9429,3248 Frankfort Ave,Sellersburg,IN,US,47172,Primary
+CON-0069,ACC-0050,Marcus,Vance,marcus.vance@example.com,502-650-9357,1271 Preston Hwy,Bardstown,KY,US,40004,
+CON-0070,ACC-0051,Melissa,Sanders,melissa.sanders@example.com,502-989-7374,1615 Shelbyville Rd,New Albany,IN,US,47150,Primary
+CON-0071,ACC-0051,Andre,Sanders,andre.sanders@example.com,502-989-7374,1615 Shelbyville Rd,New Albany,IN,US,47150,Co-signer
+CON-0072,ACC-0052,Monica,Mabry,monica.mabry@example.com,502-601-9655,5560 Outer Loop,Elizabethtown,KY,US,42701,Primary
+CON-0073,ACC-0053,Amanda,Hutchinson,amanda.hutchinson@example.com,502-220-4841,1715 Breckenridge Ln,Mount Washington,KY,US,40047,Primary
+CON-0074,ACC-0054,Douglas,Okafor,douglas.okafor@example.com,502-952-3399,8022 Fegenbush Ln,Shepherdsville,KY,US,40165,Primary
+CON-0075,ACC-0054,Shanice,Okafor,noemail@example.com,502-952-3399,8022 Fegenbush Ln,Shepherdsville,KY,US,40165,Co-signer
+CON-0076,ACC-0055,Shanice,Stinson,shanice.stinson@example.com,502-741-3924,1239 Cane Run Rd,Mount Washington,KY,US,40047,Primary
+CON-0077,ACC-0056,Angela,Prather,angela.prather@example.com,502-696-2650,2038 Preston Hwy,Shepherdsville,KY,US,40165,Primary
+CON-0078,ACC-0056,Christopher,Prather,christopher.prather@example.com,502-696-2650,2038 Preston Hwy,Shepherdsville,KY,US,40165,Co-signer
+CON-0079,ACC-0057,Andre,Ortega,andre.ortega@example.com,502-689-3325,2613 Hurstbourne Pkwy,Mount Washington,KY,US,40047,Primary
+CON-0080,ACC-0058,Brittany,Trimble,brittany.trimble@example.com,502-305-6400,3305 Outer Loop,Louisville,KY,US,40204,Primary
+CON-0081,ACC-0059,Joshua,Bruner,joshua.bruner@example.com,502-857-3159,4291 Westport Rd,Bardstown,KY,US,40004,Primary
+CON-0082,ACC-0060,Maria,Boone,maria.boone@example.com,502-773-4821,4499 Cane Run Rd,Shepherdsville,KY,US,40165,Primary
+CON-0083,ACC-0061,Sandra,Mabry,sandra.mabry@example.com,502-255-9994,3712 Grant Line Rd,New Albany,IN,US,47150,Primary
+CON-0084,ACC-0062,Stephanie,Fitch,stephanie.fitch@example.com,502-276-4430,4719 Poplar Level Rd,Elizabethtown,KY,US,42701,Primary
+CON-0085,ACC-0062,Maria,Fitch,maria.fitch@example.com,502-276-4430,4719 Poplar Level Rd,Elizabethtown,KY,US,42701,Co-signer
+CON-0086,ACC-0063,Stephanie,Nakamura,stephanie.nakamura@example.com,502-467-6057,4898 Veterans Pkwy,Elizabethtown,KY,US,42701,Primary
+CON-0087,ACC-0064,Maria,Hutchinson,maria.hutchinson@example.com,502-416-2411,2371 Fegenbush Ln,Bardstown,KY,US,40004,Primary
+CON-0088,ACC-0064,Latoya,Hutchinson,latoya.hutchinson@example.com,502-416-2411,2371 Fegenbush Ln,Bardstown,KY,US,40004,Co-signer
+CON-0089,ACC-0065,Derek,Fitch,derek.fitch@example.com,502-591-8562,5298 Poplar Level Rd,Jeffersonville,IN,US,47130,Primary
+CON-0090,ACC-0066,Sandra,Naylor,sandra.naylor@example.com,502-251-5851,7289 Frankfort Ave,Shepherdsville,KY,US,40165,Primary
+CON-0091,ACC-0067,Sandra,Barnett,sandra.barnett@example.com,502-501-8479,1534 Poplar Level Rd,Louisville,KY,US,40204,Primary
+CON-0092,ACC-0068,Crystal,Coleman,crystal.coleman@example.com,502-304-6702,2777 Six Mile Ln,Jeffersonville,IN,US,47130,Primary
+CON-0093,ACC-0068,Brian,Coleman,brian.coleman@example.com,502-304-6702,2777 Six Mile Ln,Jeffersonville,IN,US,47130,Co-signer
+CON-0094,ACC-0069,Nicole,Grissom,nicole.grissom@example.com,502-632-2513,4214 Fegenbush Ln,La Grange,KY,US,40031,
+CON-0095,ACC-0070,Nicole,Tillman,nicole.tillman@example.com,502-948-1602,2297 Outer Loop,La Grange,KY,US,40031,Primary
+CON-0096,ACC-0071,Tonya,Hutchinson,tonya.hutchinson@example.com,502-929-1856,1364 Dixie Hwy,Louisville,KY,US,40299,Primary
+CON-0097,ACC-0071,Patrick,Hutchinson,patrick.hutchinson@example.com,502-929-1856,1364 Dixie Hwy,Louisville,KY,US,40299,Co-signer
+CON-0098,ACC-0072,Tonya,Bruner,tonya.bruner@example.com,502-210-9247,9092 Veterans Pkwy,Shelbyville,KY,US,40065,Primary
+CON-0099,ACC-0072,Monica,Bruner,monica.bruner@example.com,502-210-9247,9092 Veterans Pkwy,Shelbyville,KY,US,40065,Co-signer
+CON-0100,ACC-0073,Nicole,Coffey,nicole.coffey@example.com,502-777-9525,6081 Six Mile Ln,La Grange,KY,US,40031,Primary
+CON-0101,ACC-0074,Gregory,Vogel,gregory.vogel@example.com,502-814-7407,2374 Frankfort Ave,Mount Washington,KY,US,40047,Primary
+CON-0102,ACC-0075,Anthony,Sanders,anthony.sanders@example.com,502-979-6629,1632 Brownsboro Rd,Shepherdsville,KY,US,40165,Primary
+CON-0103,ACC-0076,Patrick,Ballard,patrick.ballard@example.com,502-405-3975,6729 Grant Line Rd,Elizabethtown,KY,US,42701,Primary
+CON-0104,ACC-0077,Eric,Shelton,eric.shelton@example.com,502-884-3272,5762 Brownsboro Rd,Shelbyville,KY,US,40065,Primary
+CON-0105,ACC-0078,Jeffrey,Okafor,jeffrey.okafor@example.com,502-355-5597,7542 Charlestown Rd,Mount Washington,KY,US,40047,Primary
+CON-0106,ACC-0079,William,Bruner,william.bruner@example.com,502-570-9347,6900 Cane Run Rd,Louisville,KY,US,40299,Primary
+CON-0107,ACC-0080,Jeffrey,Naylor,jeffrey.naylor@example.com,502-791-6594,8235 Breckenridge Ln,Shepherdsville,KY,US,40165,Primary
+CON-0108,ACC-0081,Stephanie,Ballard,stephanie.ballard@example.com,502-981-5712,4031 Breckenridge Ln,Louisville,KY,US,40299,Primary
+CON-0109,ACC-0082,Tonya,Boone,tonya.boone@example.com,502-306-3005,866 Dixie Hwy,Shelbyville,KY,US,40065,Primary
+CON-0110,ACC-0082,Scott,Boone,scott.boone@example.com,502-306-3005,866 Dixie Hwy,Shelbyville,KY,US,40065,Co-signer
+CON-0111,ACC-0083,Marcus,Delgado,marcus.delgado@example.com,502-369-7255,4715 Westport Rd,Louisville,KY,US,40299,Primary
+CON-0112,ACC-0084,Jeffrey,Trimble,jeffrey.trimble@example.com,502-214-3989,8699 Outer Loop,Shepherdsville,KY,US,40165,Primary
+CON-0113,ACC-0085,Heather,Hargrove,heather.hargrove@example.com,502-778-6214,383 Brownsboro Rd,Mount Washington,KY,US,40047,Primary
+CON-0114,ACC-0085,Eric,Hargrove,eric.hargrove@example.com,502-778-6214,383 Brownsboro Rd,Mount Washington,KY,US,40047,Co-signer
+CON-0115,ACC-0086,Marcus,Rojas,marcus.rojas@example.com,502-727-9666,6030 Bardstown Rd,Mount Washington,KY,US,40047,Primary
+CON-0116,ACC-0087,Melissa,Abernathy,melissa.abernathy@example.com,502-331-1214,7713 Brownsboro Rd,Clarksville,IN,US,47129,Primary
+CON-0117,ACC-0088,Tonya,Stinson,tonya.stinson@example.com,502-885-6242,6429 Preston Hwy,Jeffersonville,IN,US,47130,Primary
+CON-0118,ACC-0089,Patrick,Stiles,patrick.stiles@example.com,502-908-2694,6980 Bardstown Rd,Elizabethtown,KY,US,42701,Primary
+CON-0119,ACC-0090,Heather,Stiles,heather.stiles@example.com,502-761-9952,8686 Breckenridge Ln,Louisville,KY,US,40204,Primary
+CON-0120,ACC-0091,Patrick,Dorsey,patrick.dorsey@example.com,502-357-5817,5542 Dixie Hwy,La Grange,KY,US,40031,Primary
+CON-0121,ACC-0092,Ryan,Abernathy,ryan.abernathy@example.com,502-359-5413,8715 Hurstbourne Pkwy,Mount Washington,KY,US,40047,Primary
+CON-0122,ACC-0093,Shanice,Coffey,shanice.coffey@example.com,502-579-8452,9763 Outer Loop,Louisville,KY,US,40219,Primary
+CON-0123,ACC-0094,Joshua,Tillman,joshua.tillman@example.com,502-374-1328,6732 Taylorsville Rd,La Grange,KY,US,40031,Primary
+CON-0124,ACC-0095,Patrick,Lattimore,patrick.lattimore@example.com,502-584-8329,8736 Cane Run Rd,Elizabethtown,KY,US,42701,Primary
+CON-0125,ACC-0096,Amanda,Hargrove,amanda.hargrove@example.com,502-349-1041,4732 Poplar Level Rd,Bardstown,KY,US,40004,Primary
+CON-0126,ACC-0097,Brittany,Mercer,brittany.mercer@example.com,502-505-7470,7019 Grant Line Rd,Mount Washington,KY,US,40047,Primary
+CON-0127,ACC-0098,Rachel,Lattimore,rachel.lattimore@example.com,502-829-2665,4692 Breckenridge Ln,Shepherdsville,KY,US,40165,Primary
+CON-0128,ACC-0099,Daniel,Vance,daniel.vance@example.com,502-347-8391,8361 Frankfort Ave,Shelbyville,KY,US,40065,Primary
+CON-0129,ACC-0100,Maria,Delgado,maria.delgado@example.com,502-610-1572,5901 Hurstbourne Pkwy,Bardstown,KY,US,40004,Primary
+CON-0130,ACC-0027,A.,Mercer,ANTHONY.MERCER@EXAMPLE.COM,502-744-8499,8757 Fegenbush Ln,New Albany,IN,US,47150,
+CON-0131,ACC-0085,Heather,Hargrove,HEATHER.HARGROVE@EXAMPLE.COM,502-778-6214,383 Brownsboro Rd,Mount Washington,KY,US,40047,
+CON-0132,ACC-0051,M.,Sanders,melissa.sanders@example.com,502-989-7374,1615 Shelbyville Rd,New Albany,IN,US,47150,
+CON-0133,ACC-0084,J.,Trimble,jeffrey.trimble@example.com,502-214-3989,8699 Outer Loop,Shepherdsville,KY,US,40165,
+CON-0134,ACC-0028,Stephanie,Okafor,STEPHANIE.OKAFOR@EXAMPLE.COM,502-607-7675,5928 Shelbyville Rd,Bardstown,KY,US,40004,
+CON-0135,ACC-0031,Stephanie,Stinson,STEPHANIE.STINSON@EXAMPLE.COM,502-794-9124,6697 Outer Loop,Mount Washington,KY,US,40047,

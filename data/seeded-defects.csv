@@ -1,0 +1,34 @@
+Defect,Record,Related Account
+due date before statement date,STMT-00150,ACC-0027
+due date before statement date,STMT-00208,ACC-0037
+duplicate contact,CON-0130,ACC-0027
+duplicate contact,CON-0131,ACC-0085
+duplicate contact,CON-0132,ACC-0051
+duplicate contact,CON-0133,ACC-0084
+duplicate contact,CON-0134,ACC-0028
+duplicate contact,CON-0135,ACC-0031
+placeholder or typo email domain,CON-0012,ACC-0007
+placeholder or typo email domain,CON-0035,ACC-0024
+placeholder or typo email domain,CON-0075,ACC-0054
+missing role on agreement,CON-0001,ACC-0001
+missing role on agreement,CON-0012,ACC-0007
+missing role on agreement,CON-0013,ACC-0008
+missing role on agreement,CON-0018,ACC-0012
+missing role on agreement,CON-0029,ACC-0020
+missing role on agreement,CON-0034,ACC-0023
+missing role on agreement,CON-0050,ACC-0034
+missing role on agreement,CON-0056,ACC-0040
+missing role on agreement,CON-0069,ACC-0050
+missing role on agreement,CON-0094,ACC-0069
+no primary contact,ACC-0018,
+no primary contact,ACC-0019,
+no primary contact,ACC-0030,
+no primary contact,ACC-0068,
+no primary contact,ACC-0084,
+promise with no related statement,PTP-0015,ACC-0040
+promise with no related statement,PTP-0034,ACC-0006
+promise with no related statement,PTP-0038,ACC-0021
+promise with no related statement,PTP-0043,ACC-0030
+status says Current but account is past due,ACC-0001,
+status says Current but account is past due,ACC-0002,
+status says Current but account is past due,ACC-0003,

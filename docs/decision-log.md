@@ -177,3 +177,47 @@ Every entry uses the same format: context, options considered, decision, rationa
 **Revisit if.** Account volume makes sharing recalculation slow enough to affect reps, or a compliance requirement demands collections access be logged per record rather than granted by rule.
 
 **Decided by / date.** Zana Yocum, 2026-09-26.
+
+---
+
+## D-09 — Legacy ID fields stay in the org after the data load
+
+**Context.** Loading child records requires pointing at parents that don't have Salesforce IDs yet. The standard approach is an External ID field on each parent carrying a stable identifier from the source system, so Data Loader can resolve relationships at insert time.
+
+**Options considered.**
+
+1. **Add `Legacy_Id__c` External ID fields, then delete them** once the load finishes, leaving a clean data model.
+2. **Add them and keep them**, documented as migration artifacts.
+3. **Skip External IDs** and load in stages, exporting Salesforce IDs after each parent load and mapping them into the child files by hand.
+
+**Decision.** Option 2. `Legacy_Id__c` is added to Account, Opportunity, Service Contract, and Billing Statement, and stays after the load.
+
+**Rationale.** Option 3 is how people do this when they haven't done it before, and it falls apart the moment a load has to be re-run — every ID changes and the mapping is worthless. Option 1 is tempting but shortsighted: this dataset will be reloaded several times during the build as objects change, and each reload needs the same anchor. Keeping the field also means the repo's seed data can be re-imported into a fresh org by anyone reviewing the project, which is the one-command deploy the README promises.
+
+**Consequences.** Four objects carry a field with no business meaning, which needs explaining to anyone browsing the data model — hence the description on each one naming it a migration artifact. The fields are hidden from all page layouts and visible only to the admin. In a production migration these would typically be retained for exactly this reason and then cleaned up once the source system is decommissioned.
+
+**Revisit if.** The org ever becomes the system of record with no upstream source, at which point the fields are dead weight.
+
+**Decided by / date.** Zana Yocum, 2026-09-27.
+
+---
+
+## D-10 — Seed data loaded with the Salesforce CLI rather than Data Loader
+
+**Context.** The plan called for Data Loader, the tool nearly every admin job description names. Partway through the load, relationships by External ID stopped resolving reliably through Data Loader's mapping dialog — one relationship wasn't exposed in the picker at all, and auto-match repeatedly mapped relationship columns to the plain lookup.
+
+**Options considered.**
+
+1. **Keep using Data Loader**, working around the mapping dialog one file at a time.
+2. **Salesforce CLI bulk import** (`sf data import bulk`), which reads relationship references directly from the CSV header with no mapping step.
+3. **Export Salesforce IDs and VLOOKUP them** into each child file, loading with plain IDs.
+
+**Decision.** Option 2 for files 04 through 12. Files 01 and 02 had already loaded through Data Loader and stayed as they were.
+
+**Rationale.** The CLI removes the step that kept failing. Headers name the relationship and the External ID, and the Bulk API resolves the parent at insert time — nothing to map, nothing to mis-map. It's also scriptable, so the whole load is reproducible from the repo, which Data Loader's GUI isn't. Option 3 works but needs a spreadsheet round trip per file and breaks every time the parent data reloads.
+
+**Consequences.** CSV headers must be exact API names and use dot notation for relationships (`Account__r.Legacy_Id__c`), which differs from Data Loader's colon syntax — the same file can't serve both tools. PowerShell's `>` redirect produces files the Bulk API rejects, so `--output-file` is required. Two upsert passes that needed an External ID relationship Data Loader wouldn't expose were deferred to flows, which is the better design regardless.
+
+**Revisit if.** A load needs field mapping the source headers can't express, or someone without CLI access has to rerun it.
+
+**Decided by / date.** Zana Yocum, 2026-09-29.
