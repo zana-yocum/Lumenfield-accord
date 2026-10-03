@@ -22,20 +22,27 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 
 ## Deferred to a later phase
 
-### Phase 5 — data load
-- ☐ Delete the sample data that ships with Developer Edition (Edge Communications, Burlington Textiles, and so on) before loading the Lumenfield dataset. A reviewer clicking through should never see it.
-- ☐ Seed 5–10% deliberate defects into the dataset so the data quality work has a real baseline to improve
-
-### Phase 5 — data load
-- ☑ `Legacy_Id__c` External ID fields on Account, Contact, Opportunity, Service Contract, Billing Statement (D-09)
+### Phase 5 — data load and quality ☑ closed 2026-10-03
+- ☑ Developer Edition sample data deleted (Edge Communications, Burlington Textiles, Sample Account for Entitlements, 22 sample leads); confirmed nothing else survived
+- ☑ 5–10% deliberate defects seeded into the dataset
+- ☑ `Legacy_Id__c` External ID fields on Account, Contact, Lead, Opportunity, Service Contract, Billing Statement (D-09)
 - ☑ Dataset loaded via CLI bulk import: 100 accounts, 135 contacts, 100 opportunities, 31 commitments, 100 service contracts, 570 statements, 518 payments, 60 promises, 12 adjustments, 30 leads
-- ☐ Delete "Sample Account for Entitlements" and the 22 Developer Edition sample leads
-- ☐ Confirm no other sample data survived: Contact, Opportunity, Case counts with null Legacy Id should be zero
-- ☐ Set record type to Organization on the twelve HOA and property-manager accounts
-- ☐ Build the five data quality reports and capture the baseline **before** any cleanup
-- ☐ Build matching rules, duplicate rules, and validation rules — then reactivate or replace the standard duplicate rules
+- ☑ Data quality baseline captured 2026-09-30: 7 duplicate pairs flagged · 0% primary contact · 88% role completeness · 97% status accuracy · 2 statement date errors
+- ☑ Contact matching rule and duplicate rule (alert, not block) built; Standard Contact Duplicate Rule deactivated
+- ☑ Five validation rules built, with descriptions
+- ☑ Cleanup: six duplicate pairs merged, missing roles filled, two statement dates corrected
+- ☑ Two `noemail@example.com` placeholder emails cleared; one `.cm` typo domain fixed
+- ☑ Dashboard renamed **Data Quality**; duplicate chart sorted by count, metric tiles color-ranged, titles shortened
+- ☑ Two unused report copies deleted from the `DataQuality` folder
+- ☑ Screenshot `phase05-data-quality-dashboard-after.png`
+- ☑ CHANGELOG v0.4 written
+- ☑ Phase 5 metadata retrieved: objects (with validation rules), matching rule, both Contact duplicate rules, dashboard, five reports, both folders
+- ☐ Commit Phase 5 to GitHub
+- ☐ Remaining Phase 5 screenshots if not yet taken: `phase05-duplicate-rule-config.png`, `phase05-duplicate-alert-in-action.png`, `phase05-data-loader-success.png`
+- ☐ `data-plan.md` — add the after numbers to the measurement table (duplicates 0, roles 0, statement dates 0)
 
 ### Phase 6 — service
+- ☐ **Create Account record types** — Residential Agreement and Organization. Listed in the data dictionary but never built in Phase 3. Assign through permission sets, set page layouts, then bulk-assign the twelve organization accounts with a CLI update. Until then, reports isolate residential accounts by name ("Household").
 - ☐ Case sharing rule `Billing_Disputes_to_Collections` — couldn't be built in Phase 4 because it filters on a record type that doesn't exist yet
 - ☐ Assign app and tab visibility to each permission set group. Minimum Access users currently land on an empty home page with no tabs, reachable only through search and the App Launcher
 - ☐ Negative test: sales rep opening a dispute case they aren't on the team for. Deferred from Phase 4 for lack of cases to test against
@@ -45,6 +52,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ Case record types (Billing Dispute, Default Review) with their own support processes and page layouts
 
 ### Phase 7 — automation
+- ☐ **Activate `VR_Account_PrimaryContactRequired` only after the primary contact backfill runs.** Activated now, it would block every edit to all 88 residential accounts, since none have a primary contact yet. Also depends on Account record types existing.
 - ☐ **Flow: stamp Primary Contact on Account** when the first contact is created. Replaces seed file 03, which couldn't load because Data Loader didn't expose the relationship by External ID. The flow is better anyway — it covers every new account, not just the seed set.
 - ☐ **Flow: link Commitments to their Service Contract** at Closed Won. Replaces seed file 07 for the same reason, and it's the automation US-02 already requires.
 - ☐ Document that the account status-stamping flow functions as a security control, not just a convenience — the delinquent-account sharing rule depends on status being accurate (D-08)
@@ -67,6 +75,8 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 
 - ☑ **Data load: six distinct failure modes, all diagnosed from error files.** State and Country picklists rejecting plain values · Data Loader caching the schema before new fields existed · relationship columns needing different syntax per tool (colon for Data Loader, dot for Bulk API 2.0) · Legacy Id columns on objects that had no such field · picklist values entered with trailing commas or two values on one line · standard duplicate rules active by default and blocking API inserts. Full write-up in `data-plan.md`.
 
+- ☑ **Metadata retrieve lessons.** Validation rules come back inside `CustomObject`, not as a standalone type. Folder-based metadata (reports, dashboards) needs exact `Folder/DeveloperName` names, found with `sf org list metadata --folder`, and private folders can't be retrieved at all. The dashboard's own XML is the source of truth for which reports it uses — that's how two unused copies were found and deleted.
+
 - ☑ Security Health Check: **66% (Poor) → 96% (Excellent)** in one sitting. The single remaining Critical is trusted IP ranges, left unfixed deliberately and documented in `security-model.md`.
 - ☑ Enabled "Require permission to view record names in lookup fields" — closes a leak where users who can't see a record can still see its name through a lookup.
 
@@ -74,7 +84,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 
 ## Time-sensitive
 
-- ☐ **Winter '27 readiness review.** Production upgrade weekends are October 3 and October 10, 2026. The review is worth more written *before* the upgrade hits the org, showing what was assessed and tested in advance. Covers the Flow Builder canvas redesign, pending Release Updates, and the release update ending username-and-password logins for integrations.
+- ☐ **Winter '27 readiness review.** First production upgrade weekend is underway (October 3, 2026); the second is October 10. Check the org's current release version first (Setup → Company Information, or the release name at the top of Setup Home). If the org hasn't upgraded yet, write the review before October 10 so it shows what was assessed in advance. Covers the Flow Builder canvas redesign, pending Release Updates, and the release update ending username-and-password logins for integrations.
 
 ---
 
@@ -83,6 +93,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ Delete stray field `Production_estimate_given_at_signing_Wh__c` on Service Contract — a description pasted into a label on a second attempt at Est Annual Production
 - ☐ Relabel custom `Payment__c` to **Lease Payment**. It shares a label with the standard Payment object, so the org shows two objects named Payment. API name stays `Payment__c`; nothing breaks.
 - ☐ `Legacy_Id__c` on Lead isn't referenced by anything. Delete it, or document it as unused.
+- ☐ Dashboard API name is auto-generated (`KBzhEuJNWsMpcbnMzmuwzHqwlGrEtH`). Cosmetic; document it as a platform default rather than chase a rename.
 
 ---
 
