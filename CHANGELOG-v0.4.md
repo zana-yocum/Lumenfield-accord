@@ -27,7 +27,7 @@ Synthetic Lumenfield dataset loaded, data quality baseline measured, integrity r
 - One `.cm` typo domain corrected to `.com`
 
 ### Removed
-- All Developer Edition sample data, including the Sample Account for Entitlements and 22 sample leads
+- All Developer Edition sample data: sample accounts and opportunities, 22 sample leads, the Sample Account for Entitlements and its entitlement, 17 GenWatt products, 10 sample solutions, 4 sample campaigns, and a non-standard sample price book. The Standard Price Book stays for Phase 8.
 - Two unused report copies left over from dashboard building
 
 ### Data quality, before → after

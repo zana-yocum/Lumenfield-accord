@@ -37,7 +37,10 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☑ Screenshot `phase05-data-quality-dashboard-after.png`
 - ☑ CHANGELOG v0.4 written
 - ☑ Phase 5 metadata retrieved: objects (with validation rules), matching rule, both Contact duplicate rules, dashboard, five reports, both folders
-- ☐ Commit Phase 5 to GitHub
+- ☑ Commit Phase 5 to GitHub
+- ☑ **Org verification via the Salesforce connector (2026-10-03)** caught three items marked done that weren't: the `.cm` typo and both placeholder emails were never fixed (one placeholder had been changed to `.cm`, which is why the duplicate chart looked clean), and the Sample Account for Entitlements was still present. Also found and removed 17 sample products, 10 sample solutions, and a sample price book. All fixed and re-verified.
+- ☑ 4 sample campaigns (2001–2002) deleted. The first attempt failed with insufficient access: deleting campaigns requires the **Marketing User** checkbox on the user record, which was then enabled.
+- ☐ Reword four validation rule error messages to name the fix rather than the problem, per `conventions.md` (e.g. "Enter a due date on or after the statement date"). `VR_Adjustment_RejectionReason` already complies.
 - ☐ Remaining Phase 5 screenshots if not yet taken: `phase05-duplicate-rule-config.png`, `phase05-duplicate-alert-in-action.png`, `phase05-data-loader-success.png`
 - ☐ `data-plan.md` — add the after numbers to the measurement table (duplicates 0, roles 0, statement dates 0)
 
@@ -48,6 +51,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ Negative test: sales rep opening a dispute case they aren't on the team for. Deferred from Phase 4 for lack of cases to test against
 - ☐ Load dispute and default review cases into the dataset once record types exist
 - ☐ Add the remaining `Dispute_Evidence_Requirement__mdt` records. Seven exist covering the top three reasons; still needed: Duplicate or Unauthorized Draft, Payment Not Posted, Annual Escalator Increase, Home Sale or Transfer, Outage or Repair Credit
+- ☐ Read the Winter '27 Case Milestone fix in the Service release notes before building the entitlement process
 - ☐ Second business hours record for outbound contact windows, which are narrower than support hours in collections
 - ☐ Case record types (Billing Dispute, Default Review) with their own support processes and page layouts
 
@@ -56,9 +60,12 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ **Flow: stamp Primary Contact on Account** when the first contact is created. Replaces seed file 03, which couldn't load because Data Loader didn't expose the relationship by External ID. The flow is better anyway — it covers every new account, not just the seed set.
 - ☐ **Flow: link Commitments to their Service Contract** at Closed Won. Replaces seed file 07 for the same reason, and it's the automation US-02 already requires.
 - ☐ Document that the account status-stamping flow functions as a security control, not just a convenience — the delinquent-account sharing rule depends on status being accurate (D-08)
+- ☐ **Design constraint from Winter '27 review:** no flow may assume sharing is recalculated in the same transaction as a role or group change (Spring '27 release update; D-08 depends on sharing)
+- ☐ Consider Winter '27 mass screen flow action (`ids` collection) for bulk collections outcomes, and rely on Flow's row-lock auto-retry for the backfill
 - ☐ Note the `Dispute_Reason__c` weakness in the automation inventory: it's plain text on the custom metadata type because custom metadata picklists can't inherit from a global value set, so the match to the value set is convention rather than enforcement
 
 ### Phase 8 — sales
+- ☐ Lead-to-Contact matching rule on email (listed in `data-plan.md`, not yet built)
 - ☐ Enable Quotes (Setup → Quote Settings), then add Quote, Product, and Price Book access to `PS_Sales_Core`
 - ☐ Load forecast quotas via Data Loader
 
@@ -84,7 +91,11 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 
 ## Time-sensitive
 
-- ☐ **Winter '27 readiness review.** First production upgrade weekend is underway (October 3, 2026); the second is October 10. Check the org's current release version first (Setup → Company Information, or the release name at the top of Setup Home). If the org hasn't upgraded yet, write the review before October 10 so it shows what was assessed in advance. Covers the Flow Builder canvas redesign, pending Release Updates, and the release update ending username-and-password logins for integrations.
+- ☑ **Winter '27 readiness review** written: `docs/release-readiness-winter27.md`. Instance USA838 upgrades **Oct 9, 2026, 11:00 PM CDT**.
+- ☐ Before Oct 9: enable Profile Filtering (overdue, currently off) and verify records, reports, and dashboard still work
+- ☐ Before Oct 9: test runs for the three overdue accessibility updates and Update Instanced URLs; check dashboard, a record page, and New Payment / New Billing Statement modals at 200%+ zoom
+- ☐ Before Oct 9: screenshots `release-winter27-updates-before.png`, `release-winter27-overdue-before.png`, `release-winter27-profile-filtering-before.png`
+- ☐ After Oct 9: run the post-upgrade checklist in the readiness doc, screenshot `release-winter27-after.png`
 
 ---
 
@@ -93,6 +104,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ Delete stray field `Production_estimate_given_at_signing_Wh__c` on Service Contract — a description pasted into a label on a second attempt at Est Annual Production
 - ☐ Relabel custom `Payment__c` to **Lease Payment**. It shares a label with the standard Payment object, so the org shows two objects named Payment. API name stays `Payment__c`; nothing breaks.
 - ☐ `Legacy_Id__c` on Lead isn't referenced by anything. Delete it, or document it as unused.
+- ☐ `Experience_Profile_Manager` standard permission set is in the repo from a wildcard retrieve. Delete the local file and retrieve only `PS_` permission sets going forward.
 - ☐ Dashboard API name is auto-generated (`KBzhEuJNWsMpcbnMzmuwzHqwlGrEtH`). Cosmetic; document it as a platform default rather than chase a rename.
 
 ---
