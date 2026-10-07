@@ -45,7 +45,9 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ `data-plan.md` — add the after numbers to the measurement table (duplicates 0, roles 0, statement dates 0)
 
 ### Phase 6 — service
-- ☐ **Create Account record types** — Residential Agreement and Organization. Listed in the data dictionary but never built in Phase 3. Assign through permission sets, set page layouts, then bulk-assign the twelve organization accounts with a CLI update. Until then, reports isolate residential accounts by name ("Household").
+- ☑ **Account record types created** (2026-10-03): `Residential_Agreement` (88 accounts) and `Organization` (12 accounts, ACC-0089 to ACC-0100). Available on System Administrator (default Residential Agreement) and through `PS_Sales_Core` only. Collections doesn't need an assignment, because record type assignment governs create and change, not view or edit. Accounts bulk-assigned through the API and verified by count.
+- ☐ Retrieve Account record types and `PS_Sales_Core`, `PS_Payment_Detail` into the repo
+- ☐ Page layouts per Account record type (currently both use Account Layout)
 - ☐ Case sharing rule `Billing_Disputes_to_Collections` — couldn't be built in Phase 4 because it filters on a record type that doesn't exist yet
 - ☐ Assign app and tab visibility to each permission set group. Minimum Access users currently land on an empty home page with no tabs, reachable only through search and the App Launcher
 - ☐ Negative test: sales rep opening a dispute case they aren't on the team for. Deferred from Phase 4 for lack of cases to test against
@@ -53,7 +55,8 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ Add the remaining `Dispute_Evidence_Requirement__mdt` records. Seven exist covering the top three reasons; still needed: Duplicate or Unauthorized Draft, Payment Not Posted, Annual Escalator Increase, Home Sale or Transfer, Outage or Repair Credit
 - ☐ Read the Winter '27 Case Milestone fix in the Service release notes before building the entitlement process
 - ☐ Second business hours record for outbound contact windows, which are narrower than support hours in collections
-- ☐ Case record types (Billing Dispute, Default Review) with their own support processes and page layouts
+- ☑ **Case record types deployed from source** (2026-10-07): Billing Dispute and Default Review, each with its own support process. Seven new Case Status values added (Acknowledged, Awaiting Evidence, Under Review, Pending Credit Approval, Resolved, Cured, Default Confirmed). Available on System Administrator (default Billing Dispute) and on `PS_Dispute_Management` (Billing Dispute only, since default reviews are opened by automation). Status paths verified per record type through the UI API.
+- ☐ Retrieve `PS_Dispute_Management` so its Case record type access is in the repo
 
 ### Phase 7 — automation
 - ☐ **Activate `VR_Account_PrimaryContactRequired` only after the primary contact backfill runs.** Activated now, it would block every edit to all 88 residential accounts, since none have a primary contact yet. Also depends on Account record types existing.
@@ -65,6 +68,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ Note the `Dispute_Reason__c` weakness in the automation inventory: it's plain text on the custom metadata type because custom metadata picklists can't inherit from a global value set, so the match to the value set is convention rather than enforcement
 
 ### Phase 8 — sales
+- ☐ **Default record type for lead conversion.** Permission sets can grant record types but can't set a default; defaults come only from the profile. Sales reps on Minimum Access have no default Account record type, and lead conversion depends on one. Resolve before building conversion: test it, then decide whether the profile gets Residential Agreement as its default or the conversion process handles it.
 - ☐ Lead-to-Contact matching rule on email (listed in `data-plan.md`, not yet built)
 - ☐ Enable Quotes (Setup → Quote Settings), then add Quote, Product, and Price Book access to `PS_Sales_Core`
 - ☐ Load forecast quotas via Data Loader
@@ -104,12 +108,16 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ Delete stray field `Production_estimate_given_at_signing_Wh__c` on Service Contract — a description pasted into a label on a second attempt at Est Annual Production
 - ☐ Relabel custom `Payment__c` to **Lease Payment**. It shares a label with the standard Payment object, so the org shows two objects named Payment. API name stays `Payment__c`; nothing breaks.
 - ☐ `Legacy_Id__c` on Lead isn't referenced by anything. Delete it, or document it as unused.
+- ☑ `PS_Payment_Detail` label had a double space (`Payment  Detail`); corrected.
+- ☐ **Developer Edition sample fields still on standard objects.** Case: `Product__c` (GenWatt model codes), `PotentialLiability__c`, `SLAViolation__c`, plus sample Type and Case Reason values (Mechanical, Electrical, Installation…). Account: `Active__c`, `CustomerPriority__c`, `NumberofLocations__c`, `SLA__c`, `SLASerialNumber__c`, `SLAExpirationDate__c`, `UpsellOpportunity__c`. Contact: `Languages__c`, `Level__c`. Lead: `CurrentGenerators__c`, `NumberofLocations__c`, `Primary__c`, `ProductInterest__c`, `SICCode__c`. Opportunity: `CurrentGenerators__c`, `DeliveryInstallationStatus__c`, `MainCompetitors__c`, `OrderNumber__c`, `TrackingNumber__c`. Delete, and replace Case Type and Reason values with ones that fit solar servicing.
 - ☐ `Experience_Profile_Manager` standard permission set is in the repo from a wildcard retrieve. Delete the local file and retrieve only `PS_` permission sets going forward.
 - ☐ Dashboard API name is auto-generated (`KBzhEuJNWsMpcbnMzmuwzHqwlGrEtH`). Cosmetic; document it as a platform default rather than chase a rename.
 
 ---
 
 ## Doc updates pending
+
+- ☑ `requirements.md` rewritten: acceptance criteria for all 21 stories, a summary table, and traceability filled in for what's built. US-21 retitled to match D-05 (consent gates promotional messages only).
 
 - ☐ `README.md` — add a line explaining that field descriptions reference user stories (US-xx) and decisions (D-xx), both in `/docs`
 - ☐ `security-model.md` — add a note that activity access can't be granted or restricted through permission sets, so Task visibility follows access to the parent record. Also note the Quotes deferral.

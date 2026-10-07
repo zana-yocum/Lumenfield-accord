@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Default_Review</fullName>
+    <active>true</active>
+    <businessProcess>Default_Review_Process</businessProcess>
+    <description>Opened when an account crosses the default threshold, to decide whether it cures or defaults. US-15.</description>
+    <label>Default Review</label>
+</RecordType>

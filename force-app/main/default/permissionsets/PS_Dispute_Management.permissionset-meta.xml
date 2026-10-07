@@ -43,4 +43,8 @@
         <viewAllFields>false</viewAllFields>
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
+    <recordTypeVisibilities>
+        <recordType>Case.Billing_Dispute</recordType>
+        <visible>true</visible>
+    </recordTypeVisibilities>
 </PermissionSet>

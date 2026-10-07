@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Billing_Dispute</fullName>
+    <active>true</active>
+    <businessProcess>Billing_Dispute_Process</businessProcess>
+    <description>A customer disputes a bill. Worked by dispute specialists under the three-milestone entitlement process. Replaces a custom dispute object (D-03). US-07 to US-11.</description>
+    <label>Billing Dispute</label>
+</RecordType>

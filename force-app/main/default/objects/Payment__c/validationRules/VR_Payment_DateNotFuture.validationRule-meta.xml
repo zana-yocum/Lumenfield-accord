@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>VR_Payment_DateNotFuture</fullName>
-    <active>true</active>
-    <description>Rejects future-dated payments, which would mark a promise kept and reduce a balance for money not yet received. US-04.</description>
-    <errorConditionFormula>Payment_Date__c &gt; TODAY()</errorConditionFormula>
-    <errorDisplayField>Payment_Date__c</errorDisplayField>
-    <errorMessage>Payment date can&apos;t be in the future.</errorMessage>
-</ValidationRule>
