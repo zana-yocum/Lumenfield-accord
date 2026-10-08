@@ -51,6 +51,10 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☑ Case sharing rule `Billing_Disputes_to_Collections`: criteria-based, Billing Dispute record type, Read Only to the Collections Rep role. Supervisors already see disputes through the hierarchy; Default Review cases stay private.
 - ☑ **Role hierarchy cleanup** (2026-10-07): nine Developer Edition sample roles deleted (VP North American Sales, VP International Sales, VP Marketing, two sales directors, four sales and marketing teams). Three of them sat directly under Dispute Specialist, which would have given dispute specialists upward visibility into any sales or marketing records. No users held them. Hierarchy is now Executive → VP Customer Operations → Collections Supervisor → (Collections Rep, Dispute Specialist), and Executive → VP Sales → Sales Manager → Sales Rep.
 - ☐ Retrieve Case sharing rules and roles into the repo; delete local role files for the nine removed roles
+- ☑ **Queues** Dispute Specialists and Default Reviews (Case), with roles as members rather than named users: Dispute Specialist role and Collections Supervisor role.
+- ☑ **Case assignment rule** `Accord Case Routing`: Billing Dispute → Dispute Specialists queue, Default Review → Default Reviews queue. Assignment checkbox defaulted on and hidden on Case Layout so it can't be bypassed. Verified by creating one test case of each type through the API (both landed in the right queue), then deleting them.
+- ☑ **Found and fixed while testing:** the Collections Rep could not see a Billing Dispute case even though the sharing rule had created a Read share. `PS_Collections_Core` had no Read permission on Case, so sharing had nothing to open. Added Case Read (no create, edit, or delete) plus read on `Dispute_Reason__c` and `Root_Cause__c`. Retested: Billing Dispute readable, not editable; Default Review not visible. Case access across personas is now: Collections Rep Read · Collections Supervisor and Dispute Specialist Read/Create/Edit · Sales Rep Read (for case teams, US-18) · no Delete anywhere.
+- ☐ Retrieve queues, assignment rule, Case Layout, and `PS_Collections_Core` into the repo
 - ☐ Assign app and tab visibility to each permission set group. Minimum Access users currently land on an empty home page with no tabs, reachable only through search and the App Launcher
 - ☐ Negative test: sales rep opening a dispute case they aren't on the team for. Deferred from Phase 4 for lack of cases to test against
 - ☐ Load dispute and default review cases into the dataset once record types exist
@@ -61,6 +65,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ Retrieve `PS_Dispute_Management` so its Case record type access is in the repo
 
 ### Phase 7 — automation
+- ☐ **Flow can't run assignment rules.** The default review flow must set the case owner to the Default Reviews queue directly; the assignment rule only covers cases people create.
 - ☐ **Activate `VR_Account_PrimaryContactRequired` only after the primary contact backfill runs.** Activated now, it would block every edit to all 88 residential accounts, since none have a primary contact yet. Also depends on Account record types existing.
 - ☐ **Flow: stamp Primary Contact on Account** when the first contact is created. Replaces seed file 03, which couldn't load because Data Loader didn't expose the relationship by External ID. The flow is better anyway — it covers every new account, not just the seed set.
 - ☐ **Flow: link Commitments to their Service Contract** at Closed Won. Replaces seed file 07 for the same reason, and it's the automation US-02 already requires.
@@ -112,6 +117,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ `Legacy_Id__c` on Lead isn't referenced by anything. Delete it, or document it as unused.
 - ☑ `PS_Payment_Detail` label had a double space (`Payment  Detail`); corrected.
 - ☐ **Developer Edition sample fields still on standard objects.** Case: `Product__c` (GenWatt model codes), `PotentialLiability__c`, `SLAViolation__c`, plus sample Type and Case Reason values (Mechanical, Electrical, Installation…). Account: `Active__c`, `CustomerPriority__c`, `NumberofLocations__c`, `SLA__c`, `SLASerialNumber__c`, `SLAExpirationDate__c`, `UpsellOpportunity__c`. Contact: `Languages__c`, `Level__c`. Lead: `CurrentGenerators__c`, `NumberofLocations__c`, `Primary__c`, `ProductInterest__c`, `SICCode__c`. Opportunity: `CurrentGenerators__c`, `DeliveryInstallationStatus__c`, `MainCompetitors__c`, `OrderNumber__c`, `TrackingNumber__c`. Delete, and replace Case Type and Reason values with ones that fit solar servicing.
+- ☐ Delete Developer Edition sample Case layouts: Case (Marketing), Case (Sales), Case (Support) — once per-record-type layouts exist
 - ☐ `Experience_Profile_Manager` standard permission set is in the repo from a wildcard retrieve. Delete the local file and retrieve only `PS_` permission sets going forward.
 - ☐ Dashboard API name is auto-generated (`KBzhEuJNWsMpcbnMzmuwzHqwlGrEtH`). Cosmetic; document it as a platform default rather than chase a rename.
 
