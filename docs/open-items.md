@@ -55,6 +55,13 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☑ **Case assignment rule** `Accord Case Routing`: Billing Dispute → Dispute Specialists queue, Default Review → Default Reviews queue. Assignment checkbox defaulted on and hidden on Case Layout so it can't be bypassed. Verified by creating one test case of each type through the API (both landed in the right queue), then deleting them.
 - ☑ **Found and fixed while testing:** the Collections Rep could not see a Billing Dispute case even though the sharing rule had created a Read share. `PS_Collections_Core` had no Read permission on Case, so sharing had nothing to open. Added Case Read (no create, edit, or delete) plus read on `Dispute_Reason__c` and `Root_Cause__c`. Retested: Billing Dispute readable, not editable; Default Review not visible. Case access across personas is now: Collections Rep Read · Collections Supervisor and Dispute Specialist Read/Create/Edit · Sales Rep Read (for case teams, US-18) · no Delete anywhere.
 - ☐ Retrieve queues, assignment rule, Case Layout, and `PS_Collections_Core` into the repo
+- ☑ **Entitlement process `Billing Dispute SLA`** deployed from source, active, on Lumenfield Support Hours (Mon–Fri 8–6 ET, so one business day = 600 minutes). Milestones: Acknowledge Dispute 600 min, Request Evidence 1800, Resolve Dispute 6000. Clock stops when the case closes. Sample process Standard Case and its three sample milestone types deleted.
+- ☑ **88 entitlements**, one per Residential Agreement account, each pointing at Billing Dispute SLA.
+- ☑ **SLA verified with a test case** created Wednesday 8:26 PM ET: targets landed Thu 6 PM, Mon 6 PM (weekend skipped), and Wed Oct 21 6 PM (10 business days). Proves US-09 criterion 4. Test case deleted.
+- ☑ Field-level security gap found: `Case.EntitlementId` was hidden from System Administrator, so cases couldn't be linked to entitlements even through the API. Granted Read/Edit to System Administrator and Read to `PS_Dispute_Management`.
+- ☐ Entitlement process displays its API name (`billing_dispute_sla`) as its name. Rename to "Billing Dispute SLA" in Setup → Entitlement Processes → Edit.
+- ☐ Retrieve `EntitlementProcess`, `MilestoneType`, and `PS_Dispute_Management` into the repo
+- ☐ Milestone warning (75%) and violation actions for US-14
 - ☐ Assign app and tab visibility to each permission set group. Minimum Access users currently land on an empty home page with no tabs, reachable only through search and the App Launcher
 - ☐ Negative test: sales rep opening a dispute case they aren't on the team for. Deferred from Phase 4 for lack of cases to test against
 - ☐ Load dispute and default review cases into the dataset once record types exist
@@ -65,6 +72,9 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ Retrieve `PS_Dispute_Management` so its Case record type access is in the repo
 
 ### Phase 7 — automation
+- ☐ **Stamp `EntitlementId` on new Billing Dispute cases** from the account's active Billing Dispute SLA entitlement. Without it, a case has no SLA clock. Until this flow exists, the entitlement has to be set by hand.
+- ☐ **Complete milestones from status changes**: Acknowledged completes Acknowledge Dispute, Awaiting Evidence completes Request Evidence, Resolved completes Resolve Dispute (US-09 criterion 3).
+- ☐ New Residential Agreement accounts need a Billing Dispute SLA entitlement; create it when the account is created or activated.
 - ☐ **Flow can't run assignment rules.** The default review flow must set the case owner to the Default Reviews queue directly; the assignment rule only covers cases people create.
 - ☐ **Activate `VR_Account_PrimaryContactRequired` only after the primary contact backfill runs.** Activated now, it would block every edit to all 88 residential accounts, since none have a primary contact yet. Also depends on Account record types existing.
 - ☐ **Flow: stamp Primary Contact on Account** when the first contact is created. Replaces seed file 03, which couldn't load because Data Loader didn't expose the relationship by External ID. The flow is better anyway — it covers every new account, not just the seed set.
