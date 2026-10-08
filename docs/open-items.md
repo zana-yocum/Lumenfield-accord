@@ -66,12 +66,16 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☑ Org Recycle Bin emptied (123 items: test cases, sample data, merged duplicate contacts)
 - ☐ Deploy the shortened email alert descriptions (Setup lists alerts by description), then retrieve `EntitlementProcess` so the six time triggers are in the repo
 - ☐ Check Setup → Deliverability is set to **All email**, or the alerts won't send
-- ☐ Assign app and tab visibility to each permission set group. Minimum Access users currently land on an empty home page with no tabs, reachable only through search and the App Launcher
+- ☑ **Collections Console** (Lightning console app) and **five object tabs** (Billing Statement, Payment, Promise to Pay, Adjustment, Commitment) deployed from source. The root cause of the empty home page was that the custom objects had no tabs, so no app could show them. Accounts open as workspace tabs; related records open as subtabs.
+- ☑ App access and 10 tab settings (Default On) granted to `PS_Collections_Core` and `PS_Dispute_Management` through the API. Verified the app flows through `PSG_Collections_Rep` to the Test Persona user.
+- ☑ **Found while testing as Test Persona:** persona users landed in Salesforce Classic, where console apps don't exist. Minimum Access doesn't include the Lightning Experience User permission, so with D-07 it has to come from a permission set. Added it to `PS_Collections_Core`, `PS_Dispute_Management`, and `PS_Sales_Core`, and set Test Persona's interface preference to Lightning.
+- ☐ Sales persona app (Lightning Sales app, or a custom one) — Phase 8
+- ☐ Give System Administrator access to Collections Console (App Manager → Edit → User Profiles)
 - ☐ Negative test: sales rep opening a dispute case they aren't on the team for. Deferred from Phase 4 for lack of cases to test against
 - ☐ Load dispute and default review cases into the dataset once record types exist
-- ☐ Add the remaining `Dispute_Evidence_Requirement__mdt` records. Seven exist covering the top three reasons; still needed: Duplicate or Unauthorized Draft, Payment Not Posted, Annual Escalator Increase, Home Sale or Transfer, Outage or Repair Credit
+- ☑ **Dispute evidence requirements complete**: 10 new records deployed from source, two per reason, for Duplicate or Unauthorized Draft, Payment Not Posted, Annual Escalator Increase, Home Sale or Transfer, and Outage or Repair Credit. All 8 dispute reasons now have a checklist (16 records). The org had 6 before this, not 7 as previously noted.
 - ☐ Read the Winter '27 Case Milestone fix in the Service release notes before building the entitlement process
-- ☐ Second business hours record for outbound contact windows, which are narrower than support hours in collections
+- ☑ **`Lumenfield Outbound Contact Window`** business hours: Mon–Fri 8 AM–8 PM, Sat 9 AM–5 PM, Sunday closed, Eastern. Inside the FDCPA 8 AM–9 PM limit with an end-of-day buffer. Not the default; support hours still run the SLA clock.
 - ☑ **Case record types deployed from source** (2026-10-07): Billing Dispute and Default Review, each with its own support process. Seven new Case Status values added (Acknowledged, Awaiting Evidence, Under Review, Pending Credit Approval, Resolved, Cured, Default Confirmed). Available on System Administrator (default Billing Dispute) and on `PS_Dispute_Management` (Billing Dispute only, since default reviews are opened by automation). Status paths verified per record type through the UI API.
 - ☐ Retrieve `PS_Dispute_Management` so its Case record type access is in the repo
 
@@ -95,6 +99,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ Load forecast quotas via Data Loader
 
 ### Phase 10 — release
+- ☐ README limits section: business hours use a single time zone, so the outbound contact window doesn't protect a customer in another time zone from an early call. A production build would check the customer's local time in the contact automation.
 - ☐ README limits section — write up the payment allocation gap, the business-day simplification on the default review window, and the Developer Edition persona testing constraint
 - ☐ Recruit 3–5 outside UAT testers, run scripts, collect written sign-off
 - ☐ Root cause analysis write-up on one defect found during UAT
