@@ -48,7 +48,9 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☑ **Account record types created** (2026-10-03): `Residential_Agreement` (88 accounts) and `Organization` (12 accounts, ACC-0089 to ACC-0100). Available on System Administrator (default Residential Agreement) and through `PS_Sales_Core` only. Collections doesn't need an assignment, because record type assignment governs create and change, not view or edit. Accounts bulk-assigned through the API and verified by count.
 - ☐ Retrieve Account record types and `PS_Sales_Core`, `PS_Payment_Detail` into the repo
 - ☐ Page layouts per Account record type (currently both use Account Layout)
-- ☐ Case sharing rule `Billing_Disputes_to_Collections` — couldn't be built in Phase 4 because it filters on a record type that doesn't exist yet
+- ☑ Case sharing rule `Billing_Disputes_to_Collections`: criteria-based, Billing Dispute record type, Read Only to the Collections Rep role. Supervisors already see disputes through the hierarchy; Default Review cases stay private.
+- ☑ **Role hierarchy cleanup** (2026-10-07): nine Developer Edition sample roles deleted (VP North American Sales, VP International Sales, VP Marketing, two sales directors, four sales and marketing teams). Three of them sat directly under Dispute Specialist, which would have given dispute specialists upward visibility into any sales or marketing records. No users held them. Hierarchy is now Executive → VP Customer Operations → Collections Supervisor → (Collections Rep, Dispute Specialist), and Executive → VP Sales → Sales Manager → Sales Rep.
+- ☐ Retrieve Case sharing rules and roles into the repo; delete local role files for the nine removed roles
 - ☐ Assign app and tab visibility to each permission set group. Minimum Access users currently land on an empty home page with no tabs, reachable only through search and the App Launcher
 - ☐ Negative test: sales rep opening a dispute case they aren't on the team for. Deferred from Phase 4 for lack of cases to test against
 - ☐ Load dispute and default review cases into the dataset once record types exist
@@ -116,6 +118,8 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 ---
 
 ## Doc updates pending
+
+- ☐ `security-model.md` — add the Case sharing rule and record the sample-role cleanup, including why roles parented under Dispute Specialist were a visibility problem
 
 - ☑ `requirements.md` rewritten: acceptance criteria for all 21 stories, a summary table, and traceability filled in for what's built. US-21 retitled to match D-05 (consent gates promotional messages only).
 
