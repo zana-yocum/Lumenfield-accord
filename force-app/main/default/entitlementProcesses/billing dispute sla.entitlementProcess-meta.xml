@@ -14,18 +14,66 @@
         <isDisplayedOnLinkedEntity>false</isDisplayedOnLinkedEntity>
         <milestoneName>Acknowledge Dispute</milestoneName>
         <minutesToComplete>600</minutesToComplete>
+        <timeTriggers>
+            <actions>
+                <name>Dispute_Milestone_Violation</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>0</timeLength>
+            <workflowTimeTriggerUnit>Minutes</workflowTimeTriggerUnit>
+        </timeTriggers>
+        <timeTriggers>
+            <actions>
+                <name>Dispute_Milestone_Warning</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>-150</timeLength>
+            <workflowTimeTriggerUnit>Minutes</workflowTimeTriggerUnit>
+        </timeTriggers>
         <useCriteriaStartTime>false</useCriteriaStartTime>
     </milestones>
     <milestones>
         <isDisplayedOnLinkedEntity>false</isDisplayedOnLinkedEntity>
         <milestoneName>Request Evidence</milestoneName>
         <minutesToComplete>1800</minutesToComplete>
+        <timeTriggers>
+            <actions>
+                <name>Dispute_Milestone_Warning</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>-450</timeLength>
+            <workflowTimeTriggerUnit>Minutes</workflowTimeTriggerUnit>
+        </timeTriggers>
+        <timeTriggers>
+            <actions>
+                <name>Dispute_Milestone_Violation</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>0</timeLength>
+            <workflowTimeTriggerUnit>Minutes</workflowTimeTriggerUnit>
+        </timeTriggers>
         <useCriteriaStartTime>false</useCriteriaStartTime>
     </milestones>
     <milestones>
         <isDisplayedOnLinkedEntity>false</isDisplayedOnLinkedEntity>
         <milestoneName>Resolve Dispute</milestoneName>
         <minutesToComplete>6000</minutesToComplete>
+        <timeTriggers>
+            <actions>
+                <name>Dispute_Milestone_Violation</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>0</timeLength>
+            <workflowTimeTriggerUnit>Minutes</workflowTimeTriggerUnit>
+        </timeTriggers>
+        <timeTriggers>
+            <actions>
+                <name>Dispute_Milestone_Warning</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>-1500</timeLength>
+            <workflowTimeTriggerUnit>Minutes</workflowTimeTriggerUnit>
+        </timeTriggers>
         <useCriteriaStartTime>false</useCriteriaStartTime>
     </milestones>
 </EntitlementProcess>

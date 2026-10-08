@@ -61,7 +61,11 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☑ Field-level security gap found: `Case.EntitlementId` was hidden from System Administrator, so cases couldn't be linked to entitlements even through the API. Granted Read/Edit to System Administrator and Read to `PS_Dispute_Management`.
 - ☐ Entitlement process displays its API name (`billing_dispute_sla`) as its name. Rename to "Billing Dispute SLA" in Setup → Entitlement Processes → Edit.
 - ☐ Retrieve `EntitlementProcess`, `MilestoneType`, and `PS_Dispute_Management` into the repo
-- ☐ Milestone warning (75%) and violation actions for US-14
+- ☑ **Milestone alerts (US-14)**: email templates `Dispute Milestone Warning` and `Dispute Milestone Violation` (folder Accord Case SLA) and matching email alerts, deployed from source. Warning goes to the case owner at 75% of each milestone (150 / 450 / 1500 minutes before target); violation goes to the owner and the Collections Supervisor role at the target. Both queues set to email their members. The "flagged as breached" criterion is met by the standard Milestone Status field (Open Violation).
+- ☑ **Lesson: an entitlement process locks once any case has used it, even a deleted test case.** The Metadata API refused the update with "Cannot update SLA process that is in use"; detaching all 88 entitlements and emptying the Recycle Bin didn't release it. Milestone actions were added through Setup instead, which allows actions on in-use processes. In production, enable entitlement versioning before go-live so later changes become new versions.
+- ☑ Org Recycle Bin emptied (123 items: test cases, sample data, merged duplicate contacts)
+- ☐ Deploy the shortened email alert descriptions (Setup lists alerts by description), then retrieve `EntitlementProcess` so the six time triggers are in the repo
+- ☐ Check Setup → Deliverability is set to **All email**, or the alerts won't send
 - ☐ Assign app and tab visibility to each permission set group. Minimum Access users currently land on an empty home page with no tabs, reachable only through search and the App Launcher
 - ☐ Negative test: sales rep opening a dispute case they aren't on the team for. Deferred from Phase 4 for lack of cases to test against
 - ☐ Load dispute and default review cases into the dataset once record types exist
