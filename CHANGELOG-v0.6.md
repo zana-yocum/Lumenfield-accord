@@ -13,7 +13,7 @@ Ten flows, an approval process and five validation rules. Every story they serve
 | `Promise_AfterSave_ApplyPolicy` | After save | Blocks a second active promise; out-of-policy promises go to Pending Approval; in-policy promises set the collection hold | US-03 |
 | `Promise_Daily_Evaluate` | Scheduled, daily | After grace, totals real payments and marks Kept or Broken; releases the hold | US-04 |
 | `Opportunity_AfterSave_CreateServiceContract` | After save | At Closed Won, creates the service contract and links the deal's commitments | US-02 |
-| `Adjustment_AfterSave_Lifecycle` | After save | Credits within the rep limit post immediately; submission, approval and rejection move the related dispute | US-11, US-13 |
+| `Adjustment_AfterSave_Lifecycle` | After save | Credits within the rep limit post immediately; submission, approval and rejection move the related dispute; a rejection without a reason assigns the approver a task to record one | US-11, US-13 |
 | `ServiceContract_AfterSave_WelcomeAndReminder` | After save + scheduled path | Welcome email on activation, first-payment reminder 7 days before due, follow-up task when there's no email | US-19, US-20, US-21 |
 
 ### Added — rules and approvals
@@ -38,7 +38,7 @@ Ten flows, an approval process and five validation rules. Every story they serve
 - Credits: $75 posted on its own; $250 blocked from manual approval, approved through the process, posted, dispute returned to Under Review; approved amount locked
 
 ### Lessons recorded
-- Approval field updates skip validation rules. Used deliberately to make the approval process the only path for large credits — and it's why a rejection reason can't be enforced on a rejection that comes through the approval process
+- Approval field updates skip validation rules. Used deliberately to make the approval process the only path for large credits — and it's why a rejection reason can't be required at the moment of an approval-process rejection; the lifecycle flow assigns the approver a task to record it instead
 - System Administrators can submit any approval regardless of allowed submitters. In a two-license org where the admin is also the supervisor, self-approval is possible; in production, admins don't approve credits
 - Approval entry criteria can't read custom metadata, so the $100 threshold is duplicated from `Rep_Credit_Limit`
 - Milestones lock once their case exits the entitlement process

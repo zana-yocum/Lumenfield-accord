@@ -72,25 +72,44 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 
 **Loose ends carried forward (small)**
 - ☐ Setup → Deliverability is **All email**, or milestone alerts fire but never send
-- ☐ System Administrator access to Collections Console (App Manager → Edit → User Profiles)
-- ☐ Deploy the shortened email alert descriptions if not done (`Case.workflow-meta.xml`)
+- ☑ System Administrator access to Collections Console (verified)
+- ☑ Email alert descriptions shortened (verified)
 - ☐ Retrieve `CustomField:Billing_Statement__c.Balance__c` (formula fix) and commit `data/regen/`, excluding the `del_*.csv` scratch files
 - ☑ `--line-ending LF` added to the runbook import commands
 - ☐ Sales persona app — Phase 8
 
-### Phase 7 — automation
-- ☐ **Remove case team members when a dispute closes** (US-08 criterion 2, US-18 criterion 3). Salesforce keeps case team access after close; nothing removes it yet.
-- ☐ **Opening a dispute flags its statement** (`Dispute_Open__c`, status In Dispute) and excludes it from collections priority (US-07 criterion 2). The 13 test disputes don't flag their statements yet.
+### Phase 7 — automation ☑ built and tested 2026-10-09
+- ☑ **Promises (US-03, US-04):** `Promise_AfterSave_ApplyPolicy`, `Promise_Daily_Evaluate`, `Account_Daily_BrokenPromiseCount`. Tested: second active promise blocked; in-policy promise set a hold to grace end; short promise went to Pending Approval with no hold.
+- ☑ **Credits (US-11, US-13):** `Adjustment_AfterSave_Lifecycle`, Credit Approval process, `VR_Adjustment_ApprovalRequired`, `VR_Adjustment_AmountLockedAfterApproval`. Tested: $75 posted on its own; $250 blocked from manual approval, approved through the process, posted, dispute back to Under Review; approved amount locked.
+- ☑ **Welcome and reminder (US-19, US-20, US-21):** `ServiceContract_AfterSave_WelcomeAndReminder`. Tested: welcome sent and stamped on activation; reminder scheduled. Fires only when a contract becomes active, so the existing 88 customers weren't emailed.
+- ☐ **Confirm the first scheduled runs** (Oct 10, 1:00 and 1:30 AM ET): ACC-0002 and ACC-0003 move to Delinquent; nothing else changes status; broken-promise counts unchanged (the regenerated data already matches); no Active promise past grace yet
+- ☐ Test a Default Review opening automatically: let an account cross 90 days with no open review, or debug the status flow on one after closing its review
+- ☑ **Rejection reason on approval-process rejections** (US-11 criterion 3): approval field updates skip `VR_Adjustment_RejectionReason`, so `Adjustment_AfterSave_Lifecycle` now assigns the approver a high-priority task to record the reason when a credit is rejected without one. The task attaches to the account because activities aren't enabled on Adjustment. Tested: submit → reject with no reason → task created for the approver, dispute back to Under Review. Test records deleted.
+- ☐ **Self-approval by admins**: System Administrators can submit any approval regardless of allowed submitters. Document in `security-model.md`; in production the admin isn't a supervisor
+- ☐ Approval threshold ($100) duplicates `Rep_Credit_Limit`; reminder offset (7 days) duplicates `Pre_Due_Offset_Days`. Note both in the automation inventory
+- ☑ **`VR_Case_RootCauseRequired`** (US-10): billing disputes can't be Resolved without a root cause; Closed (withdrawn) doesn't need one. Found missing while filling in traceability; built through the Tooling API and tested on CASE-0001.
+- ☐ **US-06 contact attempt action** (Should): a quick action or screen flow to log an outcome from the Contact Outcome value set, chaining into a promise when the outcome is Promise to Pay. Not built in Phase 7; carry to Phase 8 or 9.
+- ☐ Commitment Status picklist has a stray value "Check" — remove or deactivate
+- ☐ Retrieve and commit: everything in `phase7-automation.zip` is already local; also retrieve `ValidationRule:Account.VR_Account_PrimaryContactRequired` and `ValidationRule:Case.VR_Case_RootCauseRequired`
+- ☑ **Dispute lifecycle tested end to end** on a throwaway case (Paid statement STM-00452, ACC-0060): created with no entitlement → entitlement attached, routed to Dispute Specialists, 3 milestones started, statement In Dispute. Acknowledged → only Acknowledge completed. Sales rep added to case team, then jumped straight to Resolved → team member removed, both remaining milestones completed, statement back to Paid with Dispute Open cleared. Test case deleted.
+- ☑ **Backfilled the 13 Phase 6 test disputes**: 12 passed milestones completed on open cases, 10 open disputes' statements flagged In Dispute.
+- ☑ **Lesson: milestones lock once their case exits the entitlement process.** Completing milestones on the 3 already-closed test disputes was refused ("can't change the completion date on a milestone that's already exited an entitlement process"). The flow completes them inside the closing save, before they lock, so this only affects cases closed before the flow existed; their milestones stay as an honest record.
+- ☑ **`Account_Daily_Collections_Status`** (scheduled, daily 1 AM ET) deployed from source and active. Sets Account Status from Days Past Due (Current / Delinquent / Default Review at the `Default_Threshold_DPD` policy setting), stamps Threshold Crossed Date, opens a Default Review case owned by the Default Reviews queue when none is open. Skips Closed and Hardship Review. Debug-tested on three accounts: ACC-0082 (14 DPD, Delinquent) and ACC-0060 (0 DPD, Current) took "Already correct" with no update; ACC-0001 (43 DPD, marked Current) moved to Delinquent.
+- ☑ **Proved the security effect (D-08):** right after the debug run, Test Persona (Collections Rep) could read ACC-0001 and still could not read ACC-0002, the other mismatch account not yet run. Status drives visibility; the flow is what makes it accurate.
+- ☐ Confirm the first scheduled run (Oct 10, 1 AM ET) moved ACC-0002 and ACC-0003 to Delinquent and changed nothing else
+- ☑ **Case team removed on close** in `Case_AfterSave_DisputeLifecycle`. Done.
+- ☑ **Disputed statement flagged** (Dispute Open, In Dispute) while the case is open; restored on close to Paid / Past Due / Open from its real balance and due date. Done.
 - ☐ Confirm a case team member with Read can add case comments (US-08 says "read the case and add comments"); if comments need Edit, decide between a Sales Input permission and a quick action
 - ☐ Account record types: the 12 Organization accounts each still have a service contract, though Organization is described as "not a lease holder." Remove those contracts or revise the description.
-- ☐ **Stamp `EntitlementId` on new Billing Dispute cases** from the account's active Billing Dispute SLA entitlement. Without it, a case has no SLA clock. Until this flow exists, the entitlement has to be set by hand.
-- ☐ **Complete milestones from status changes**: Acknowledged completes Acknowledge Dispute, Awaiting Evidence completes Request Evidence, Resolved completes Resolve Dispute (US-09 criterion 3).
+- ☑ **`Case_BeforeSave_StampEntitlement`**: new Billing Disputes without an entitlement get the account's active one, so the SLA starts. Done.
+- ☑ **Milestones complete from status** in `Case_AfterSave_DisputeLifecycle`: Acknowledged → Acknowledge; Awaiting Evidence or later → Request Evidence; Resolved/Closed → Resolve; skipped stages complete too. Done.
 - ☐ New Residential Agreement accounts need a Billing Dispute SLA entitlement; create it when the account is created or activated.
 - ☐ **Flow can't run assignment rules.** The default review flow must set the case owner to the Default Reviews queue directly; the assignment rule only covers cases people create.
-- ☐ **Activate `VR_Account_PrimaryContactRequired` only after the primary contact backfill runs.** Activated now, it would block every edit to all 88 residential accounts, since none have a primary contact yet. Also depends on Account record types existing.
-- ☐ **Flow: stamp Primary Contact on Account** when the first contact is created. Replaces seed file 03, which couldn't load because Data Loader didn't expose the relationship by External ID. The flow is better anyway — it covers every new account, not just the seed set.
-- ☐ **Flow: link Commitments to their Service Contract** at Closed Won. Replaces seed file 07 for the same reason, and it's the automation US-02 already requires.
-- ☐ Document that the account status-stamping flow functions as a security control, not just a convenience — the delinquent-account sharing rule depends on status being accurate (D-08)
+- ☑ **Primary contact backfill**: all 100 accounts set to their Primary-role contact through the API. The Data Quality "no one to contact" tile should now read 0 (was 88).
+- ☑ **`VR_Account_PrimaryContactRequired` active**: residential, not Closed, primary contact required. Refined from the Phase 5 plan to skip the first save (`NOT(ISNEW())`), because an account has to exist before its contact can be added. Tested: clearing a primary contact is blocked with the field-level message.
+- ☑ **`Contact_AfterSave_StampPrimaryContact`** deployed and active. A Primary-role contact becomes the account's primary; an account with no primary takes its first contact as a stand-in. Tested end to end on a throwaway household: saved with no contacts, co-signer stamped as stand-in, Primary-role contact took over. Test records deleted (still in the Recycle Bin).
+- ☑ **`Opportunity_AfterSave_CreateServiceContract`** + `VR_Opp_ConcessionNeedsCommitment` (US-02). Tested: close blocked without a commitment; after adding one, service contract created and commitment linked.
+- ☑ Status flow documented and demonstrated as a security control (see CHANGELOG v0.6)
 - ☐ **Design constraint from Winter '27 review:** no flow may assume sharing is recalculated in the same transaction as a role or group change (Spring '27 release update; D-08 depends on sharing)
 - ☐ Consider Winter '27 mass screen flow action (`ids` collection) for bulk collections outcomes, and rely on Flow's row-lock auto-retry for the backfill
 - ☐ Note the `Dispute_Reason__c` weakness in the automation inventory: it's plain text on the custom metadata type because custom metadata picklists can't inherit from a global value set, so the match to the value set is convention rather than enforcement
@@ -149,6 +168,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☑ `PS_Payment_Detail` label had a double space (`Payment  Detail`); corrected.
 - ☐ **Developer Edition sample fields still on standard objects.** Case: `Product__c` (GenWatt model codes), `PotentialLiability__c`, `SLAViolation__c`, plus sample Type and Case Reason values (Mechanical, Electrical, Installation…). Account: `Active__c`, `CustomerPriority__c`, `NumberofLocations__c`, `SLA__c`, `SLASerialNumber__c`, `SLAExpirationDate__c`, `UpsellOpportunity__c`. Contact: `Languages__c`, `Level__c`. Lead: `CurrentGenerators__c`, `NumberofLocations__c`, `Primary__c`, `ProductInterest__c`, `SICCode__c`. Opportunity: `CurrentGenerators__c`, `DeliveryInstallationStatus__c`, `MainCompetitors__c`, `OrderNumber__c`, `TrackingNumber__c`. Delete, and replace Case Type and Reason values with ones that fit solar servicing.
 - ☐ Delete Developer Edition sample layouts now that per-record-type layouts are assigned: Case (Marketing), Case (Sales), Case (Support), Account (Marketing), Account (Sales), Account (Support)
+- ☐ Household names repeat (three "Boone Household" accounts, ACC-0001, 0060, 0082). Make them unique so search and record pickers aren't ambiguous.
 - ☐ `Experience_Profile_Manager` standard permission set is in the repo from a wildcard retrieve. Delete the local file and retrieve only `PS_` permission sets going forward.
 - ☐ Dashboard API name is auto-generated (`KBzhEuJNWsMpcbnMzmuwzHqwlGrEtH`). Cosmetic; document it as a platform default rather than chase a rename.
 
