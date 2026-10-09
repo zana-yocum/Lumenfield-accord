@@ -346,24 +346,24 @@ Filled in as the build progresses. This table turns a pile of config into a deli
 
 | Story | Built in | Implemented by | Tested by |
 |---|---|---|---|
-| US-01 | Phase 3, 8 | Account Lightning page, related lists | UAT-01 |
-| US-02 | Phase 3, 7 | `VR_Opportunity_ConcessionRequiresCommitment`, `Opportunity_AfterSave_CreateServiceContract` | UAT-02 |
-| US-03 | Phase 3, 5, 7 | `Promise_to_Pay__c`, `Policy_Setting__mdt`, `VR_Promise_AmountPositive` · promise policy flow (Phase 7) | UAT-03 |
-| US-04 | Phase 3, 5, 7 | `Broken_Promises_90d__c`, `VR_Payment_AmountPositive`, `VR_Payment_DateNotFuture` · promise evaluation flow (Phase 7) | UAT-04 |
-| US-05 | Phase 3, 7, 9 | `Priority_Score__c`, sharing rule (D-08) · status-stamping flow (Phase 7) | UAT-05 |
-| US-06 | Phase 3, 7 | Contact Outcome value set · contact attempt action (Phase 7) | UAT-06 |
-| US-07 | Phase 6, 7 | Billing Dispute record type, `Dispute_Evidence_Requirement__mdt` | UAT-07 |
-| US-08 | Phase 4, 6 | Case team roles | UAT-08 |
-| US-09 | Phase 6 | Entitlement process, Billing Dispute support process | UAT-09 |
-| US-10 | Phase 6, 7 | Root Cause value set | UAT-10 |
-| US-11 | Phase 5, 7 | `Adjustment__c`, `VR_Adjustment_RejectionReason` · approval process (Phase 7) | UAT-11 |
-| US-12 | Phase 9 | | UAT-12 |
-| US-13 | Phase 7 | | UAT-13 |
-| US-14 | Phase 6 | | UAT-14 |
-| US-15 | Phase 6, 7, 9 | Default Review record type, `Threshold_Crossed_Date__c` | UAT-15 |
-| US-16 | Phase 8 | | UAT-16 |
-| US-17 | Phase 8 | | UAT-17 |
-| US-18 | Phase 4, 6 | Case team roles | UAT-18 |
-| US-19 | Phase 7 | `Welcome_Sent_On__c` | UAT-19 |
-| US-20 | Phase 7 | `First_Due_Date__c` | UAT-20 |
-| US-21 | Phase 3, 7 | `Do_Not_Contact__c`, consent model (D-05) | UAT-21 |
+| US-01 | Phase 3, 6, 7 | Residential Agreement layout (Collections section), `Billing_Disputes_to_Collections` sharing rule, `VR_Account_PrimaryContactRequired`, `Contact_AfterSave_StampPrimaryContact` | UAT-01 |
+| US-02 | Phase 3, 7 | `VR_Opp_ConcessionNeedsCommitment`, `Opportunity_AfterSave_CreateServiceContract` | UAT-02 |
+| US-03 | Phase 3, 5, 7 | `Promise_to_Pay__c`, `Out_of_Policy__c`, `Policy_Setting__mdt`, `VR_Promise_AmountPositive`, `Promise_AfterSave_ApplyPolicy` | UAT-03 |
+| US-04 | Phase 3, 5, 7 | `VR_Payment_AmountPositive`, `VR_Payment_DateNotFuture`, `Promise_Daily_Evaluate`, `Account_Daily_BrokenPromiseCount` | UAT-04 |
+| US-05 | Phase 3, 7, 9 | `Priority_Score__c`, sharing rule (D-08), `Account_Daily_Collections_Status` | UAT-05 |
+| US-06 | Phase 3, 7 | Contact Outcome value set · contact attempt action (not yet built) | UAT-06 |
+| US-07 | Phase 6, 7 | Billing Dispute record type and support process, `Dispute_Evidence_Requirement__mdt` (16 records), `Case_AfterSave_DisputeLifecycle` (statement flag) | UAT-07 |
+| US-08 | Phase 4, 6, 7 | Case team role Sales Input, `Case_AfterSave_DisputeLifecycle` (team removed at close) | UAT-08 |
+| US-09 | Phase 6, 7 | `Billing Dispute SLA` entitlement process, 88 entitlements, `Case_BeforeSave_StampEntitlement`, milestone completion in `Case_AfterSave_DisputeLifecycle` | UAT-09 |
+| US-10 | Phase 6, 7 | Root Cause value set, Resolution section on the Billing Dispute layout, `VR_Case_RootCauseRequired` | UAT-10 |
+| US-11 | Phase 5, 7 | `VR_Adjustment_RejectionReason`, Credit Approval process, `VR_Adjustment_ApprovalRequired`, `VR_Adjustment_AmountLockedAfterApproval`, `Adjustment_AfterSave_Lifecycle` | UAT-11 |
+| US-12 | Phase 9 | Supervisor dashboard (not yet built) | UAT-12 |
+| US-13 | Phase 7 | Credit Approval process (allowed submitters), `Adjustment_AfterSave_Lifecycle` | UAT-13 |
+| US-14 | Phase 6 | Milestone warning and violation email alerts, Milestone Status | UAT-14 |
+| US-15 | Phase 6, 7, 9 | Default Review record type, Default Reviews queue, `Account_Daily_Collections_Status` | UAT-15 |
+| US-16 | Phase 8 | Web-to-lead (not yet built) | UAT-16 |
+| US-17 | Phase 8 | Forecasts (not yet built) | UAT-17 |
+| US-18 | Phase 4, 6, 7 | Case team role Sales Input, `PS_Sales_Core` Case Read, team removal at close | UAT-18 |
+| US-19 | Phase 7 | `ServiceContract_AfterSave_WelcomeAndReminder` (welcome path) | UAT-19 |
+| US-20 | Phase 7 | `ServiceContract_AfterSave_WelcomeAndReminder` (scheduled path) | UAT-20 |
+| US-21 | Phase 3, 7 | `Do_Not_Contact__c` gate in the welcome flow; no promotional automation exists (D-05) | UAT-21 |
