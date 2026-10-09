@@ -1,0 +1,13 @@
+Account__r.Legacy_Id__c,Billing_Statement__r.Legacy_Id__c,Type__c,Status__c,Amount__c,Posted_Date__c,Rejection_Reason__c
+ACC-0028,STM-00219,Goodwill Credit,Posted,120.00,2026-09-23,
+ACC-0067,STM-00497,Goodwill Credit,Posted,180.00,2026-08-07,
+ACC-0058,STM-00436,Goodwill Credit,Approved,120.00,,
+ACC-0011,STM-00084,Goodwill Credit,Rejected,180.00,,Credit exceeds policy for a first-time request
+ACC-0001,STM-00005,Goodwill Credit,Pending Approval,180.00,,
+ACC-0009,STM-00065,Goodwill Credit,Approved,180.00,,
+ACC-0021,STM-00165,Billing Correction,Posted,120.00,2026-08-23,
+ACC-0026,STM-00208,Goodwill Credit,Approved,180.00,,
+ACC-0053,STM-00398,Goodwill Credit,Approved,45.00,,
+ACC-0030,STM-00235,Goodwill Credit,Posted,420.00,2026-09-11,
+ACC-0087,STM-00624,Billing Correction,Posted,250.00,2026-07-22,
+ACC-0003,STM-00020,Production Guarantee,Pending Approval,120.00,,

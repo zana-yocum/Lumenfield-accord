@@ -44,42 +44,45 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ Remaining Phase 5 screenshots if not yet taken: `phase05-duplicate-rule-config.png`, `phase05-duplicate-alert-in-action.png`, `phase05-data-loader-success.png`
 - ☐ `data-plan.md` — add the after numbers to the measurement table (duplicates 0, roles 0, statement dates 0)
 
-### Phase 6 — service
+### Phase 6 — service ☑ closed 2026-10-08
 - ☑ **Account record types created** (2026-10-03): `Residential_Agreement` (88 accounts) and `Organization` (12 accounts, ACC-0089 to ACC-0100). Available on System Administrator (default Residential Agreement) and through `PS_Sales_Core` only. Collections doesn't need an assignment, because record type assignment governs create and change, not view or edit. Accounts bulk-assigned through the API and verified by count.
-- ☐ Retrieve Account record types and `PS_Sales_Core`, `PS_Payment_Detail` into the repo
-- ☐ Page layouts per Account record type (currently both use Account Layout)
+- ☑ **Page layouts per record type** deployed from source and assigned for every profile (verified for System Administrator and Minimum Access): Residential Agreement (Collections section with balance, days past due, bucket, priority score, broken promises), Organization (no collections fields), Billing Dispute (dispute, SLA entitlement, Resolution with Root Cause), Default Review (threshold date, on-time flag, outcome). Sample fields are left off every layout.
+- ☑ Lesson from the deploy: some standard fields must be on every layout whether used or not. Account needs Parent Account; Case needs Contact, Case Origin, and the four Web fields. Salesforce reports one per layout per deploy, so it took three rounds.
 - ☑ Case sharing rule `Billing_Disputes_to_Collections`: criteria-based, Billing Dispute record type, Read Only to the Collections Rep role. Supervisors already see disputes through the hierarchy; Default Review cases stay private.
 - ☑ **Role hierarchy cleanup** (2026-10-07): nine Developer Edition sample roles deleted (VP North American Sales, VP International Sales, VP Marketing, two sales directors, four sales and marketing teams). Three of them sat directly under Dispute Specialist, which would have given dispute specialists upward visibility into any sales or marketing records. No users held them. Hierarchy is now Executive → VP Customer Operations → Collections Supervisor → (Collections Rep, Dispute Specialist), and Executive → VP Sales → Sales Manager → Sales Rep.
-- ☐ Retrieve Case sharing rules and roles into the repo; delete local role files for the nine removed roles
 - ☑ **Queues** Dispute Specialists and Default Reviews (Case), with roles as members rather than named users: Dispute Specialist role and Collections Supervisor role.
 - ☑ **Case assignment rule** `Accord Case Routing`: Billing Dispute → Dispute Specialists queue, Default Review → Default Reviews queue. Assignment checkbox defaulted on and hidden on Case Layout so it can't be bypassed. Verified by creating one test case of each type through the API (both landed in the right queue), then deleting them.
 - ☑ **Found and fixed while testing:** the Collections Rep could not see a Billing Dispute case even though the sharing rule had created a Read share. `PS_Collections_Core` had no Read permission on Case, so sharing had nothing to open. Added Case Read (no create, edit, or delete) plus read on `Dispute_Reason__c` and `Root_Cause__c`. Retested: Billing Dispute readable, not editable; Default Review not visible. Case access across personas is now: Collections Rep Read · Collections Supervisor and Dispute Specialist Read/Create/Edit · Sales Rep Read (for case teams, US-18) · no Delete anywhere.
-- ☐ Retrieve queues, assignment rule, Case Layout, and `PS_Collections_Core` into the repo
 - ☑ **Entitlement process `Billing Dispute SLA`** deployed from source, active, on Lumenfield Support Hours (Mon–Fri 8–6 ET, so one business day = 600 minutes). Milestones: Acknowledge Dispute 600 min, Request Evidence 1800, Resolve Dispute 6000. Clock stops when the case closes. Sample process Standard Case and its three sample milestone types deleted.
 - ☑ **88 entitlements**, one per Residential Agreement account, each pointing at Billing Dispute SLA.
 - ☑ **SLA verified with a test case** created Wednesday 8:26 PM ET: targets landed Thu 6 PM, Mon 6 PM (weekend skipped), and Wed Oct 21 6 PM (10 business days). Proves US-09 criterion 4. Test case deleted.
 - ☑ Field-level security gap found: `Case.EntitlementId` was hidden from System Administrator, so cases couldn't be linked to entitlements even through the API. Granted Read/Edit to System Administrator and Read to `PS_Dispute_Management`.
-- ☐ Entitlement process displays its API name (`billing_dispute_sla`) as its name. Rename to "Billing Dispute SLA" in Setup → Entitlement Processes → Edit.
-- ☐ Retrieve `EntitlementProcess`, `MilestoneType`, and `PS_Dispute_Management` into the repo
 - ☑ **Milestone alerts (US-14)**: email templates `Dispute Milestone Warning` and `Dispute Milestone Violation` (folder Accord Case SLA) and matching email alerts, deployed from source. Warning goes to the case owner at 75% of each milestone (150 / 450 / 1500 minutes before target); violation goes to the owner and the Collections Supervisor role at the target. Both queues set to email their members. The "flagged as breached" criterion is met by the standard Milestone Status field (Open Violation).
 - ☑ **Lesson: an entitlement process locks once any case has used it, even a deleted test case.** The Metadata API refused the update with "Cannot update SLA process that is in use"; detaching all 88 entitlements and emptying the Recycle Bin didn't release it. Milestone actions were added through Setup instead, which allows actions on in-use processes. In production, enable entitlement versioning before go-live so later changes become new versions.
 - ☑ Org Recycle Bin emptied (123 items: test cases, sample data, merged duplicate contacts)
-- ☐ Deploy the shortened email alert descriptions (Setup lists alerts by description), then retrieve `EntitlementProcess` so the six time triggers are in the repo
-- ☐ Check Setup → Deliverability is set to **All email**, or the alerts won't send
 - ☑ **Collections Console** (Lightning console app) and **five object tabs** (Billing Statement, Payment, Promise to Pay, Adjustment, Commitment) deployed from source. The root cause of the empty home page was that the custom objects had no tabs, so no app could show them. Accounts open as workspace tabs; related records open as subtabs.
 - ☑ App access and 10 tab settings (Default On) granted to `PS_Collections_Core` and `PS_Dispute_Management` through the API. Verified the app flows through `PSG_Collections_Rep` to the Test Persona user.
 - ☑ **Found while testing as Test Persona:** persona users landed in Salesforce Classic, where console apps don't exist. Minimum Access doesn't include the Lightning Experience User permission, so with D-07 it has to come from a permission set. Added it to `PS_Collections_Core`, `PS_Dispute_Management`, and `PS_Sales_Core`, and set Test Persona's interface preference to Lightning.
-- ☐ Sales persona app (Lightning Sales app, or a custom one) — Phase 8
-- ☐ Give System Administrator access to Collections Console (App Manager → Edit → User Profiles)
-- ☐ Negative test: sales rep opening a dispute case they aren't on the team for. Deferred from Phase 4 for lack of cases to test against
-- ☐ Load dispute and default review cases into the dataset once record types exist
 - ☑ **Dispute evidence requirements complete**: 10 new records deployed from source, two per reason, for Duplicate or Unauthorized Draft, Payment Not Posted, Annual Escalator Increase, Home Sale or Transfer, and Outage or Repair Credit. All 8 dispute reasons now have a checklist (16 records). The org had 6 before this, not 7 as previously noted.
-- ☐ Read the Winter '27 Case Milestone fix in the Service release notes before building the entitlement process
 - ☑ **`Lumenfield Outbound Contact Window`** business hours: Mon–Fri 8 AM–8 PM, Sat 9 AM–5 PM, Sunday closed, Eastern. Inside the FDCPA 8 AM–9 PM limit with an end-of-day buffer. Not the default; support hours still run the SLA clock.
 - ☑ **Case record types deployed from source** (2026-10-07): Billing Dispute and Default Review, each with its own support process. Seven new Case Status values added (Acknowledged, Awaiting Evidence, Under Review, Pending Credit Approval, Resolved, Cured, Default Confirmed). Available on System Administrator (default Billing Dispute) and on `PS_Dispute_Management` (Billing Dispute only, since default reviews are opened by automation). Status paths verified per record type through the UI API.
-- ☐ Retrieve `PS_Dispute_Management` so its Case record type access is in the repo
+- ☑ **Test cases loaded** (CASE-0001 to CASE-0018): 13 billing disputes covering all 8 dispute reasons and every status (3 New, 2 Acknowledged, 2 Awaiting Evidence, 2 Under Review, 1 Pending Credit Approval, 2 Resolved with root cause, 1 Closed as withdrawn), each linked to its statement, contact, service contract, originating deal and SLA entitlement; 5 default reviews on the five 90+ accounts. Verified: disputes routed to Dispute Specialists with 3 milestones each, reviews routed to Default Reviews. All 5 reviews show Opened On Time = false, which is correct — those accounts crossed 90 days before any automation existed. That's the US-15 "before" number for Phase 7.
+- ☑ **Negative test (US-08, US-18), deferred since Phase 4.** Test Persona was switched temporarily to Sales Rep (Developer Edition has two full licenses, so one persona user stands in for each role in turn). Not on the case team: no access to the dispute about their own deal, an unrelated dispute, or a default review. Added to the case team as Sales Input: read access to that one case, no edit — the team role grants Edit, but `PS_Sales_Core` has Read on Case, so the object permission caps it. Team member removed and Test Persona restored to Collections Rep; access rechecked afterward.
+- ☑ Retrieves for each step committed as the phase went
+
+**Loose ends carried forward (small)**
+- ☐ Setup → Deliverability is **All email**, or milestone alerts fire but never send
+- ☐ System Administrator access to Collections Console (App Manager → Edit → User Profiles)
+- ☐ Deploy the shortened email alert descriptions if not done (`Case.workflow-meta.xml`)
+- ☐ Retrieve `CustomField:Billing_Statement__c.Balance__c` (formula fix) and commit `data/regen/`, excluding the `del_*.csv` scratch files
+- ☑ `--line-ending LF` added to the runbook import commands
+- ☐ Sales persona app — Phase 8
 
 ### Phase 7 — automation
+- ☐ **Remove case team members when a dispute closes** (US-08 criterion 2, US-18 criterion 3). Salesforce keeps case team access after close; nothing removes it yet.
+- ☐ **Opening a dispute flags its statement** (`Dispute_Open__c`, status In Dispute) and excludes it from collections priority (US-07 criterion 2). The 13 test disputes don't flag their statements yet.
+- ☐ Confirm a case team member with Read can add case comments (US-08 says "read the case and add comments"); if comments need Edit, decide between a Sales Input permission and a quick action
+- ☐ Account record types: the 12 Organization accounts each still have a service contract, though Organization is described as "not a lease holder." Remove those contracts or revise the description.
 - ☐ **Stamp `EntitlementId` on new Billing Dispute cases** from the account's active Billing Dispute SLA entitlement. Without it, a case has no SLA clock. Until this flow exists, the entitlement has to be set by hand.
 - ☐ **Complete milestones from status changes**: Acknowledged completes Acknowledge Dispute, Awaiting Evidence completes Request Evidence, Resolved completes Resolve Dispute (US-09 criterion 3).
 - ☐ New Residential Agreement accounts need a Billing Dispute SLA entitlement; create it when the account is created or activated.
@@ -97,6 +100,9 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ Lead-to-Contact matching rule on email (listed in `data-plan.md`, not yet built)
 - ☐ Enable Quotes (Setup → Quote Settings), then add Quote, Product, and Price Book access to `PS_Sales_Core`
 - ☐ Load forecast quotas via Data Loader
+
+### Phase 9 additions
+- ☐ **Collections Console home page.** The console currently shows the default Sales home (Quarterly Performance, Key Deals, an opportunity-access message). Replace it with a Lightning home page for the app: the rep's prioritized work list (US-05) and open disputes.
 
 ### Phase 10 — release
 - ☐ README limits section: business hours use a single time zone, so the outbound contact window doesn't protect a customer in another time zone from an early call. A production build would check the customer's local time in the contact automation.
@@ -129,6 +135,12 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 
 ---
 
+## Found while preparing test cases (2026-10-08)
+
+- ☑ **`Billing_Statement__c.Balance__c` formula was `Amount_Paid__c - Amount_Paid__c`** — always zero. Every statement showed a $0 balance, statement Days Past Due read 0, and the account roll-ups Current Balance and Past Due Balance summed to $0 across the whole book. Corrected to `Amount_Due__c - Amount_Paid__c` through the Tooling API; roll-ups recalculated to about $10,088 owed. Retrieve `CustomField:Billing_Statement__c.Balance__c` into the repo. Worth a line in the Phase 5 write-up: the data quality dashboard couldn't have caught it, because nothing measured balances.
+- ☑ **Delinquency distribution doesn't match `data-plan.md`.** Fixed 2026-10-08: billing data regenerated with `data/regen/generate_billing.py` anchored to today and reloaded with the CLI (632 statements, 545 payments, 60 promises, 12 adjustments). Verified in the org: Current 52 · 1–30 14 · 31–60 10 (including the 3 seeded status mismatches) · 61–90 7 · 90+ 5. Original note: Plan: 14 accounts at 1–30 DPD, 10 at 31–60, 7 at 61–90, 5 at 90+. Org: 29 accounts at 146+ DPD (up to 484) and 1 at 64. Each account's statement series stops months or a year before today, so unpaid statements age past 90 days. Needs the billing data (statements, payments, promises) regenerated against today's date before Phase 7, since status stamping, default reviews, and the priority list all depend on it.
+- ☑ Re-age routine exists: `data/regen/generate_billing.py` + `RUNBOOK.md`. Rerun before UAT and demos. Still document the drift in the README. Original note: **Static seed data drifts.** Days Past Due uses TODAY(), so even correct data ages a day every day and every account eventually lands in 90+. Plan a re-age routine to run before UAT and demos, and document the limit in the README.
+
 ## Org cleanup
 
 - ☐ Delete stray field `Production_estimate_given_at_signing_Wh__c` on Service Contract — a description pasted into a label on a second attempt at Est Annual Production
@@ -136,7 +148,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ `Legacy_Id__c` on Lead isn't referenced by anything. Delete it, or document it as unused.
 - ☑ `PS_Payment_Detail` label had a double space (`Payment  Detail`); corrected.
 - ☐ **Developer Edition sample fields still on standard objects.** Case: `Product__c` (GenWatt model codes), `PotentialLiability__c`, `SLAViolation__c`, plus sample Type and Case Reason values (Mechanical, Electrical, Installation…). Account: `Active__c`, `CustomerPriority__c`, `NumberofLocations__c`, `SLA__c`, `SLASerialNumber__c`, `SLAExpirationDate__c`, `UpsellOpportunity__c`. Contact: `Languages__c`, `Level__c`. Lead: `CurrentGenerators__c`, `NumberofLocations__c`, `Primary__c`, `ProductInterest__c`, `SICCode__c`. Opportunity: `CurrentGenerators__c`, `DeliveryInstallationStatus__c`, `MainCompetitors__c`, `OrderNumber__c`, `TrackingNumber__c`. Delete, and replace Case Type and Reason values with ones that fit solar servicing.
-- ☐ Delete Developer Edition sample Case layouts: Case (Marketing), Case (Sales), Case (Support) — once per-record-type layouts exist
+- ☐ Delete Developer Edition sample layouts now that per-record-type layouts are assigned: Case (Marketing), Case (Sales), Case (Support), Account (Marketing), Account (Sales), Account (Support)
 - ☐ `Experience_Profile_Manager` standard permission set is in the repo from a wildcard retrieve. Delete the local file and retrieve only `PS_` permission sets going forward.
 - ☐ Dashboard API name is auto-generated (`KBzhEuJNWsMpcbnMzmuwzHqwlGrEtH`). Cosmetic; document it as a platform default rather than chase a rename.
 
