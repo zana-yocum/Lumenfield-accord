@@ -19,7 +19,7 @@ Every story has an ID. That ID is referenced in the configuration that implement
 | US-03 | Log a promise to pay within policy limits | Collections rep | Must | 3, 5, 7 |
 | US-04 | See which promises were kept or broken, and when | Collections rep | Must | 3, 5, 7 |
 | US-05 | Work a prioritized list instead of searching | Collections rep | Must | 3, 7, 9 |
-| US-06 | Record a contact attempt in a structured way | Collections rep | Should | 3, 7 |
+| US-06 | Record a contact attempt in a structured way | Collections rep | Should | 3, 8 |
 | US-07 | Open a dispute through guided intake | Dispute specialist | Must | 6, 7 |
 | US-08 | Request the sales rep's side, with access that ends at close | Dispute specialist | Should | 4, 6 |
 | US-09 | See the SLA clock and what's due next | Dispute specialist | Must | 6 |
@@ -30,7 +30,7 @@ Every story has an ID. That ID is referenced in the configuration that implement
 | US-14 | Get alerted when a dispute breaches a milestone | Collections supervisor | Should | 6 |
 | US-15 | See default threshold crossings and review timeliness | Collections supervisor | Must | 6, 7, 9 |
 | US-16 | Capture website leads without rekeying | Sales rep | Should | 8 |
-| US-17 | See pipeline and forecast against quota | Sales rep | Could | 8 |
+| US-17 | See pipeline and forecast against quota | Sales rep | Could — **cut** | — |
 | US-18 | Respond to a dispute that names my deal | Sales rep | Should | 4, 6 |
 | US-19 | Welcome touch after activation | New customer | Should | 7 |
 | US-20 | Reminder before the first payment | New customer | Should | 7 |
@@ -138,7 +138,7 @@ Every story has an ID. That ID is referenced in the configuration that implement
 - **Given** a dispute reason with no evidence requirements configured, **when** I select it, **then** I see a message saying none are defined and can still proceed, rather than a blank checklist.
 - **Given** no related statement, **when** I try to save a Billing Dispute case, **then** it's blocked. A dispute has to name what's being disputed.
 
-**Notes:** Disputes are Cases with a record type, not a custom object (D-03). Seven evidence requirement records exist for the top three reasons; the rest are on the Phase 6 open items.
+**Notes:** Disputes are Cases with a record type, not a custom object (D-03). All eight dispute reasons have evidence requirements (16 records), so the third criterion is a safeguard for reasons added later.
 
 ---
 
@@ -268,7 +268,9 @@ Every story has an ID. That ID is referenced in the configuration that implement
 ---
 
 ### US-17 — See pipeline and forecast against quota
-**Priority:** Could · **Phases:** 8
+**Priority:** Could · **Status:** Cut in Phase 8
+
+> **Cut on purpose.** Collaborative Forecasts and quota loading add setup without touching the problem Accord exists to solve: a promise made at signing reaching collections. Cutting the one Could story is a scope decision, kept here so the criteria are on record if it's picked up later.
 
 **As a** sales rep, **I want** my pipeline and forecast against quota in one view, **so that** I know where I stand for the month without exporting to a spreadsheet.
 
@@ -350,19 +352,19 @@ Filled in as the build progresses. This table turns a pile of config into a deli
 | US-02 | Phase 3, 7 | `VR_Opp_ConcessionNeedsCommitment`, `Opportunity_AfterSave_CreateServiceContract` | UAT-02 |
 | US-03 | Phase 3, 5, 7 | `Promise_to_Pay__c`, `Out_of_Policy__c`, `Policy_Setting__mdt`, `VR_Promise_AmountPositive`, `Promise_AfterSave_ApplyPolicy` | UAT-03 |
 | US-04 | Phase 3, 5, 7 | `VR_Payment_AmountPositive`, `VR_Payment_DateNotFuture`, `Promise_Daily_Evaluate`, `Account_Daily_BrokenPromiseCount` | UAT-04 |
-| US-05 | Phase 3, 7, 9 | `Priority_Score__c`, sharing rule (D-08), `Account_Daily_Collections_Status` | UAT-05 |
-| US-06 | Phase 3, 7 | Contact Outcome value set · contact attempt action (not yet built) | UAT-06 |
-| US-07 | Phase 6, 7 | Billing Dispute record type and support process, `Dispute_Evidence_Requirement__mdt` (16 records), `Case_AfterSave_DisputeLifecycle` (statement flag) | UAT-07 |
+| US-05 | Phase 3, 7, 9 | `Priority_Score__c`, sharing rule (D-08), `Account_Daily_Collections_Status`, Collections Work List report | UAT-05 |
+| US-06 | Phase 3, 8 | Contact Outcome value set, `Task.Contact_Outcome__c`, `Account_Screen_LogContactAttempt`, `Account.Log_Contact_Attempt` quick action | UAT-06 |
+| US-07 | Phase 6, 7, 9 | Billing Dispute record type and support process, `Dispute_Evidence_Requirement__mdt` (16 records), `Case_AfterSave_DisputeLifecycle` (statement flag), `VR_Case_DisputeNeedsStatement` | UAT-07 |
 | US-08 | Phase 4, 6, 7 | Case team role Sales Input, `Case_AfterSave_DisputeLifecycle` (team removed at close) | UAT-08 |
 | US-09 | Phase 6, 7 | `Billing Dispute SLA` entitlement process, 88 entitlements, `Case_BeforeSave_StampEntitlement`, milestone completion in `Case_AfterSave_DisputeLifecycle` | UAT-09 |
 | US-10 | Phase 6, 7 | Root Cause value set, Resolution section on the Billing Dispute layout, `VR_Case_RootCauseRequired` | UAT-10 |
 | US-11 | Phase 5, 7 | `VR_Adjustment_RejectionReason`, Credit Approval process, `VR_Adjustment_ApprovalRequired`, `VR_Adjustment_AmountLockedAfterApproval`, `Adjustment_AfterSave_Lifecycle` | UAT-11 |
-| US-12 | Phase 9 | Supervisor dashboard (not yet built) | UAT-12 |
+| US-12 | Phase 9 | Collections Supervisor dashboard (runs as supervisor), Collections Home page, 8 reports in `Collections` | UAT-12 |
 | US-13 | Phase 7 | Credit Approval process (allowed submitters), `Adjustment_AfterSave_Lifecycle` | UAT-13 |
 | US-14 | Phase 6 | Milestone warning and violation email alerts, Milestone Status | UAT-14 |
-| US-15 | Phase 6, 7, 9 | Default Review record type, Default Reviews queue, `Account_Daily_Collections_Status` | UAT-15 |
-| US-16 | Phase 8 | Web-to-lead (not yet built) | UAT-16 |
-| US-17 | Phase 8 | Forecasts (not yet built) | UAT-17 |
+| US-15 | Phase 6, 7, 9 | Default Review record type, Default Reviews queue, `Account_Daily_Collections_Status`, `Review_Opened_On_Time__c`, Default Review Timeliness report | UAT-15 |
+| US-16 | Phase 8 | `web/lumenfield-solar-inquiry.html`, `Accord Lead Routing` → Inbound Leads, `Lead_Matches_Existing_Customer` (alert), `VR_Lead_EmailOrPhoneRequired` | UAT-16 |
+| US-17 | — | **Cut.** The only Could story; forecasts don't touch the lead-to-cash gap Accord addresses | N/A |
 | US-18 | Phase 4, 6, 7 | Case team role Sales Input, `PS_Sales_Core` Case Read, team removal at close | UAT-18 |
 | US-19 | Phase 7 | `ServiceContract_AfterSave_WelcomeAndReminder` (welcome path) | UAT-19 |
 | US-20 | Phase 7 | `ServiceContract_AfterSave_WelcomeAndReminder` (scheduled path) | UAT-20 |

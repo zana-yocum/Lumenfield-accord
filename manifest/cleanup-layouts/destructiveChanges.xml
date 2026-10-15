@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Account-Account (Marketing) Layout</members>
+        <members>Account-Account (Sales) Layout</members>
+        <members>Account-Account (Support) Layout</members>
+        <members>Case-Case (Marketing) Layout</members>
+        <members>Case-Case (Sales) Layout</members>
+        <members>Case-Case (Support) Layout</members>
+        <name>Layout</name>
+    </types>
+    <version>67.0</version>
+</Package>

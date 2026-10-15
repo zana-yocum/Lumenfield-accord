@@ -1,96 +1,90 @@
-# Accord — Collections & Concessions on Salesforce
+# Accord — Lead to Cash for a Residential Solar Servicer
 
-> Every promise made at the sale follows the customer from first click to final payment.
+A Salesforce Administrator portfolio project. Accord is built for **Lumenfield Home Energy**, a fictional company that leases solar systems to homeowners and services the leases for 20 years. It runs from website inquiry to closed deal, activation, billing, disputes and collections, on Sales Cloud and Service Cloud.
 
-A self-directed Salesforce build for **Lumenfield Home Energy**, a fictional residential solar servicer. Built solo in a Developer Edition org with synthetic data, September–October 2026. This is not a production system and isn't presented as one.
+**The idea:** every concession a sales rep offers at signing becomes a governed record that follows the customer into collections. When a customer says "I was told my first two payments were covered," the collections rep can see whether that's true.
 
-**Zana Yocum** · Salesforce Administrator
-[Trailhead profile](TODO) · [LinkedIn](TODO) · [Portfolio](TODO)
+Declarative only — flows, validation rules, approvals, sharing, entitlements and reports. No Apex, no custom Lightning components (D-04).
 
----
-
-## The problem
-
-Sales reps promise things at closing: a promotional credit, a delayed billing start, the first couple of payments covered. When none of it gets recorded in Salesforce, the customer's first past-due notice turns into a dispute. The collections rep can't confirm what was promised, the customer feels lied to, and the balance ages while both sides hunt for proof.
-
-In the seeded dataset, **[__]%** of open disputes trace back to a commitment nobody wrote down.
-
----
-
-## What I built
-
-| Area | What's in it |
-|---|---|
-| **Sales** | Web-to-Lead capture, assignment rules, Flow-based lead scoring, campaigns with influence, conversion mapping, Products and Price Books, Quotes, forecasts with quotas |
-| **Concessions** | Commitment object in master-detail to Opportunity, roll-up summary, validation rule blocking Closed Won when a concession isn't recorded, auto-created Service Contract at close |
-| **Service** | Dispute cases with their own record type and support process, queues, assignment and escalation rules, entitlement process with milestones on real business hours |
-| **Collections** | Billing statements, payments, promises to pay with automatic kept/broken evaluation, consent-gated onboarding touches, nightly default reviews, tiered credit approvals |
-| **Security** | Four personas on permission set groups over a minimum-access profile, private org-wide defaults, role hierarchy, sharing rules, field-level security on payment data, expiring case-team access |
-| **Data** | ~2,000 synthetic records seeded with deliberate defects, duplicate and matching rules, validation rules, data quality dashboard |
-| **Analytics** | Custom report types and dashboards per persona: funnel, SLA compliance, DPD aging, promise-kept rate, data health |
+**Start here:** [Case study](docs/case-study.md) · [Requirements](docs/requirements.md) · [UAT scripts](docs/uat-scripts.md)
 
 ---
 
 ## Results
 
-Measured in the seeded dataset. Baselines captured before the build, after-numbers on release.
+| Measure | Before | After |
+|---|---|---|
+| User stories delivered | 21 written | 20 delivered, 1 cut on purpose (US-17) |
+| Duplicate contact pairs | 7 | 0 |
+| Accounts hidden from collections by a stale status | 3 | 0, corrected nightly |
+| Residential accounts with no one to contact | 88 | 0, enforced by validation rule |
+| Statement date errors | 2 | 0, enforced by validation rule |
+| Security Health Check | 66% (Poor) | 96% (Excellent) |
 
-| Metric | Baseline | After | Target |
-|---|---|---|---|
-| Disputes with a commitment on file before the dispute opened | TBD | TBD | 90% |
-| Dispute cycle time | TBD | TBD | ≤ 7 days |
-| Dispute SLA compliance | No SLA existed | TBD | 90% |
-| First-payment default rate (last 60 days) | TBD | TBD | < 5% |
-| Default reviews opened in policy window | TBD | TBD | 95% |
-| Promise-to-pay kept rate | TBD | TBD | 80% |
-| Duplicate contact rate | TBD | TBD | < 2% |
-| Security Health Check score | TBD | TBD | — |
+## What's in the org
 
----
+| Area | Built |
+|---|---|
+| Data model | Commitment, Billing Statement, Payment, Promise to Pay, Adjustment; Policy Setting and Dispute Evidence Requirement custom metadata |
+| Security | Minimum Access profile + 4 permission set groups (Collections Rep, Collections Supervisor, Dispute Specialist, Sales Rep); criteria-based sharing on Account Status; case teams for sales input |
+| Service | Billing Dispute and Default Review case record types, two queues, assignment rules, a 3-milestone entitlement process on business hours, warning and breach alerts, Collections Console app |
+| Automation | 11 flows (record-triggered, scheduled and one screen flow), credit approval process, 12 validation rules |
+| Sales | Web-to-lead form, lead routing to a queue, duplicate alert against existing customers, concession-to-commitment enforcement at Closed Won |
+| Analytics | 8 collections reports, Collections Supervisor dashboard, Data Quality dashboard, console home page |
 
-## Walkthrough
+Personas, stories and the components that implement each one: [`docs/requirements.md`](docs/requirements.md#traceability).
 
-**[3-minute narrated tour of the org](TODO)** — the fastest way to see it.
+## How to explore it
 
----
+1. Read the [case study](docs/case-study.md) — ten minutes, the whole project.
+2. Pick a story in [`requirements.md`](docs/requirements.md) and follow its traceability row to the flow or rule in `force-app/`.
+3. Read a changelog entry to see how a phase actually went, including what broke: `CHANGELOG.md`.
+4. Read the [root cause analysis](docs/rca-balance-formula.md) for the defect that made every balance $0.
 
-## How it's put together
+Field and rule descriptions reference user stories (`US-xx`) and decisions (`D-xx`). Both are in `/docs`, so any component can be traced back to why it exists.
 
-- [Project brief](docs/brief.md) — problem, personas, scope, metrics, constraints
-- [Decision log](docs/decision-log.md) — every design decision, the options rejected, and when to revisit
-- [Requirements](docs/requirements.md) — user stories with acceptance criteria
-- [Data model](docs/data-model.md) — ERD and object-by-object rationale
-- [Data dictionary](docs/data-dictionary.md) — every custom field, its purpose, and its source
-- [Security model](docs/security-model.md) — personas, access matrix, sharing design
-- [Automation inventory](docs/automation-inventory.md) — every flow, its trigger, its order, its fault path
-- [UAT results](docs/uat-results.md) — test scripts, defects found, sign-off
-- [Release notes](CHANGELOG.md) — what shipped, when
-- [Conventions](docs/conventions.md) — naming and configuration standards
+## Repository
 
----
-
-## Deploy it yourself
-
-```bash
-git clone TODO
-sf org login web -a lumenfield
-sf project deploy start -o lumenfield
-sf data import tree -p data/plan.json -o lumenfield
+```
+force-app/            Metadata retrieved from the org (source format)
+manifest/             Retrieve manifests and destructive-change packages
+data/                 Seed CSVs, load runbook, billing re-age generator (data/regen)
+web/                  Web-to-lead inquiry form
+docs/
+  brief.md            The business problem
+  requirements.md     21 user stories, acceptance criteria, traceability
+  decision-log.md     D-01 to D-10
+  conventions.md      Naming and configuration standards
+  data-model.md       ERD and relationship rationale
+  data-dictionary.md  Every field
+  security-model.md   Personas, sharing, field-level security
+  data-plan.md        Dataset, load failures, data quality before and after
+  release-readiness-winter27.md
+  uat-scripts.md      One script per story
+  rca-balance-formula.md
+  quick-reference.md  One page per role
+  case-study.md
+  open-items.md       Everything deferred, flagged, or deliberately not done
+CHANGELOG.md
 ```
 
-Everything here is synthetic. No real customer data exists in this repo.
+## Known limits
 
----
+Written down so they're read as decisions, not oversights.
 
-## Limits, and what I'd do differently in production
+- **Static data drifts.** Days Past Due counts from `TODAY()`, so the dataset ages every day and accounts slide into 90+. Run `data/regen/generate_billing.py` before any demo or UAT session (see `data/regen/RUNBOOK.md`).
+- **One time zone for outbound contact.** The contact-window business hours are Eastern. A customer in another time zone isn't protected from an early call. Production would check the customer's local time.
+- **No payment allocation.** A payment that covers two statements can't be split between them. Promise evaluation counts payments on the promise's related statement only. Production would add a junction object.
+- **Default review window is calendar days.** Three calendar days, not business days — business-day math in a formula needs Apex or a workaround.
+- **Fixed values duplicated from policy settings.** Approval entry criteria and scheduled-path offsets can't read custom metadata, so the $100 credit limit and 7-day reminder offset are duplicated from `Policy_Setting__mdt`.
+- **Two-license persona testing.** Developer Edition has two full licenses, so one test user is switched between roles. In this org the admin is also the supervisor and can approve their own submissions; in production the admin wouldn't approve credits.
+- **Entitlement process can't be edited once used.** Versioning should be enabled before go-live.
+- **New households need an entitlement.** The 88 seeded accounts each have one. A new Residential Agreement account doesn't get one automatically, so its first dispute has no SLA clock until an entitlement is added. Production would create it on activation.
+- **Evidence checklist matches by text.** `Dispute_Evidence_Requirement__mdt` stores the dispute reason as text, because custom metadata picklists can't use a global value set. Renaming a Dispute Reason value means updating the matching records by hand.
+- **Volume.** About 1,650 records, using 3 of the org's 5 MB. Sharing recalculation, roll-ups and report performance behave differently at production scale.
 
-<!-- Written at release. Be specific and honest — this section is read closely. -->
+## Built with
 
-- Built in Developer Edition: 5 MB of data storage, so volumes are small and nothing was tested at production scale.
-- Outreach is email and tasks only. SMS would require a messaging channel and consent handling beyond what's modeled here.
-- TODO
-- TODO
+Salesforce Developer Edition (Winter '27, API 68.0) · Salesforce CLI · Data Loader · Python (data generation) · GitHub
 
----
-
-**Environment:** Salesforce Developer Edition · API version TODO · built September–October 2026
+All data is invented. No real customer information appears anywhere in this repository or the org.

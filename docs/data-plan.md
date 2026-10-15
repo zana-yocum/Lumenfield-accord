@@ -144,13 +144,23 @@ Every error message names the fix, not the rule. "Enter a due date on or after t
 
 Five reports, one dashboard. The dashboard is the artifact; the reports feed it.
 
-| Metric | Report | Baseline | Target |
-|---|---|---|---|
-| Duplicate contact rate | Contacts flagged by duplicate rules ÷ total contacts | TBD | Under 2% |
-| Primary contact completeness | Residential accounts with a primary contact ÷ total | TBD | 98% |
-| Contact role completeness | Contacts with a role on agreement ÷ total | TBD | 95% |
-| Status accuracy | Accounts where status matches DPD bucket ÷ total | TBD | 100% after Phase 7 |
-| Statement date integrity | Statements failing the date rule | TBD | 0 |
+| Metric | Report | Baseline (2026-09-30) | After (2026-10-14) | Target |
+|---|---|---|---|---|
+| Duplicate contact rate | Contacts flagged by duplicate rules ÷ total contacts | **4.4% — 7 pairs flagged, 6 confirmed, 1 placeholder-email false positive** | **0 pairs** | Under 2% |
+| Primary contact completeness | Residential accounts with a primary contact ÷ total | **0% (0 of 88)** — load gap, see note | **100%**, enforced by `VR_Account_PrimaryContactRequired` | 98% |
+| Contact role completeness | Contacts with a role on agreement ÷ total | **88% (16 of 135 missing)** | **100%** | 95% |
+| Status accuracy | Accounts where status matches DPD bucket ÷ total | **97% (3 of 100 wrong)** | **100%**, corrected nightly by `Account_Daily_Collections_Status` | 100% after Phase 7 |
+| Statement date integrity | Statements failing the date rule | **2 of 570** | **0**, enforced by `VR_Statement_DueAfterStatementDate` | 0 |
+
+Every target met. Phase 5 fixed what a person should fix (duplicates, roles, dates); Phase 7 fixed what automation should fix (status, primary contact), and keeps them fixed.
+
+**Baseline captured 2026-09-30**, before any cleanup or rules. Dashboard screenshot: `phase05-data-quality-dashboard-before.png`.
+
+**On the 0% primary contact baseline:** the seed file that set primary contacts couldn't load, because Data Loader didn't expose that relationship by External ID. The number is real, but its cause is a load gap rather than bad source data — and the Phase 7 flow that stamps primary contacts fixes existing and future accounts at once. Stated plainly rather than left to look like a data disaster.
+
+**On the seventh duplicate pair:** six pairs were seeded. The seventh was two different customers on two different accounts who both carried the placeholder email `noemail@example.com`. A report grouping by email can't tell that apart from a real duplicate; a person reviewing the pair can. It was left unmerged and fixed at the source instead, by clearing the placeholder values — merging would have collapsed two customers' payment and dispute history into one record. It's also the evidence behind the duplicate rule alerting rather than blocking: a blocking rule would have stopped a legitimate customer from being saved.
+
+**On the three status mismatches:** these accounts are past due, marked Current, and therefore excluded from the collections sharing rule. They're invisible to the people who should be working them. That's the clearest example in the build of data quality being an access problem, not a hygiene problem.
 
 Status accuracy stays imperfect until the Phase 7 stamping flow exists, and that's the right answer — a data quality problem that automation fixes, rather than one someone corrects by hand forever.
 
@@ -188,8 +198,17 @@ The load took several attempts, and every failure was diagnosed from the job's e
 
 ---
 
+## After the load
+
+**Billing data was regenerated on 2026-10-08.** The original seed's statement series ended months before the load date, so unpaid statements aged past 90 days and 29 of 30 delinquent accounts landed in 90+. `data/regen/generate_billing.py` rebuilds statements, payments, promises and adjustments anchored to any date, and `data/regen/RUNBOOK.md` reloads them. Regenerated: 632 statements, 545 payments, 60 promises, 12 adjustments; buckets Current 52 · 1–30 14 · 31–60 10 · 61–90 7 · 90+ 5. Days Past Due counts from today, so rerun it before every demo or UAT session.
+
+**A zero-balance formula went unnoticed through the load.** `Balance__c` subtracted a field from itself, so every statement read $0. Load verification counted records but didn't sum any values. Load verification now includes one control total: amount due minus amount paid across all statements should match the source file. See `rca-balance-formula.md`.
+
+**Household names made unique on 2026-10-14.** The seed reused 26 surnames across up to seven accounts ("Coffey Household" seven times), which made search and record pickers ambiguous. All 88 residential accounts were renamed from their primary contact, e.g. "Patrick Boone Household." The seed CSVs in `data/` keep the original names; the regen generator doesn't touch names.
+
 ## Known limitations
 
 - **Volume.** Two thousand records is not production scale, and nothing here tests what happens at two million. Roll-up recalculation, sharing recalculation, and report performance all behave differently at volume.
 - **Defect realism.** Seeded defects are the ones chosen to be interesting. Real migrations surface problems nobody anticipated.
+- **Storage.** The org uses 3 of its 5 MB. Room for UAT records, not for another full dataset.
 - **No historical churn.** Every record is created at load time, so field history and audit trails start empty regardless of what the data says about the past.
