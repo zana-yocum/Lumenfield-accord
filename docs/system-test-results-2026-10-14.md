@@ -204,26 +204,39 @@ Made the evening of Oct 14, about 8:48 PM CT, after the v1.0.1 docs were written
 
 **Verified through the API (2026-10-24):** version 3 active with the restriction, version 2 obsolete, nothing else changed; flow access on `PS_Collections_Core` and, after recalculation, on the Collections Rep, Collections Supervisor and Dispute Specialist groups; none on Sales Rep. **In the console:** to be confirmed by the rest of Steward's hand check (Log Contact Attempt as Test Persona).
 
-### DEF-09 — The Minimum Access profile grants field access the design gives to permission sets · High · **Open, fix planned**
+### DEF-09 — The Minimum Access profile granted field access the design gives to permission sets · High · **Fixed 2026-10-25**
 **Found:** 2026-10-24, while checking DEF-08's fix: the field permissions on Test Persona's profile, Minimum Access - Salesforce, were listed through the API.
 
-**What's there:** the profile grants field-level security on **74 of Accord's custom fields, 58 of them Read/Edit**. Setup's new-field wizard makes a field visible to every profile unless the boxes are cleared, and Accord's fields were created in Setup. Accord's permission sets grant almost no field access of their own (`PS_Collections_Core` has 14 field permissions, mostly on activities), so nearly everything collections personas read today reaches them through the profile. D-07 says all access comes from permission sets; for objects that's true, for fields it isn't.
+**What was there:** the profile granted field-level security on **74 of Accord's custom fields, 58 of them Read/Edit**. Setup's new-field wizard makes a field visible to every profile unless the boxes are cleared, and Accord's fields were created in Setup. Accord's permission sets granted almost no field access of their own (`PS_Collections_Core` had 14 field permissions, mostly on activities), so nearly everything collections personas read reached them through the profile. D-07 says all access comes from permission sets; for objects that was true, for fields it wasn't.
 
 **Effect, in order of risk**
-- Reps can edit **Account Status**, the field the collections sharing rule reads (D-08). Sales reps can edit it too, through their Account access. Only automation should set it.
-- Reps and sales reps can edit **Broken Promises (90d)** and **Collection Hold Until**, which feed the priority score and the work list.
-- Sales reps can read account balances, days past due and priority score. The security model's field table says those are hidden from sales.
-- Sales reps can edit **Do Not Contact**, which the design gives them as read-only.
+- Reps could edit **Account Status**, the field the collections sharing rule reads (D-08). Sales reps could edit it too, through their Account access. Only automation and supervisors should set it.
+- Reps and sales reps could edit **Broken Promises (90d)** and **Collection Hold Until**, which feed the priority score and the work list.
+- Sales reps could read account balances, days past due and priority score. The security model's field table says those are hidden from sales.
+- Sales reps could edit **Do Not Contact**, which the design gives them as read-only.
 
-Payment Method and External Reference were removed from the profile on Oct 14, so UAT-01's check still holds.
+Payment Method and External Reference had been removed from the profile on Oct 14, so UAT-01's check held throughout.
 
-**Plan:**
-1. Grant each persona's fields through its permission sets: collections read on accounts, statements, promises, commitments, service contracts and dispute fields, with edit only on Do Not Contact, Primary Contact and the promise fields; dispute fields and adjustments for Dispute Management; commitments, opportunities and leads for Sales Core, with no financial account fields.
-2. Remove Accord's fields from the profile.
-3. Run Steward's test suite against the change; its rep assistant reads many of these fields in user mode.
-4. Re-check Test Persona field by field through the API.
+**Fix (2026-10-25), in an order that never took away access a persona needed:**
+1. **Granted through permission sets first.** `PS_Collections_Core`: 54 fields, read-only except Do Not Contact, Primary Contact, a promise's statement and a contact's role. `PS_Dispute_Management`: 14, the dispute fields and adjustment fields, with the posted date read-only. `PS_Sales_Core`: 29, commitments, opportunities and leads, with no balances, days past due or priority.
+2. **A new supervisor-only permission set, `PS_Collections_Overrides`,** for the three account fields a supervisor still has to change by hand: Account Status (to release Hardship Review or close an account), Collection Hold Until and High Value. It's in the Collections Supervisor group. That group's source lives in Steward's repository, so its change is in Steward's pull request #13.
+3. **Removed from the profile:** all 74 Accord field permissions. The eight Legacy Id fields now belong to no persona; they exist for data loads.
 
-The steps are in this order so that nothing a persona needs disappears between steps.
+**Verified in the org (2026-10-25):**
+- The profile holds no field permission on any Accord field; 109 permissions on standard objects remain, as Salesforce ships them.
+- Each group's own field permissions on Accord's fields, counted against the plan, match exactly:
+
+| Group | Accord fields readable | Of those, editable |
+|---|---|---|
+| Collections Rep | 56 | 4 |
+| Dispute Specialist | 63 | 17 |
+| Collections Supervisor | 63 | 20 |
+| Sales Rep | 29 | 12 |
+
+- Test Persona (Collections Rep), field by field through `UserFieldAccess`: every collections field on the account readable, with Account Status, Broken Promises (90d) and Collection Hold Until now read-only; Do Not Contact and Primary Contact editable; statement and commitment fields read-only; a promise's statement editable; adjustments and every Legacy Id unreadable; a case's description still unreadable, as designed.
+- Steward's rep assistant reads many of these fields as the user. Test Persona still reads every field its templates read (Steward's `docs/agent-governance.md`), and Steward's full test suite ran against the changed org in its pull request #13 validation (`0Afaj00000p4HeQCAU`): 159 of 159 tests passed.
+
+---
 
 ---
 

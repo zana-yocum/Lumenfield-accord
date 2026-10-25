@@ -1,6 +1,6 @@
 # Security Model — Accord
 
-Who can see what, why, and how it was verified.
+Who can see what, why, and how it was verified. Updated for v1.0.2 (2026-10-25); the object and field tables were read from the org that day.
 
 The guiding rule is least privilege: nobody gets access because it's convenient, and every grant traces to something a persona actually has to do in a user story.
 
@@ -12,34 +12,46 @@ The guiding rule is least privilege: nobody gets access because it's convenient,
 |---|---|---|
 | **Collections rep** | Works past-due accounts, logs contact attempts and promises | Needs full context on delinquent accounts they don't own |
 | **Dispute specialist** | Owns billing disputes end to end, gathers evidence, proposes credits | Needs cases, adjustments, and the commitments behind the sale |
-| **Collections supervisor** | Watches queue health, approves credits, handles escalations | Needs everything the team sees, plus approval authority |
+| **Collections supervisor** | Watches queue health, approves credits, handles escalations and hardship | Needs everything the team sees, plus approval authority and overrides |
 | **Sales rep** | Sells leases, records concessions at signing | Owns the account and opportunity, but has no business in payment data |
 
 ---
 
 ## Profiles and permission sets
 
-Everyone sits on **Minimum Access - Salesforce**. No custom profiles exist in this org.
+Everyone sits on **Minimum Access - Salesforce**. No custom profiles exist in this org (D-07). The profile holds no object or field access to Accord's data; every grant lives in a permission set.
 
 Access comes from function-based permission sets, assembled into persona-based groups:
 
 | Permission set | Grants |
 |---|---|
-| `PS_Collections_Core` | Account and Contact read/edit · Billing Statement, Payment, Service Contract, Commitment read · Promise to Pay full · Task full |
-| `PS_Dispute_Management` | Case create/read/edit · Adjustment create/read/edit · Entitlement read |
-| `PS_Credit_Approval` | Adjustment edit including status · approval authority |
+| `PS_Collections_Core` | Account and Contact read/edit · Billing Statement, Lease Payment, Service Contract, Opportunity, Commitment and Case read · Promise to Pay create/read/edit · the Log Contact Attempt flow (DEF-08) · Run Reports · the Collections Console app and tabs · read on the collections fields, edit only on Do Not Contact, Primary Contact, a promise's statement and a contact's role |
+| `PS_Dispute_Management` | Case and Adjustment create/read/edit · Entitlement read · edit on the dispute fields and adjustment fields · Billing Dispute record type |
+| `PS_Credit_Approval` | Adjustment read/edit for the approver · the approval authority itself is the Credit Approval process, which routes to the supervisor |
 | `PS_Collections_Reporting` | Create and customize reports, manage dashboards, manage public list views |
-| `PS_Payment_Detail` | Field-level read on payment method and processor reference fields |
-| `PS_Sales_Core` | Lead, Opportunity, Product, Price Book, Quote full · Commitment full · Account and Contact read/edit · Service Contract read |
+| `PS_Payment_Detail` | Read on a payment's method and processor reference |
+| `PS_Collections_Overrides` | Edit on the account fields automation maintains: Account Status, Collection Hold Until, High Value (DEF-09) |
+| `PS_Sales_Core` | Lead, Opportunity, Account, Contact and Commitment create/read/edit · Case, Service Contract, Product and Price Book read · lead conversion · both account record types · edit on commitments, opportunity and lead fields, with no balances |
 
 | Permission set group | Contains | Muted |
 |---|---|---|
-| `PSG_Collections_Rep` | `PS_Collections_Core` | Delete on Promise to Pay |
-| `PSG_Dispute_Specialist` | `PS_Collections_Core` + `PS_Dispute_Management` | Delete on Promise to Pay |
-| `PSG_Collections_Supervisor` | `PS_Collections_Core` + `PS_Dispute_Management` + `PS_Credit_Approval` + `PS_Collections_Reporting` + `PS_Payment_Detail` | — |
+| `PSG_Collections_Rep` | `PS_Collections_Core` | Delete on Promise to Pay (`Mute_Rep_Promise_Delete`) |
+| `PSG_Dispute_Specialist` | `PS_Collections_Core` + `PS_Dispute_Management` | — |
+| `PSG_Collections_Supervisor` | `PS_Collections_Core` + `PS_Dispute_Management` + `PS_Credit_Approval` + `PS_Collections_Reporting` + `PS_Payment_Detail` + `PS_Collections_Overrides` | — |
 | `PSG_Sales_Rep` | `PS_Sales_Core` | — |
 
-**The muting set is the interesting part.** `PS_Collections_Core` grants delete on Promise to Pay because supervisors need it — a promise logged against the wrong account has to go. Reps shouldn't have it, since a deleted promise erases evidence of what a customer committed to. Rather than splitting the permission set in two, the rep and specialist groups mute that one permission. One source of truth, adjusted per persona.
+Since Steward (2026-10-23), the three collections groups also hold Steward's rep-assistant permission sets, and those groups are maintained in Steward's repository. See the README's ownership note.
+
+**Promise deletion, then and now.** The original design gave `PS_Collections_Core` delete on Promise to Pay for supervisors and muted it for reps, so one permission set could serve every persona. The system test found that deleting an active promise leaves the collection hold in place (OBS-01), so delete was removed from Collections Core and nobody can delete a promise; Cancelled is the supported exit. The rep group's muting permission set is still there. It no longer changes anything, but it would catch delete if it were ever granted again.
+
+**Overrides are their own permission set.** Account Status drives the collections sharing rule, and Collection Hold Until and Broken Promises (90d) drive the work list, so automation sets them. A supervisor still has to move an account out of Hardship Review, close an account, or extend a hold. That edit lives in `PS_Collections_Overrides`, in the supervisor group only, instead of being folded into a permission set with another purpose.
+
+### Exceptions to D-07
+
+| Exception | Why |
+|---|---|
+| Minimum Access has **Residential Agreement** as its default Account record type | A profile is the only place a default record type can be set. Lead conversion and new-account creation need one |
+| **Lightning Experience User** granted through permission sets | Minimum Access doesn't include it, so persona users landed in Classic, where console apps don't exist |
 
 ---
 
@@ -74,6 +86,8 @@ Executive
 
 The hierarchy does one job here: supervisors see their team's records without a sharing rule. Everything else is granted explicitly.
 
+Nine Developer Edition sample roles were deleted in Phase 6. Three of them sat directly **under** Dispute Specialist, which would have given dispute specialists visibility into any sales or marketing records owned by users in those roles. No users held them, so there was no live exposure, but the hierarchy was wrong by construction.
+
 ---
 
 ## Sharing rules
@@ -82,13 +96,17 @@ The hard problem in this org: **sales owns the account, but collections has to w
 
 | Rule | Shares | With | Access | Why |
 |---|---|---|---|---|
-| Delinquent Accounts to Collections | Accounts where Account Status is Delinquent, Hardship Review, or Default Review | Public group Collections Team | Read/Write | Collections works accounts it doesn't own, and only once they're delinquent. A current account stays out of reach. |
-| Closed Won Opportunities to Collections | Opportunities where Stage equals Closed Won | Public group Collections Team | Read Only | Commitments are master-detail children of Opportunity, so without this a dispute specialist literally cannot see what was promised at signing. |
-| Billing Disputes to Collections Team | Cases with the Billing Dispute record type | Public group Collections Team | Read Only | Reps need to know a dispute is open before calling. Editing stays with the specialist who owns it. |
+| `Delinquent_Accounts_to_Collections` | Accounts where Account Status is Delinquent, Hardship Review, or Default Review | Public group Collections Team | Read/Write | Collections works accounts it doesn't own, and only once they're delinquent. A current account stays out of reach. |
+| `Closed_Won_to_Collections` | Opportunities where Stage equals Closed Won | Public group Collections Team | Read Only | Commitments are master-detail children of Opportunity, so without this a dispute specialist literally cannot see what was promised at signing. |
+| `Billing_Disputes_to_Collections` | Cases with the Billing Dispute record type | Collections Rep role | Read Only | Reps need to know a dispute is open before calling. Editing stays with the specialist who owns it. Supervisors already see disputes through the hierarchy. |
 
-**Public groups:** `Collections_Team` (reps, specialists, supervisors) and `Sales_Team`.
+**Public groups:** `Collections_Team` is the Collections Supervisor role and its subordinates (supervisors, reps, specialists). `Sales_Team` is the sales chain. Default Review cases aren't shared: they belong to the Default Reviews queue, whose member is the Collections Supervisor role. Billing disputes route to the Dispute Specialists queue (the Dispute Specialist role).
 
-That second rule is worth pausing on. Master-detail inheritance means a relationship decision made in Phase 3 created a security requirement in Phase 4. If commitments had been a lookup instead, they'd need their own sharing — and the validation rule in US-02 wouldn't work. The trade-off runs in both directions.
+The Closed Won rule is worth pausing on. Master-detail inheritance means a relationship decision made in Phase 3 created a security requirement in Phase 4. If commitments had been a lookup instead, they'd need their own sharing — and the validation rule in US-02 wouldn't work. The trade-off runs in both directions.
+
+**Object access has to exist before sharing does anything.** The case rule created Read shares from day one, but reps still couldn't open a dispute because `PS_Collections_Core` had no Read on Case. Sharing decides *which* records; object permissions decide *whether* the object is reachable at all.
+
+**Account Status is a security field.** Because the account rule reads it, whoever can edit Account Status can widen or narrow who sees the account. That's why it's read-only to everyone but supervisors (DEF-09) and set by the daily status flow.
 
 ---
 
@@ -96,15 +114,28 @@ That second rule is worth pausing on. Master-detail inheritance means a relation
 
 Record access and field access are separate layers, and both have to be right.
 
-| Field | Collections | Dispute | Supervisor | Sales |
+**Field access comes only from permission sets.** Setup's new-field wizard makes every field visible to every profile unless the boxes are cleared, and until v1.0.2 the Minimum Access profile granted access to 74 of Accord's fields, 58 of them editable (DEF-09). Reps and sales reps could edit Account Status. The fix moved each persona's fields into its permission sets and removed every Accord field from the profile. **For any new field: clear the profile boxes in the wizard, and grant the field through the persona's permission set.**
+
+| Field | Rep | Specialist | Supervisor | Sales |
 |---|---|---|---|---|
-| Account: Current Balance, Past Due Balance, Days Past Due, DPD Bucket | Read | Read | Read | **Hidden** |
-| Account: Broken Promises 90d, Priority Score | Read | Read | Read | **Hidden** |
+| Account: Current Balance, Past Due Balance, Days Past Due, DPD Bucket, Oldest Past Due Date | Read | Read | Read | **Hidden** |
+| Account: Broken Promises 90d, Priority Score, Threshold Crossed Date | Read | Read | Read | **Hidden** |
+| Account: Account Status | Read | Read | Edit | Read |
+| Account: Collection Hold Until, High Value | Read | Read | Edit | **Hidden** |
 | Account: Do Not Contact | Edit | Edit | Edit | Read |
-| Account: Collection Hold Until | Read | Read | Edit | **Hidden** |
+| Account: Primary Contact | Edit | Edit | Edit | Edit |
+| Billing Statement: all fields | Read | Read | Read | No object access |
 | Payment: Method, External Reference | **Hidden** | **Hidden** | Read | No object access |
-| Adjustment: all fields | No access | Edit | Edit | No access |
-| Commitment: all fields | Read | Read | Read | Edit |
+| Promise to Pay: statement | Edit | Edit | Edit | No object access |
+| Promise to Pay: amount received, grace end, out of policy | Read | Read | Read | No object access |
+| Case: dispute reason, root cause, resolution summary, disputed statement | Read | Edit | Edit | Read, except the statement |
+| Adjustment: all fields (posted date read-only) | No access | Edit | Edit | No access |
+| Commitment: all fields | Read | Read | Read | Edit (service contract read-only) |
+| Service Contract: terms and dates | Read | Read | Read | Read |
+| Lead: service area, address, inquiry detail | No object access | No object access | No object access | Edit |
+| Legacy Id (every object) | **Hidden** | **Hidden** | **Hidden** | **Hidden** |
+
+Required and master-detail fields, such as a promise's amount and date, are always visible to anyone who can see the record, so they aren't in the table.
 
 Sales reps keep the account but lose the money. They have no operational need for a customer's balance or payment history, and every additional person who can see payment data is additional exposure if an account is ever compromised.
 
@@ -112,20 +143,54 @@ This is also what makes the second acceptance criterion in US-08 true: a sales r
 
 ---
 
+## Flows and who can run them
+
+Record-triggered and scheduled flows run in system context and need no user access. Accord's one screen flow, **Log Contact Attempt**, is different: a user needs the Run Flows permission or access to that specific flow. Until v1.0.2 no persona had either, so Lightning hid the action from every collections persona (DEF-08). The flow now restricts access to enabled permission sets, and `PS_Collections_Core` grants it. Run Flows wasn't used, because it opens every current and future flow, and this flow runs in system mode with sharing so reps can set Do Not Contact and Hardship Review without broad edit rights.
+
+---
+
 ## Case teams — access that expires
 
 US-08 needs a sales rep to answer questions on a dispute naming their deal, then lose that access when the case closes.
 
-**Case team role:** `Sales Input` — Read/Write on the case, visible in the case team related list.
+**Case team role:** `Sales Input`. The team role grants Read/Write, but `PS_Sales_Core` has Read on Case, so the object permission caps it at Read.
 
-- When a specialist requests sales input, a flow adds the account owner to the case team in that role and creates a task.
-- When the case reaches Resolved or Closed, a flow removes them.
+- The dispute specialist adds the sales rep to the case team in that role when input is needed.
+- When the case reaches Resolved or Closed, `Case_AfterSave_DisputeLifecycle` removes the team, so access ends without anyone remembering to remove it (US-08, US-18).
 - Access exists only while the case is open, and it's visible to anyone looking at the case rather than buried in a sharing rule.
 
 **What was rejected and why:**
 - *Sharing sets* only apply to Experience Cloud external users. Not applicable to internal reps.
 - *Criteria-based sharing rules* can't be revoked per record — a rule broad enough to grant access would grant it to every matching case, permanently.
 - *Manual sharing* would work but relies on someone remembering to remove it, which is how orgs accumulate access nobody can explain.
+
+**Open question:** US-08 also says the sales rep adds comments. Whether a team member with Read can add a case comment hasn't been confirmed in the console yet (`docs/persona-checks.md`, step 7).
+
+---
+
+## Activities
+
+Task and Event access can't be granted or restricted through permission sets. Activity visibility follows access to the parent record, so a rep sees contact attempts on accounts they can see, and none on accounts they can't. `Task.Contact_Outcome__c` field-level security is granted per permission set like any other field.
+
+---
+
+## Reports and dashboards
+
+| Folder | View | Edit |
+|---|---|---|
+| Collections (reports) | VP Customer Operations and subordinates | Collections Supervisor role |
+| Collections Dashboards | VP Customer Operations and subordinates | Collections Supervisor role |
+| Data Quality, Data Quality Dashboard | Admin only | Admin only |
+
+**Run Reports** is granted through `PS_Collections_Core` and `PS_Dispute_Management`. Creating and customizing reports and dashboards stays with the supervisor group and `PS_Collections_Reporting`.
+
+The Collections Supervisor dashboard **runs as a specified user**, chosen deliberately rather than left as whoever built it. Anyone who can open the folder sees that user's view of the numbers. That's acceptable here because everyone with folder access is in the collections chain; a dashboard for a wider audience would be dynamic (run as the viewer) instead. In the repository its running user is a placeholder on `example.com`.
+
+---
+
+## Approvals
+
+System Administrators can submit and approve any approval regardless of the allowed-submitter list. In this two-license org the admin is also the supervisor, so self-approval is technically possible. In production the admin isn't a credit approver. Recorded as a known limit, not a control.
 
 ---
 
@@ -138,7 +203,11 @@ US-08 needs a sales rep to answer questions on a dispute naming their deal, then
 | Session timeout | 2 hours, force logout on timeout | Collections workstations sit unattended |
 | Login IP ranges | Not restricted | Documented deliberately: a remote workforce makes IP ranges impractical. Compensating control is MFA plus session timeout. |
 | Password policy | 90-day expiry, 8 character minimum, 3 passwords remembered | |
-| Health Check | Baseline captured before, again after | Score and remediated items recorded in the case study |
+| Require permission to view record names in lookup fields | On | Closes a leak where a user who can't see a record can still read its name through a lookup |
+| Use Any API Auth | Deliberately not granted | Nothing in Accord logs in with a username and password |
+| Profile Filtering | Enabled ahead of Winter '27 enforcement | Nothing depended on seeing other users' profiles |
+
+**Health Check: 66% (Poor) → 96% (Excellent)** in Phase 4. The one remaining Critical is login IP ranges, left open deliberately for the reason above.
 
 Naming the control you *didn't* implement, and what covers for it, is worth more than a clean list. Every real org has these.
 
@@ -146,17 +215,13 @@ Naming the control you *didn't* implement, and what covers for it, is worth more
 
 ## How it was tested
 
-Developer Edition provides very few full Salesforce licenses, so four persona users aren't possible.
+Developer Edition provides very few full Salesforce licenses, so four persona users aren't possible. One test user, Test Persona, stands in for each persona in turn.
 
-**Approach:** one test user, with permission set groups swapped between rounds. For each persona:
+1. **Through the API, as the admin:** object and field access read per persona from each group's own permissions, and per user through `UserFieldAccess`. This is fast and exact, and it's how DEF-09 was found and its fix counted field by field.
+2. **In the console, as the persona:** Setup → Users → Test Persona → **Login**, with the group switched between rounds. This is the only test of what the persona actually sees. It's how DEF-08 was found: every API check had run as the admin, who can run any flow, so a missing action never showed.
+3. **The negative test is the one that matters.** Confirming a dispute specialist can open a case proves little; confirming a sales rep hits an insufficient-privileges error opening someone else's dispute proves the model works. The Phase 6 negative test did exactly that for US-08 and US-18.
 
-1. Assign the group, remove the others
-2. Log in as the user
-3. Walk the access matrix — confirm what should be visible is visible, and what shouldn't be, isn't
-4. Attempt one thing the persona should be blocked from, and screenshot the denial
-5. Record the result in `uat-results.md`
-
-The negative test is the one that matters. Confirming a dispute specialist can open a case proves little; confirming a sales rep hits an insufficient-privileges error opening someone else's dispute proves the model works.
+Results: `docs/system-test-results-2026-10-14.md`. The console checks still to run are in `docs/persona-checks.md`.
 
 **In production this would be different:** persona test users in a full sandbox, run as part of every release rather than once at build time. Noted as a known limitation rather than glossed over.
 
@@ -164,22 +229,22 @@ The negative test is the one that matters. Confirming a dispute specialist can o
 
 ## Access matrix
 
-C = Create · R = Read · U = Update · D = Delete
+C = Create · R = Read · U = Update · D = Delete. Read from each group's permissions in the org on 2026-10-25. No persona can delete any of these records.
 
 | Object | Collections Rep | Dispute Specialist | Supervisor | Sales Rep |
 |---|---|---|---|---|
-| Account | R U | R U | R U | R U (own) |
+| Account | R U | R U | R U | C R U |
 | Contact | R U | R U | R U | C R U |
-| Opportunity | R (Closed Won) | R (Closed Won) | R (Closed Won) | C R U D (own) |
+| Opportunity | R (Closed Won) | R (Closed Won) | R (Closed Won) | C R U (own) |
 | Commitment | R | R | R | C R U |
 | Service Contract | R | R | R | R |
-| Billing Statement | R | R | R U | — |
-| Payment | R | R | R U | — |
-| Promise to Pay | C R U | C R U | C R U D | — |
-| Case — Billing Dispute | C R | C R U | C R U D | R (case team only, while open) |
-| Case — Default Review | R | R | C R U | — |
+| Billing Statement | R | R | R | — |
+| Lease Payment | R | R | R | — |
+| Promise to Pay | C R U | C R U | C R U | — |
+| Case — Billing Dispute | R | C R U | C R U | R (case team only, while open) |
+| Case — Default Review | — (not shared) | — (not shared) | C R U (queue) | — |
 | Adjustment | — | C R U | C R U + approve | — |
-| Task | C R U D (own) | C R U D (own) | C R U D (own) | C R U D (own) |
+| Task | Follows the parent record | Follows the parent record | Follows the parent record | Follows the parent record |
 | Lead | — | — | — | C R U |
 
 ---
@@ -189,9 +254,9 @@ C = Create · R = Read · U = Update · D = Delete
 1. Public groups: `Collections_Team`, `Sales_Team`
 2. Roles, top down
 3. Org-wide defaults — set these *before* the sharing rules, since rules only make sense against a restricted baseline
-4. The six permission sets, object and field permissions from the matrix
+4. The seven permission sets, object and field permissions from the tables above, with the profile boxes cleared on every new field
 5. Permission set groups, then the muting permission set
 6. Sharing rules
 7. Case team role
 8. Session and password settings, Health Check baseline
-9. Test user, one persona at a time
+9. Test user, one persona at a time: through the API, then in the console

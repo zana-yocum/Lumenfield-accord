@@ -2,23 +2,26 @@
 
 Newest first. Each phase of the build is a version, v1.0 is the release, and later versions are fixes found in testing and in use. Entries record what changed in the org, how it was verified, and what went wrong.
 
-## v1.0.2 — 2026-10-24 — Persona access fix, scheduled results, repository restored
+## v1.0.2 — 2026-10-25 — Persona access fixes, scheduled results, repository restored
 
-A Steward hand check found that collections personas couldn't log a contact attempt. The scheduled checks left open by the system test have now run, and the repository has the metadata back that it lost in Phase 6.
+A Steward hand check found that collections personas couldn't log a contact attempt (DEF-08). Checking that fix found that the Minimum Access profile was granting field access the design gives only to permission sets (DEF-09). The scheduled checks left open by the system test have now run, and the repository has the metadata back that it lost in Phase 6.
 
 ### Fixed
 - **DEF-08 (High): collections personas couldn't see Log Contact Attempt.** Found by Steward's Phase 5 hand check, the first time anyone used the console as a collections persona since the action was built. The action launches a screen flow, which needs the Run Flows permission or access to that flow. No persona had either, so Lightning hid the action, and US-06 didn't work for reps, specialists or supervisors. The fix is least privilege: version 3 of `Account_Screen_LogContactAttempt` restricts the flow to enabled permission sets, and `PS_Collections_Core` grants that one flow. Run Flows wasn't used, because it opens every current and future flow and this one runs in system context. Verified through the API; the console check is the rest of Steward's hand check. Details are in `docs/system-test-results-2026-10-14.md`.
+- **DEF-09 (High): the Minimum Access profile granted access to 74 of Accord's fields, 58 of them editable.** Setup's new-field wizard makes a field visible to every profile unless the boxes are cleared. Reps and sales reps could edit Account Status, which the collections sharing rule reads, and Broken Promises (90d) and Collection Hold Until, which only automation should set. Sales reps could read balances, days past due and the priority score. Found 2026-10-24 while checking DEF-08's fix; fixed 2026-10-25 in three steps, ordered so no persona lost access it needed in between:
+  1. Each persona's fields granted through its permission sets: `PS_Collections_Core` 54 fields, edit only on Do Not Contact, Primary Contact, a promise's statement and a contact's role. `PS_Dispute_Management` 14, the dispute and adjustment fields. `PS_Sales_Core` 29: commitments, opportunities and leads, with no balances.
+  2. New `PS_Collections_Overrides`: supervisor edit on Account Status (to release Hardship Review or close an account), Collection Hold Until and High Value. It's in the Collections Supervisor group, which Steward maintains, so the group's source change is Steward's pull request #13; in the org it's already in place.
+  3. Accord's 74 fields removed from the profile. The eight Legacy Id fields now belong to no persona; they're for data loads.
+
+  Verified in the org: each group's field permissions counted against the plan (Collections Rep 56 Accord fields, 4 editable; Dispute Specialist 63, 17; Collections Supervisor 63, 20; Sales Rep 29, 12), the profile holds none, and Test Persona was checked field by field through `UserFieldAccess`. Account Status is now read-only to Test Persona, and the payment method is still hidden. Steward's 159 tests passed against the changed org (validation `0Afaj00000p4HeQCAU`).
 - **DEF-07 written up.** Commitment's account lookup and `Commitment_BeforeSave_StampAccount` were built on Oct 14 at 8:48 PM CT and never recorded. This entry reconstructs them from the Setup Audit Trail, along with three other changes from the same evening:
   - payment fields removed from the Minimum Access profile
   - lead conversion rights for Sales Core
   - the supervisor role added to the Collections Team group
 
-  DEF-02 to DEF-06 were never written down; the results doc explains. Still open: the Commitments related list on the account page.
+  DEF-02 to DEF-06 were never written down; the results doc explains. The Commitments related list, the last piece of DEF-07, goes on the account page through Steward's pull request #13, because Steward maintains that layout.
 - Permission set descriptions: four began with a stray "Description: ", and `PS_Sales_Core` and `PSG_Sales_Rep` cited US-17, which was cut. Corrected in the org.
 - `Collection_Hold_Until__c` described as what it is — the hold date an in-policy promise sets and the daily evaluation clears — instead of repeating Do Not Contact's description. Found by Steward's persona-access check.
-
-### Found, not yet fixed
-- **DEF-09 (High): the Minimum Access profile grants field access on 74 Accord fields**, 58 of them Read/Edit. Setup's new-field wizard adds every profile by default. As a result, reps and sales reps can edit Account Status and other fields only automation should set, and sales reps can read account balances. The plan is in the results doc.
 
 ### Confirmed — scheduled runs, checked 2026-10-24
 - **UAT-04 step 3:** six promises were set to Broken the morning after their grace date. Holds were released and Broken Promises (90d) went up.
@@ -37,13 +40,15 @@ A Steward hand check found that collections personas couldn't log a contact atte
 - **Metadata restored.** The Phase 6 commit (`d55887f`, 2026-10-07) deleted 655 files from `force-app`. Among them were every custom object, Accord's custom fields on standard objects, five permission sets, the permission set groups, the custom metadata records, the global value sets, the Account and Opportunity sharing rules, and the Data Quality reports and dashboard. The org wasn't affected; only the repository lost them. Accord's components were retrieved again from the org on 2026-10-24 (`manifest/accord.xml`).
 - **Left out on purpose:** what's still missing from v0.4 is noise from that release's wildcard retrieve: standard fields and list views, empty sharing-rule files for 225 standard objects, Salesforce-managed groups, the nine sample roles deleted in Phase 6, and the deleted Developer Edition sample fields.
 - **Placeholders:** nine files name an org user: the approval process, two dashboards, four folders and the two assignment rule files. Each carries a placeholder on `example.com` instead. Before deploying one of those files, put a real username back.
+- **Muting permission set restored:** `Mute_Rep_Promise_Delete`, which the Collections Rep group references, was missing from the restore. Added from v0.4, matching the org.
+- **Security model rewritten as built** (`docs/security-model.md`): the object and field tables read from the org on 2026-10-25, the Phase 6–10 additions folded in, and corrections where the design had drifted. The case sharing rule shares with the Collections Rep role, not the Collections Team group; nobody can delete a promise or a case; specialists don't see Default Reviews; no flow adds a sales rep to a case team, the specialist does.
 - **Tidying:**
   - Seven per-version changelog files folded into this one.
   - The Phase 5 bulk-load result files moved from the root to `data/load-results/`; scratch ID lists removed.
   - Steward's portal screenshots moved to Steward's repository.
 
 ### Added
-- `docs/support-runbook.md`: 14 problems users are likely to report, each with the checks in order, the fix and how to prevent it, taken from what happened in this org.
+- `docs/support-runbook.md`: 15 problems users are likely to report, each with the checks in order, the fix and how to prevent it, taken from what happened in this org.
 
 ### Corrected
 - 13 flows, not 12. `Commitment_BeforeSave_StampAccount` came after the release docs.

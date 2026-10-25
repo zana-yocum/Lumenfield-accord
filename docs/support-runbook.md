@@ -153,8 +153,21 @@ Read the job's error file before changing anything; it names the cause.
 
 **Happened:** Phase 5, six failure modes (`docs/data-plan.md`; error files in `data/load-results/`).
 
+## 15. A user can edit or see a field their role shouldn't
+
+**Check**
+1. **Start with the profile, not the permission sets.** A field is visible if *anything* grants it: the profile or any permission set. Object Manager → the object → Fields & Relationships → the field → **Set Field-Level Security** shows every profile's access. Minimum Access should show none on Accord's fields.
+2. Then the user's groups: Setup → Permission Set Groups → the group → **Object Settings** → the object, which shows the group's combined field access.
+3. To check one user without logging in as them, the API answers directly: `UserFieldAccess` for that user and field returns readable and editable.
+
+**Fix:** grant the field in the persona's permission set, then remove it from the profile, in that order so nobody loses access in between. Automation-maintained account fields (Account Status, Collection Hold Until, High Value) are editable only through `PS_Collections_Overrides`, in the supervisor group.
+
+**Prevent:** in Setup's new-field wizard, clear every profile box on the field-level security step. The wizard ticks them all by default.
+
+**Happened:** DEF-09, found 2026-10-24: the profile granted access to 74 Accord fields, so reps and sales reps could edit Account Status, which drives the collections sharing rule. Fixed 2026-10-25 (results doc).
+
 ---
 
 ## Writing up a fix
 
-Every fix gets a line in `CHANGELOG.md` and, if it was a defect, a write-up with what was found, the cause, the effect, the fix and how it was verified (see DEF-01 and DEF-08 in the results doc). A change made in Setup is retrieved into `force-app/` the same day (`manifest/accord.xml`). A change with no record is how DEF-02 to DEF-06 were lost.
+Every fix gets a line in `CHANGELOG.md` and, if it was a defect, a write-up with what was found, the cause, the effect, the fix and how it was verified (see DEF-01, DEF-08 and DEF-09 in the results doc). A change made in Setup is retrieved into `force-app/` the same day (`manifest/accord.xml`). A change with no record is how DEF-02 to DEF-06 were lost.

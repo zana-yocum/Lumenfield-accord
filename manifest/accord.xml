@@ -208,7 +208,12 @@
         <name>MilestoneType</name>
     </types>
     <types>
+        <members>Mute_Rep_Promise_Delete</members>
+        <name>MutingPermissionSet</name>
+    </types>
+    <types>
         <members>PS_Collections_Core</members>
+        <members>PS_Collections_Overrides</members>
         <members>PS_Collections_Reporting</members>
         <members>PS_Credit_Approval</members>
         <members>PS_Dispute_Management</members>

@@ -6,7 +6,7 @@ Everything deferred, flagged, or half-finished. Updated at the end of every sitt
 
 ---
 
-## Release follow-up — 2026-10-24
+## Release follow-up — 2026-10-24 and 25
 
 Steward's Phase 5 hand check found that collections personas couldn't see **Log Contact Attempt** (DEF-08). Claude fixed it in the org and checked the clock-dependent results. Claude also found that `main` had been missing most of Accord's metadata since the Phase 6 commit, and retrieved it again from the org. Everything is in `CHANGELOG.md` v1.0.2 and `docs/system-test-results-2026-10-14.md`.
 
@@ -22,14 +22,14 @@ Steward's Phase 5 hand check found that collections personas couldn't see **Log 
 - ☐ 4. **UAT-14 email:** search the supervisor's inbox (yours) for **Dispute Milestone Violation**, around Oct 15, 5 PM CT and Oct 19, 5 PM CT, and tell Claude what's there. Then dispute 00001049 can be deleted.
 - ☐ 5. If `docs/release-readiness-winter27.md` is still on your computer, add it to `docs/`. It was never committed, so the README no longer lists it.
 
-**Mine (2026-10-24)**
+**Mine (2026-10-24 and 25)**
 - ☑ **DEF-08 fixed in the org:** `Account_Screen_LogContactAttempt` version 3 restricts access to enabled permission sets, and `PS_Collections_Core` grants it. Verified through the API on the three collections groups; Sales Rep excluded. Waiting on the console check.
 - ☑ **Scheduled results:**
   - UAT-04 step 3 passed: six promises were broken on schedule.
   - UAT-14 passed on the org side.
   - UAT-15 steps 1–3 passed: two on-time Default Reviews, on Oct 18 and 19.
 - ☑ **DEF-07 and the Oct 14 evening changes written up** from the Setup Audit Trail. DEF-02 to DEF-06 were never written down.
-- ☐ **DEF-09 (High): the Minimum Access profile grants field access on 74 Accord fields** (58 Read/Edit), so reps and sales reps can edit Account Status and other automation-only fields, and sales reps can read balances. Written up with the plan in the results doc. Waiting on Zana's go-ahead: the fix also changes what Steward's rep assistant can read
+- ☑ **DEF-09 (High) fixed 2026-10-25:** the Minimum Access profile granted access to 74 Accord fields, 58 editable, so reps and sales reps could edit Account Status. Each persona's fields now come from its permission sets, with supervisor edit on Account Status, Collection Hold Until and High Value in the new `PS_Collections_Overrides`; the profile grants none. Counted per group against the plan in the org, checked field by field for Test Persona, and Steward's 159 tests passed against it (`0Afaj00000p4HeQCAU`). Details in the results doc
 - ☑ **Permission set descriptions corrected in the org:** four had a stray "Description: ", and US-17 is gone from Sales Core and the Sales Rep group.
 - ☑ **Metadata restored from the org** through Steward's retrieve workflow (`manifest/accord.xml`). Placeholders in the nine files that name a user; `scripts/check_personal_details.sh` added.
 - ☑ **Repository tidied:**
@@ -37,7 +37,9 @@ Steward's Phase 5 hand check found that collections personas couldn't see **Log 
   - Bulk-load results moved to `data/load-results/`.
   - Steward's portal screenshots moved to Steward.
   - README counts corrected.
-- ☐ **DEF-07's Commitments related list** on the Residential Agreement layout goes in through Steward's pipeline, since Steward maintains that layout.
+- ☐ **DEF-07's Commitments related list** on the Residential Agreement layout: in Steward's pull request #13, validated 2026-10-25, merging once your GitHub email setting is on (Steward maintains that layout). The same pull request puts `PS_Collections_Overrides` in the supervisor group's source.
+- ☑ **Security model rewritten as built** (2026-10-25): object and field tables read from the org, the Phase 6–10 additions folded in, and the drifted claims corrected (case sharing goes to the Collections Rep role; no deletes on promises or cases; specialists don't see Default Reviews; a specialist, not a flow, adds sales input to a case team)
+- ☑ `Mute_Rep_Promise_Delete` restored to source from v0.4, matching the org
 - ☑ `Collection_Hold_Until__c`'s description, which repeated `Do_Not_Contact__c`'s, rewritten in the org and in source
 
 ---
@@ -255,7 +257,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 
 ## Doc updates
 
-- ☐ (if not done) Paste `docs/security-model-additions.md` into `security-model.md` (case sharing, role cleanup, activities, folders, D-07 exceptions, lookup-name setting, Health Check), then delete the additions file
+- ☑ `docs/security-model-additions.md` folded into `security-model.md` and deleted (2026-10-25)
 
 - ☑ README rewritten for release (results incl. Health Check, US-xx/D-xx note, limits)
 - ☑ `requirements.md` traceability complete (2026-10-14); US-17 marked cut

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Supervisor edit on the account fields automation maintains: Account Status (to release Hardship Review or close an account), Collection Hold Until and High Value. Collections Supervisor group only. DEF-09.</description>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Account_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Collection_Hold_Until__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.High_Value__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Collections Overrides</label>
+</PermissionSet>
