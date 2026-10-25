@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>67.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>Mark_Complete</name>
         <label>Mark Complete</label>
@@ -235,15 +236,15 @@
     <description>Runs when a Billing Dispute is created or its status changes. Flags the disputed statement (Dispute Open, In Dispute) while the case is open and restores its real status on close. Removes case team members on close so sales access ends with the dispute. Completes SLA milestones as the status advances, including any skipped earlier ones. US-07, US-08, US-09, US-18.</description>
     <environments>Default</environments>
     <formulas>
+        <name>fxRestoredStatus</name>
+        <dataType>String</dataType>
+        <expression>IF({!Get_Disputed_Statement.Balance__c} &lt;= 0, &quot;Paid&quot;, IF({!Get_Disputed_Statement.Due_Date__c} &lt; TODAY(), &quot;Past Due&quot;, &quot;Open&quot;))</expression>
+    </formulas>
+    <formulas>
         <name>fxStage</name>
         <dataType>Number</dataType>
         <expression>CASE(TEXT({!$Record.Status}), &quot;Acknowledged&quot;, 1, &quot;Awaiting Evidence&quot;, 2, &quot;Under Review&quot;, 2, &quot;Pending Credit Approval&quot;, 2, &quot;Resolved&quot;, 3, &quot;Closed&quot;, 3, 0)</expression>
         <scale>0</scale>
-    </formulas>
-    <formulas>
-        <name>fxRestoredStatus</name>
-        <dataType>String</dataType>
-        <expression>IF({!Get_Disputed_Statement.Balance__c} &lt;= 0, &quot;Paid&quot;, IF({!Get_Disputed_Statement.Due_Date__c} &lt; TODAY(), &quot;Past Due&quot;, &quot;Open&quot;))</expression>
     </formulas>
     <interviewLabel>Case - Dispute Lifecycle {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Case - After Save - Dispute Lifecycle</label>

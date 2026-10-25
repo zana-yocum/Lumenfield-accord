@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>67.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>Set_Entitlement</name>
         <label>Set Entitlement</label>
@@ -14,6 +15,28 @@
             </value>
         </assignmentItems>
     </assignments>
+    <decisions>
+        <name>Entitlement_Found</name>
+        <label>Entitlement Found?</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>None found</defaultConnectorLabel>
+        <rules>
+            <name>Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Active_Entitlement</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Entitlement</targetReference>
+            </connector>
+            <label>Found</label>
+        </rules>
+    </decisions>
     <decisions>
         <name>Is_Dispute_Without_SLA</name>
         <label>Dispute Without SLA?</label>
@@ -50,29 +73,7 @@
             <label>Yes</label>
         </rules>
     </decisions>
-    <decisions>
-        <name>Entitlement_Found</name>
-        <label>Entitlement Found?</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <defaultConnectorLabel>None found</defaultConnectorLabel>
-        <rules>
-            <name>Found</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Get_Active_Entitlement</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Set_Entitlement</targetReference>
-            </connector>
-            <label>Found</label>
-        </rules>
-    </decisions>
-    <description>When a Billing Dispute is created without an entitlement, attaches the account's active entitlement so the Billing Dispute SLA clock starts. Before-save, so no extra DML. US-09.</description>
+    <description>When a Billing Dispute is created without an entitlement, attaches the account&apos;s active entitlement so the Billing Dispute SLA clock starts. Before-save, so no extra DML. US-09.</description>
     <environments>Default</environments>
     <interviewLabel>Case - Stamp Entitlement {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Case - Before Save - Stamp Entitlement</label>

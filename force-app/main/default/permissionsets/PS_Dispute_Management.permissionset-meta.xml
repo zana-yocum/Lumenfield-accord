@@ -4,7 +4,7 @@
         <application>Collections_Console</application>
         <visible>true</visible>
     </applicationVisibilities>
-    <description>Description: Dispute case handling and credit proposal. US-07 through US-11.</description>
+    <description>Dispute case handling and credit proposal. US-07 through US-11.</description>
     <fieldPermissions>
         <editable>false</editable>
         <field>Case.EntitlementId</field>

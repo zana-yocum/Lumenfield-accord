@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Collection_Hold_Until__c</fullName>
+    <description>Date collections activity on the account is held until: the grace end of an in-policy promise. Set by Promise_AfterSave_ApplyPolicy when a promise becomes Active; cleared by Promise_Daily_Evaluate when the promise is judged Kept or Broken. The Collections Work List leaves out accounts on hold. US-03, US-04.</description>
+    <label>Collection Hold Until</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Date</type>
+</CustomField>

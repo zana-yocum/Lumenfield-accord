@@ -6,6 +6,41 @@ Everything deferred, flagged, or half-finished. Updated at the end of every sitt
 
 ---
 
+## Release follow-up — 2026-10-24
+
+Steward's Phase 5 hand check found that collections personas couldn't see **Log Contact Attempt** (DEF-08). Claude fixed it in the org and checked the clock-dependent results. Claude also found that `main` had been missing most of Accord's metadata since the Phase 6 commit, and retrieved it again from the org. Everything is in `CHANGELOG.md` v1.0.2 and `docs/system-test-results-2026-10-14.md`.
+
+**Your steps**
+- ☐ 1. **Before the repository goes public, decide how to handle the username in its history.** Seven files, in commits from v0.4 up to today's `main`, contain your Salesforce username; on the release branch they use placeholders. Making the repository public publishes every old commit too. Options:
+  - (a) Public as it is. The username is an org login, not an inbox, but it starts with the same name as your private email.
+  - (b) Recommended: Claude rewrites the history so those files carry the placeholder in every commit, then replaces `main` with it. The phase-by-phase commits stay.
+  - (c) A new repository with the rewritten history, under the same name, so the portfolio's links keep working. The current one is renamed and stays private.
+
+  Until you choose, Claude keeps this release on the branch `release/v1.0.2` and opens no pull request, because a pull request would keep the old history reachable on GitHub even after a rewrite.
+- ☐ 2. Then make the repository public: **Settings** → **General** → **Danger Zone** → **Change visibility** → **Change to public**. It's a launch gate for the portfolio site.
+- ☐ 3. **Persona checks:** `docs/persona-checks.md`, about 15 minutes as Test Persona. UAT-06 is possible now that DEF-08 is fixed. Steward's hand check covers Log Contact Attempt for the Collections Rep.
+- ☐ 4. **UAT-14 email:** search the supervisor's inbox (yours) for **Dispute Milestone Violation**, around Oct 15, 5 PM CT and Oct 19, 5 PM CT, and tell Claude what's there. Then dispute 00001049 can be deleted.
+- ☐ 5. If `docs/release-readiness-winter27.md` is still on your computer, add it to `docs/`. It was never committed, so the README no longer lists it.
+
+**Mine (2026-10-24)**
+- ☑ **DEF-08 fixed in the org:** `Account_Screen_LogContactAttempt` version 3 restricts access to enabled permission sets, and `PS_Collections_Core` grants it. Verified through the API on the three collections groups; Sales Rep excluded. Waiting on the console check.
+- ☑ **Scheduled results:**
+  - UAT-04 step 3 passed: six promises were broken on schedule.
+  - UAT-14 passed on the org side.
+  - UAT-15 steps 1–3 passed: two on-time Default Reviews, on Oct 18 and 19.
+- ☑ **DEF-07 and the Oct 14 evening changes written up** from the Setup Audit Trail. DEF-02 to DEF-06 were never written down.
+- ☑ **Permission set descriptions corrected in the org:** four had a stray "Description: ", and US-17 is gone from Sales Core and the Sales Rep group.
+- ☑ **Metadata restored from the org** through Steward's retrieve workflow (`manifest/accord.xml`). Placeholders in the nine files that name a user; `scripts/check_personal_details.sh` added.
+- ☑ **Repository tidied:**
+  - The seven changelog files folded into `CHANGELOG.md`.
+  - Bulk-load results moved to `data/load-results/`.
+  - Steward's portal screenshots moved to Steward.
+  - README counts corrected.
+- ☐ **DEF-07's Commitments related list** on the Residential Agreement layout goes in through Steward's pipeline, since Steward maintains that layout.
+- ☑ `Collection_Hold_Until__c`'s description, which repeated `Do_Not_Contact__c`'s, rewritten in the org and in source
+
+---
+
 ## Release sitting — 2026-10-14
 
 Built in the org through the API this sitting: Phase 9 reports, dashboard and home page; folder sharing; Run Reports for reps and specialists; `VR_Case_DisputeNeedsStatement`; four reworded error messages; 88 households renamed; Commitment Status cleaned; web-form test lead made fictional.
@@ -15,7 +50,7 @@ Built in the org through the API this sitting: Phase 9 reports, dashboard and ho
 - ☑ `sf project retrieve start -o lumenfield --manifest manifest\phase9-retrieve.xml`
 - ☑ Cleanup deploys done (fields, then layouts) — `--metadata-dir` failed with "No package.xml found"; the `--manifest` + `--post-destructive-changes` form worked
 - ☑ `.\manifest\cleanup-local.ps1` — removes the deleted components from the repo
-- ☑ Paste the three `CHANGELOG-v*.md` files into the top of `CHANGELOG.md` (newest first), then delete them
+- ☑ Paste the three `CHANGELOG-v*.md` files into the top of `CHANGELOG.md` (newest first), then delete them. *(Correction 2026-10-24: `main` had the seven version files and no `CHANGELOG.md`. They were folded together in v1.0.2.)*
 - ☑ Setup → Deliverability → Access level **All email**
 - ☑ Setup → Object Manager → Payment (custom) → Edit → Label **Lease Payment**, Plural **Lease Payments**
 - ☑ Commit: *"v1.0 — Phase 9 analytics, Phase 10 release docs, org cleanup"*
@@ -24,14 +59,15 @@ Built in the org through the API this sitting: Phase 9 reports, dashboard and ho
 
 ## System test — 2026-10-14
 
-Admin-run system test through the API, with evidence: `docs/system-test-results-2026-10-14.md`. 12 scripts pass (one after a same-night fix). **Not UAT** — no outside users.
-- ☐ Retrieve `manifest/def01-retrieve.xml` and commit (new field, new flow, Balance formula, PS_Collections_Core)
+Admin-run system test through the API, with evidence: `docs/system-test-results-2026-10-14.md`. 11 scripts pass, two of them after a same-night fix. **Not UAT** — no outside users.
+- ☑ `manifest/def01-retrieve.xml` retrieved and committed (in `main` since the StewardPhase5Updates push)
 
 - ☑ **DEF-01 (High) fixed and retested 2026-10-14:** `Credits_Applied__c` + `Adjustment_AfterSave_ApplyCredits` + Balance formula; seeded credits backfilled. Was: posted credits don't reduce the statement balance. `Balance__c` = due − paid; adjustments look up to the statement, so no roll-up. A credited customer stays past due and on the work list. Fix: `Credits_Applied__c` on Billing Statement, summed by `Adjustment_AfterSave_Lifecycle` when an adjustment posts; `Balance__c` = due − paid − credits. Retest UAT-10/11.
 - ☑ OBS-01 closed: Delete on Promise to Pay removed from `PS_Collections_Core`; no persona can delete a promise
-- ☐ Persona checks as Test Persona: UAT-01, 05 step 4, 06, 08 (case comment), 12 negative, 13 criterion 3, 18
-- ☐ UAT-14 on Thu Oct 15: dispute **00001049** left untouched — warning ≈ 3:30 PM ET, violation 6:00 PM ET. Delete the case afterward
-- ☐ UAT-04 / UAT-20 scheduled confirmations (promise past grace; reminder Oct 21)
+- ☐ Persona checks as Test Persona: UAT-01, 05 step 4, 06, 08 (case comment), 12 negative, 13 criterion 3, 18 (your step 3 above)
+- ☑ UAT-14: both milestones on **00001049** violated at their targets (checked 2026-10-24). The email arrival check is your step 4; delete the case after that
+- ☑ UAT-04 step 3 confirmed on six promises (2026-10-24). ☐ Step 2 (Kept on a scheduled run) and UAT-20 (reminder) still have no example: the Oct 14 test contract was deleted before its reminder date
+- ☑ UAT-15 steps 1–3: Default Reviews 00001051 and 00001052 opened on time by the nightly run (Oct 18, 19)
 - ☑ An AI-written "all passed" UAT summary was checked against the org and rejected: no test records existed for the scripts it reported. Pass/fail in this repo comes only from evidence in the org.
 
 ---

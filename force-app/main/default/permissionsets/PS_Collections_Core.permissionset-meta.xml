@@ -4,7 +4,7 @@
         <application>Collections_Console</application>
         <visible>true</visible>
     </applicationVisibilities>
-    <description>Base access for anyone working past-due accounts. Assigned to reps, specialists, and supervisors. US-01, US-03, US-06.</description>
+    <description>Base access for anyone working past-due accounts, including the Log Contact Attempt flow (DEF-08). Assigned to reps, specialists, and supervisors. US-01, US-03, US-06.</description>
     <fieldPermissions>
         <editable>false</editable>
         <field>Case.Dispute_Reason__c</field>
@@ -13,6 +13,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Case.Root_Cause__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Commitment__c.Account__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -70,6 +75,10 @@
         <field>Task.WhoId</field>
         <readable>true</readable>
     </fieldPermissions>
+    <flowAccesses>
+        <enabled>true</enabled>
+        <flow>Account_Screen_LogContactAttempt</flow>
+    </flowAccesses>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Collections Core</label>
     <objectPermissions>
