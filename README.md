@@ -41,6 +41,7 @@ Personas, stories and the components that implement each one: [`docs/requirement
 3. Read a changelog entry to see how a phase actually went, including what broke: `CHANGELOG.md`.
 4. Read the [root cause analysis](docs/rca-balance-formula.md) for the defect that made every balance $0.
 5. Read the [system test results](docs/system-test-results-2026-10-14.md): what passed, the defects found (DEF-01, DEF-07, DEF-08) and what's still to run.
+6. Read the [support runbook](docs/support-runbook.md): how to work the problems users report, each one taken from something that happened in this org.
 
 Field and rule descriptions reference user stories (`US-xx`) and decisions (`D-xx`). Both are in `/docs`, so any component can be traced back to why it exists.
 
@@ -70,6 +71,7 @@ docs/
   security-model.md   Personas, sharing, field-level security
   data-plan.md        Dataset, load failures, data quality before and after
   uat-scripts.md      One script per story
+  support-runbook.md  Symptom → checks → fix for the problems users actually hit
   system-test-results-2026-10-14.md  Evidence, defects, scheduled results
   persona-checks.md   The checks only a logged-in persona can make
   rca-balance-formula.md

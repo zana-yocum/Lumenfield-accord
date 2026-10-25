@@ -39,6 +39,9 @@ A Steward hand check found that collections personas couldn't log a contact atte
   - The Phase 5 bulk-load result files moved from the root to `data/load-results/`; scratch ID lists removed.
   - Steward's portal screenshots moved to Steward's repository.
 
+### Added
+- `docs/support-runbook.md`: 14 problems users are likely to report, each with the checks in order, the fix and how to prevent it, taken from what happened in this org.
+
 ### Corrected
 - 13 flows, not 12. `Commitment_BeforeSave_StampAccount` came after the release docs.
 - v1.0.1 said 12 scripts pass; it's 11. DEF-01's retest was counted twice.
