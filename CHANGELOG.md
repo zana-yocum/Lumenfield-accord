@@ -17,6 +17,9 @@ A Steward hand check found that collections personas couldn't log a contact atte
 - Permission set descriptions: four began with a stray "Description: ", and `PS_Sales_Core` and `PSG_Sales_Rep` cited US-17, which was cut. Corrected in the org.
 - `Collection_Hold_Until__c` described as what it is — the hold date an in-policy promise sets and the daily evaluation clears — instead of repeating Do Not Contact's description. Found by Steward's persona-access check.
 
+### Found, not yet fixed
+- **DEF-09 (High): the Minimum Access profile grants field access on 74 Accord fields**, 58 of them Read/Edit. Setup's new-field wizard adds every profile by default. As a result, reps and sales reps can edit Account Status and other fields only automation should set, and sales reps can read account balances. The plan is in the results doc.
+
 ### Confirmed — scheduled runs, checked 2026-10-24
 - **UAT-04 step 3:** six promises were set to Broken the morning after their grace date. Holds were released and Broken Promises (90d) went up.
 - **UAT-14:** dispute 00001049's Acknowledge and Request Evidence milestones were flagged violated at their targets. Whether the email arrived is a check in the supervisor's inbox.

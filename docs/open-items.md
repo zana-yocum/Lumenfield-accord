@@ -29,6 +29,7 @@ Steward's Phase 5 hand check found that collections personas couldn't see **Log 
   - UAT-14 passed on the org side.
   - UAT-15 steps 1–3 passed: two on-time Default Reviews, on Oct 18 and 19.
 - ☑ **DEF-07 and the Oct 14 evening changes written up** from the Setup Audit Trail. DEF-02 to DEF-06 were never written down.
+- ☐ **DEF-09 (High): the Minimum Access profile grants field access on 74 Accord fields** (58 Read/Edit), so reps and sales reps can edit Account Status and other automation-only fields, and sales reps can read balances. Written up with the plan in the results doc. Waiting on Zana's go-ahead: the fix also changes what Steward's rep assistant can read
 - ☑ **Permission set descriptions corrected in the org:** four had a stray "Description: ", and US-17 is gone from Sales Core and the Sales Rep group.
 - ☑ **Metadata restored from the org** through Steward's retrieve workflow (`manifest/accord.xml`). Placeholders in the nine files that name a user; `scripts/check_personal_details.sh` added.
 - ☑ **Repository tidied:**

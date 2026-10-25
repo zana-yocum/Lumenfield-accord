@@ -204,6 +204,27 @@ Made the evening of Oct 14, about 8:48 PM CT, after the v1.0.1 docs were written
 
 **Verified through the API (2026-10-24):** version 3 active with the restriction, version 2 obsolete, nothing else changed; flow access on `PS_Collections_Core` and, after recalculation, on the Collections Rep, Collections Supervisor and Dispute Specialist groups; none on Sales Rep. **In the console:** to be confirmed by the rest of Steward's hand check (Log Contact Attempt as Test Persona).
 
+### DEF-09 — The Minimum Access profile grants field access the design gives to permission sets · High · **Open, fix planned**
+**Found:** 2026-10-24, while checking DEF-08's fix: the field permissions on Test Persona's profile, Minimum Access - Salesforce, were listed through the API.
+
+**What's there:** the profile grants field-level security on **74 of Accord's custom fields, 58 of them Read/Edit**. Setup's new-field wizard makes a field visible to every profile unless the boxes are cleared, and Accord's fields were created in Setup. Accord's permission sets grant almost no field access of their own (`PS_Collections_Core` has 14 field permissions, mostly on activities), so nearly everything collections personas read today reaches them through the profile. D-07 says all access comes from permission sets; for objects that's true, for fields it isn't.
+
+**Effect, in order of risk**
+- Reps can edit **Account Status**, the field the collections sharing rule reads (D-08). Sales reps can edit it too, through their Account access. Only automation should set it.
+- Reps and sales reps can edit **Broken Promises (90d)** and **Collection Hold Until**, which feed the priority score and the work list.
+- Sales reps can read account balances, days past due and priority score. The security model's field table says those are hidden from sales.
+- Sales reps can edit **Do Not Contact**, which the design gives them as read-only.
+
+Payment Method and External Reference were removed from the profile on Oct 14, so UAT-01's check still holds.
+
+**Plan:**
+1. Grant each persona's fields through its permission sets: collections read on accounts, statements, promises, commitments, service contracts and dispute fields, with edit only on Do Not Contact, Primary Contact and the promise fields; dispute fields and adjustments for Dispute Management; commitments, opportunities and leads for Sales Core, with no financial account fields.
+2. Remove Accord's fields from the profile.
+3. Run Steward's test suite against the change; its rep assistant reads many of these fields in user mode.
+4. Re-check Test Persona field by field through the API.
+
+The steps are in this order so that nothing a persona needs disappears between steps.
+
 ---
 
 ## Still to run
