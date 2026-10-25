@@ -11,15 +11,28 @@ Everything deferred, flagged, or half-finished. Updated at the end of every sitt
 Built in the org through the API this sitting: Phase 9 reports, dashboard and home page; folder sharing; Run Reports for reps and specialists; `VR_Case_DisputeNeedsStatement`; four reworded error messages; 88 households renamed; Commitment Status cleaned; web-form test lead made fictional.
 
 **Your steps to close the release** (PowerShell, from `C:\Lumenfield-accord`)
-- ☐ Extract `accord-release.zip` into the repo root (overwrites README, requirements, data-plan, open-items; adds the new docs and manifests)
-- ☐ `sf project retrieve start -o lumenfield --manifest manifest\phase9-retrieve.xml`
-- ☐ `sf project deploy start -o lumenfield --metadata-dir manifest\cleanup-fields --single-package -w 10`
-- ☐ `sf project deploy start -o lumenfield --metadata-dir manifest\cleanup-layouts --single-package -w 10`
-- ☐ `.\manifest\cleanup-local.ps1` — removes the deleted components from the repo
-- ☐ Paste the three `CHANGELOG-v*.md` files into the top of `CHANGELOG.md` (newest first), then delete them
-- ☐ Setup → Deliverability → Access level **All email**
-- ☐ Setup → Object Manager → Payment (custom) → Edit → Label **Lease Payment**, Plural **Lease Payments**
-- ☐ Commit: *"v1.0 — Phase 9 analytics, Phase 10 release docs, org cleanup"*
+- ☑ Extract `accord-release.zip` into the repo root (overwrites README, requirements, data-plan, open-items; adds the new docs and manifests)
+- ☑ `sf project retrieve start -o lumenfield --manifest manifest\phase9-retrieve.xml`
+- ☑ Cleanup deploys done (fields, then layouts) — `--metadata-dir` failed with "No package.xml found"; the `--manifest` + `--post-destructive-changes` form worked
+- ☑ `.\manifest\cleanup-local.ps1` — removes the deleted components from the repo
+- ☑ Paste the three `CHANGELOG-v*.md` files into the top of `CHANGELOG.md` (newest first), then delete them
+- ☑ Setup → Deliverability → Access level **All email**
+- ☑ Setup → Object Manager → Payment (custom) → Edit → Label **Lease Payment**, Plural **Lease Payments**
+- ☑ Commit: *"v1.0 — Phase 9 analytics, Phase 10 release docs, org cleanup"*
+
+---
+
+## System test — 2026-10-14
+
+Admin-run system test through the API, with evidence: `docs/system-test-results-2026-10-14.md`. 12 scripts pass (one after a same-night fix). **Not UAT** — no outside users.
+- ☐ Retrieve `manifest/def01-retrieve.xml` and commit (new field, new flow, Balance formula, PS_Collections_Core)
+
+- ☑ **DEF-01 (High) fixed and retested 2026-10-14:** `Credits_Applied__c` + `Adjustment_AfterSave_ApplyCredits` + Balance formula; seeded credits backfilled. Was: posted credits don't reduce the statement balance. `Balance__c` = due − paid; adjustments look up to the statement, so no roll-up. A credited customer stays past due and on the work list. Fix: `Credits_Applied__c` on Billing Statement, summed by `Adjustment_AfterSave_Lifecycle` when an adjustment posts; `Balance__c` = due − paid − credits. Retest UAT-10/11.
+- ☑ OBS-01 closed: Delete on Promise to Pay removed from `PS_Collections_Core`; no persona can delete a promise
+- ☐ Persona checks as Test Persona: UAT-01, 05 step 4, 06, 08 (case comment), 12 negative, 13 criterion 3, 18
+- ☐ UAT-14 on Thu Oct 15: dispute **00001049** left untouched — warning ≈ 3:30 PM ET, violation 6:00 PM ET. Delete the case afterward
+- ☐ UAT-04 / UAT-20 scheduled confirmations (promise past grace; reminder Oct 21)
+- ☑ An AI-written "all passed" UAT summary was checked against the org and rejected: no test records existed for the scripts it reported. Pass/fail in this repo comes only from evidence in the org.
 
 ---
 
@@ -88,7 +101,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☑ Retrieves for each step committed as the phase went
 
 **Loose ends carried forward (small)**
-- ☐ Setup → Deliverability is **All email**, or milestone alerts fire but never send
+- ☑ Deliverability set to All email (2026-10-14)
 - ☑ System Administrator access to Collections Console (verified)
 - ☑ Email alert descriptions shortened (verified)
 - ☐ Commit `data/regen/`, excluding the `del_*.csv` scratch files. (`Balance__c` is in `manifest/phase9-retrieve.xml`)
@@ -191,21 +204,21 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 
 ## Org cleanup
 
-- ☐ Delete stray field `Production_estimate_given_at_signing_Wh__c` — staged in `manifest/cleanup-fields`
-- ☐ Relabel custom `Payment__c` to **Lease Payment**. It shares a label with the standard Payment object, so the org shows two objects named Payment. API name stays `Payment__c`; nothing breaks.
+- ☑ Stray field `Production_estimate_given_at_signing_Wh__c` deleted (2026-10-14)
+- ☑ Custom `Payment__c` relabeled **Lease Payment** (verified 2026-10-14)
 - ⊘ `Legacy_Id__c` on Lead kept: it ties the 30 seeded leads back to the source file, same reasoning as D-09
 - ☑ `PS_Payment_Detail` label had a double space (`Payment  Detail`); corrected.
-- ☐ **Developer Edition sample fields** — 24 fields + the Delivery Status link staged in `manifest/cleanup-fields`. Case Type and Case Reason sample values still need replacing in Setup. Original list: Case: `Product__c` (GenWatt model codes), `PotentialLiability__c`, `SLAViolation__c`, plus sample Type and Case Reason values (Mechanical, Electrical, Installation…). Account: `Active__c`, `CustomerPriority__c`, `NumberofLocations__c`, `SLA__c`, `SLASerialNumber__c`, `SLAExpirationDate__c`, `UpsellOpportunity__c`. Contact: `Languages__c`, `Level__c`. Lead: `CurrentGenerators__c`, `NumberofLocations__c`, `Primary__c`, `ProductInterest__c`, `SICCode__c`. Opportunity: `CurrentGenerators__c`, `DeliveryInstallationStatus__c`, `MainCompetitors__c`, `OrderNumber__c`, `TrackingNumber__c`. Delete, and replace Case Type and Reason values with ones that fit solar servicing.
-- ☐ Sample Account and Case layouts — staged in `manifest/cleanup-layouts`. If the deploy refuses one as still assigned, reassign that profile in Setup and rerun
+- ☑ **22 Developer Edition sample fields deleted** (2026-10-14; they sit in Deleted Fields for 15 days). Left on purpose: `Account.SLA__c` (used by sample Case assignment and escalation rule entries) and `Opportunity.TrackingNumber__c` + the Delivery Status link (on the four Opportunity layouts) — removing them means editing rules and layouts Accord doesn't use. Case Type and Case Reason sample values still need replacing in Setup. Original list: Case: `Product__c` (GenWatt model codes), `PotentialLiability__c`, `SLAViolation__c`, plus sample Type and Case Reason values (Mechanical, Electrical, Installation…). Account: `Active__c`, `CustomerPriority__c`, `NumberofLocations__c`, `SLA__c`, `SLASerialNumber__c`, `SLAExpirationDate__c`, `UpsellOpportunity__c`. Contact: `Languages__c`, `Level__c`. Lead: `CurrentGenerators__c`, `NumberofLocations__c`, `Primary__c`, `ProductInterest__c`, `SICCode__c`. Opportunity: `CurrentGenerators__c`, `DeliveryInstallationStatus__c`, `MainCompetitors__c`, `OrderNumber__c`, `TrackingNumber__c`. Delete, and replace Case Type and Reason values with ones that fit solar servicing.
+- ☑ 6 sample Account and Case layouts deleted (2026-10-14)
 - ☑ All 88 households renamed from their primary contact ("Patrick Boone Household"). 26 surnames had repeated, up to seven times
-- ☐ `Experience_Profile_Manager` standard permission set is in the repo from a wildcard retrieve. Delete the local file and retrieve only `PS_` permission sets going forward.
+- ☑ `Experience_Profile_Manager` removed from the repo by `cleanup-local.ps1`
 - ⊘ Dashboard API names are auto-generated (`KBzhEuJNWsMpcbnMzmuwzHqwlGrEtH`, and `…EtH1` for the supervisor dashboard, cloned from it). Cosmetic; recorded in CHANGELOG v0.8
 
 ---
 
 ## Doc updates
 
-- ☐ Paste `docs/security-model-additions.md` into `security-model.md` (case sharing, role cleanup, activities, folders, D-07 exceptions, lookup-name setting, Health Check), then delete the additions file
+- ☐ (if not done) Paste `docs/security-model-additions.md` into `security-model.md` (case sharing, role cleanup, activities, folders, D-07 exceptions, lookup-name setting, Health Check), then delete the additions file
 
 - ☑ README rewritten for release (results incl. Health Check, US-xx/D-xx note, limits)
 - ☑ `requirements.md` traceability complete (2026-10-14); US-17 marked cut

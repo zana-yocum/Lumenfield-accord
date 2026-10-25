@@ -27,7 +27,7 @@ One page per role. Everything starts in the **Collections Console** app (App Lau
 | Open a dispute | New Case → **Billing Dispute** → reason + **disputed statement** | No statement, no save. The evidence checklist for the reason appears on the case |
 | Know what's due | Case → Milestones | Acknowledge 1 business day · evidence 3 · resolve 10. Status changes complete milestones for you |
 | Get the sales rep's side | Case Team → add the rep as **Sales Input** | They can read the case. Access ends automatically when the case closes |
-| Credit up to $100 | New Adjustment (Credit) on the case | Posts immediately |
+| Credit up to $100 | New Adjustment on the case (Billing Correction, Goodwill Credit or Production Guarantee) | Posts immediately |
 | Credit over $100 | New Adjustment → **Submit for Approval** | Case moves to Pending Credit Approval. You can't approve it yourself or mark it Approved by hand |
 | Resolve | Status → **Resolved** + **Root Cause** | Root cause required. Withdrawn or duplicate? Use **Closed** instead, no root cause needed |
 

@@ -132,8 +132,8 @@ One script per user story. Each script names the persona to log in as, the recor
 
 | # | Step | Expected | Pass/Fail | Notes |
 |---|---|---|---|---|
-| 1 | Adjustment, Credit, $75, linked to a dispute | Posts with no approval | | |
-| 2 | Adjustment, Credit, $250 → Submit for Approval | Pending; dispute moves to Pending Credit Approval | | |
+| 1 | Adjustment, Billing Correction, $75, linked to a dispute and its statement | Posts with no approval; **statement balance drops by $75** (DEF-01, fixed 2026-10-14) | | |
+| 2 | Adjustment, Billing Correction, $250 → Submit for Approval | Pending; dispute moves to Pending Credit Approval | | |
 | 3 | Try to set the $250 adjustment to Approved by hand | Blocked: must go through approval | | |
 | 4 | Supervisor rejects with no reason | Approver gets a high-priority task to record the reason | | |
 | 5 | **Negative:** change the amount on an approved adjustment | Blocked | | |
@@ -229,7 +229,7 @@ Not built. US-17 was the only Could story and was cut deliberately in Phase 8. R
 | # | Step | Expected | Pass/Fail | Notes |
 |---|---|---|---|---|
 | 1 | Activate a contract for a contact with no promotional consent | Welcome (servicing) still sends | | |
-| 2 | Activate one on a Do Not Contact account | Nothing sends; follow-up task instead | | |
+| 2 | Activate one on a Do Not Contact account | Nothing sends; Welcome Sent On stays blank | | |
 | 3 | Search automation for promotional sends | None exist (D-05) | | |
 
 ---

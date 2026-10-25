@@ -28,7 +28,7 @@ Declarative only — flows, validation rules, approvals, sharing, entitlements a
 | Data model | Commitment, Billing Statement, Payment, Promise to Pay, Adjustment; Policy Setting and Dispute Evidence Requirement custom metadata |
 | Security | Minimum Access profile + 4 permission set groups (Collections Rep, Collections Supervisor, Dispute Specialist, Sales Rep); criteria-based sharing on Account Status; case teams for sales input |
 | Service | Billing Dispute and Default Review case record types, two queues, assignment rules, a 3-milestone entitlement process on business hours, warning and breach alerts, Collections Console app |
-| Automation | 11 flows (record-triggered, scheduled and one screen flow), credit approval process, 12 validation rules |
+| Automation | 12 flows (record-triggered, scheduled and one screen flow), credit approval process, 12 validation rules |
 | Sales | Web-to-lead form, lead routing to a queue, duplicate alert against existing customers, concession-to-commitment enforcement at Closed Won |
 | Analytics | 8 collections reports, Collections Supervisor dashboard, Data Quality dashboard, console home page |
 
@@ -74,6 +74,7 @@ Written down so they're read as decisions, not oversights.
 
 - **Static data drifts.** Days Past Due counts from `TODAY()`, so the dataset ages every day and accounts slide into 90+. Run `data/regen/generate_billing.py` before any demo or UAT session (see `data/regen/RUNBOOK.md`).
 - **One time zone for outbound contact.** The contact-window business hours are Eastern. A customer in another time zone isn't protected from an early call. Production would check the customer's local time.
+- **Credits don't carry forward.** A posted credit reduces its own statement's balance down to $0; any excess isn't applied to the next statement. Deleting a posted credit doesn't recalculate the statement (no persona can delete one).
 - **No payment allocation.** A payment that covers two statements can't be split between them. Promise evaluation counts payments on the promise's related statement only. Production would add a junction object.
 - **Default review window is calendar days.** Three calendar days, not business days — business-day math in a formula needs Apex or a workaround.
 - **Fixed values duplicated from policy settings.** Approval entry criteria and scheduled-path offsets can't read custom metadata, so the $100 credit limit and 7-day reminder offset are duplicated from `Policy_Setting__mdt`.
