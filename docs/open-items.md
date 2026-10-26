@@ -11,13 +11,9 @@ Everything deferred, flagged, or half-finished. Updated at the end of every sitt
 Steward's Phase 5 hand check found that collections personas couldn't see **Log Contact Attempt** (DEF-08). Claude fixed it in the org and checked the clock-dependent results. Claude also found that `main` had been missing most of Accord's metadata since the Phase 6 commit, and retrieved it again from the org. Everything is in `CHANGELOG.md` v1.0.2 and `docs/system-test-results-2026-10-14.md`.
 
 **Your steps**
-- ☐ 1. **Before the repository goes public, decide how to handle the username in its history.** Seven files, in commits from v0.4 up to today's `main`, contain your Salesforce username; on the release branch they use placeholders. Making the repository public publishes every old commit too. Options:
-  - (a) Public as it is. The username is an org login, not an inbox, but it starts with the same name as your private email.
-  - (b) Recommended: Claude rewrites the history so those files carry the placeholder in every commit, then replaces `main` with it. The phase-by-phase commits stay.
-  - (c) A new repository with the rewritten history, under the same name, so the portfolio's links keep working. The current one is renamed and stays private.
-
-  Until you choose, Claude keeps this release on the branch `release/v1.0.2` and opens no pull request, because a pull request would keep the old history reachable on GitHub even after a rewrite.
-- ☐ 2. Then make the repository public: **Settings** → **General** → **Danger Zone** → **Change visibility** → **Change to public**. It's a launch gate for the portfolio site.
+- ☑ 1. **History (2026-10-25): rewritten**, your choice (b). Every commit now carries the placeholder instead of the org username, and GitHub's noreply address instead of your personal email; all 26 commits and their messages kept. `main` and `release/v1.0.2` replaced on GitHub. Optional: GitHub keeps the old commits reachable by their IDs until it cleans up. To have them removed sooner, open a ticket at support.github.com → **Removing sensitive data**, naming `zana-yocum/Lumenfield-accord`. Nobody has those IDs (no forks or pull requests), so this is low priority
+- ☑ 2. **Public (2026-10-25).** The portfolio's Accord links work once v1.0.2 is merged into `main`
+- ☐ **Your copy on your computer is out of date** since the rewrite: its commits no longer match GitHub's. In File Explorer, rename `C:\Lumenfield-accord` to `C:\Lumenfield-accord-old`. In GitHub Desktop: **File** → **Clone repository** → `zana-yocum/Lumenfield-accord` → local path `C:\Lumenfield-accord`. Copy back anything you made that isn't in the new copy (for example files in `data\regen`), then delete the old folder
 - ☐ 3. **Persona checks:** `docs/persona-checks.md`, about 15 minutes as Test Persona. UAT-06 is possible now that DEF-08 is fixed. Steward's hand check covers Log Contact Attempt for the Collections Rep.
 - ☐ 4. **UAT-14 email:** search the supervisor's inbox (yours) for **Dispute Milestone Violation**, around Oct 15, 5 PM CT and Oct 19, 5 PM CT, and tell Claude what's there. Then dispute 00001049 can be deleted.
 - ☐ 5. If `docs/release-readiness-winter27.md` is still on your computer, add it to `docs/`. It was never committed, so the README no longer lists it.
@@ -37,7 +33,7 @@ Steward's Phase 5 hand check found that collections personas couldn't see **Log 
   - Bulk-load results moved to `data/load-results/`.
   - Steward's portal screenshots moved to Steward.
   - README counts corrected.
-- ☐ **DEF-07's Commitments related list** on the Residential Agreement layout: in Steward's pull request #13, validated 2026-10-25, merging once your GitHub email setting is on (Steward maintains that layout). The same pull request puts `PS_Collections_Overrides` in the supervisor group's source.
+- ☑ **DEF-07's Commitments related list** is on the Residential Agreement layout: Steward's pull request #13, deployed 2026-10-25 (`0Afaj00000p7b8jCAA`) and checked in the org. The same deploy put `PS_Collections_Overrides` in the supervisor group's source.
 - ☑ **Security model rewritten as built** (2026-10-25): object and field tables read from the org, the Phase 6–10 additions folded in, and the drifted claims corrected (case sharing goes to the Collections Rep role; no deletes on promises or cases; specialists don't see Default Reviews; a specialist, not a flow, adds sales input to a case team)
 - ☑ `Mute_Rep_Promise_Delete` restored to source from v0.4, matching the org
 - ☑ `Collection_Hold_Until__c`'s description, which repeated `Do_Not_Contact__c`'s, rewritten in the org and in source

@@ -19,7 +19,7 @@ A Steward hand check found that collections personas couldn't log a contact atte
   - lead conversion rights for Sales Core
   - the supervisor role added to the Collections Team group
 
-  DEF-02 to DEF-06 were never written down; the results doc explains. The Commitments related list, the last piece of DEF-07, goes on the account page through Steward's pull request #13, because Steward maintains that layout.
+  DEF-02 to DEF-06 were never written down; the results doc explains. The Commitments related list, the last piece of DEF-07, went on the Residential Agreement layout through Steward's pull request #13 on 2026-10-25, because Steward maintains that layout. Checked in the org after the deploy: the list shows each commitment's type, value and status.
 - Permission set descriptions: four began with a stray "Description: ", and `PS_Sales_Core` and `PSG_Sales_Rep` cited US-17, which was cut. Corrected in the org.
 - `Collection_Hold_Until__c` described as what it is — the hold date an in-policy promise sets and the daily evaluation clears — instead of repeating Do Not Contact's description. Found by Steward's persona-access check.
 
@@ -36,10 +36,17 @@ A Steward hand check found that collections personas couldn't log a contact atte
 - **Found:** `Collection_Hold_Until__c`'s description was a copy of `Do_Not_Contact__c`'s. Rewritten in the org 2026-10-24 (below).
 - **Ownership:** from this point, those two layouts and three groups are maintained in Steward's repository and deployed by its pipeline. The copies here are snapshots; change them through Steward, or Steward's next deploy undoes the change.
 
+### Changed by Steward (2026-10-25, pull request #13)
+- **Residential Agreement account layout:** Commitments related list (type, value, status), finishing DEF-07.
+- **Collections Supervisor group:** `PS_Collections_Overrides` added (DEF-09). It was added in the org first; Steward's source now holds it, so later deploys keep it.
+- **The three collections groups' descriptions** no longer mention the Promise to Pay delete that OBS-01 removed, and the rep group's names the Log Contact Attempt flow.
+- Deployed by Steward's pipeline (`0Afaj00000p7b8jCAA`) and checked in the org.
+
 ### Repository
-- **Metadata restored.** The Phase 6 commit (`d55887f`, 2026-10-07) deleted 655 files from `force-app`. Among them were every custom object, Accord's custom fields on standard objects, five permission sets, the permission set groups, the custom metadata records, the global value sets, the Account and Opportunity sharing rules, and the Data Quality reports and dashboard. The org wasn't affected; only the repository lost them. Accord's components were retrieved again from the org on 2026-10-24 (`manifest/accord.xml`).
+- **Metadata restored.** The Phase 6 commit (`6b523b5`, 2026-10-07) deleted 655 files from `force-app`. Among them were every custom object, Accord's custom fields on standard objects, five permission sets, the permission set groups, the custom metadata records, the global value sets, the Account and Opportunity sharing rules, and the Data Quality reports and dashboard. The org wasn't affected; only the repository lost them. Accord's components were retrieved again from the org on 2026-10-24 (`manifest/accord.xml`).
 - **Left out on purpose:** what's still missing from v0.4 is noise from that release's wildcard retrieve: standard fields and list views, empty sharing-rule files for 225 standard objects, Salesforce-managed groups, the nine sample roles deleted in Phase 6, and the deleted Developer Edition sample fields.
 - **Placeholders:** nine files name an org user: the approval process, two dashboards, four folders and the two assignment rule files. Each carries a placeholder on `example.com` instead. Before deploying one of those files, put a real username back.
+- **History rewritten (2026-10-25), as the repository went public.** Earlier commits carried the org username in those nine files and the author's personal email in their metadata. Every commit was rewritten with `git filter-repo`: the username became the same placeholder, and the author email became GitHub's private noreply address. All 26 commits and their messages were kept; only commit IDs changed. References to commit IDs in these docs were updated.
 - **Muting permission set restored:** `Mute_Rep_Promise_Delete`, which the Collections Rep group references, was missing from the restore. Added from v0.4, matching the org.
 - **Security model rewritten as built** (`docs/security-model.md`): the object and field tables read from the org on 2026-10-25, the Phase 6–10 additions folded in, and corrections where the design had drifted. The case sharing rule shares with the Collections Rep role, not the Collections Team group; nobody can delete a promise or a case; specialists don't see Default Reviews; no flow adds a sales rep to a case team, the specialist does.
 - **Tidying:**
