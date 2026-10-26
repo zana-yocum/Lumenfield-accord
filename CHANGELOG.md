@@ -2,6 +2,33 @@
 
 Newest first. Each phase of the build is a version, v1.0 is the release, and later versions are fixes found in testing and in use. Entries record what changed in the org, how it was verified, and what went wrong.
 
+## v1.0.3 — 2026-10-25 — Account visibility follows Account Status
+
+Checking the persona checks' expected results against the org, record by record, found that collections reps could read every customer account, not just the ones in collections (DEF-10). Two of the fix's three steps are in the org. The third, deleting the old rule, is a Setup step.
+
+### Fixed
+- **DEF-10 (High): collections reps could read every customer account.** `Closed_Won_to_Collections` shared every closed deal with the Collections Team group, so collections could see commitments. Read access to an opportunity gives read access to its account (implicit sharing), and every account has a closed deal. Test Persona, as a rep, could read all 100 accounts and edit the 34 in collections.
+  1. `Delinquent_Accounts_to_Collections` also grants read on the account's opportunities. Reps see deals and commitments on accounts in collections, and lose them when the account leaves.
+  2. New `Closed_Won_to_Dispute_Specialists`: closed deals, read-only, to the Dispute Specialist role. Supervisors get it through the role hierarchy.
+  3. `Closed_Won_to_Collections` is deleted in Setup, because the API used here can't delete a sharing rule. **Pending**: until then, reps can still read every account.
+
+  Steps 1 and 2 were applied through the Metadata API at 8:45 and 8:46 PM CT, read back from the org and recalculated. Nobody lost access in between. Expected once step 3 is done: Test Persona reads 40 accounts (the 34 in collections, plus 6 current accounts with a billing dispute) and edits 34.
+
+### Corrections
+- **The Phase 7 proof of D-08 (v0.6) didn't prove it.** Test Persona could read ACC-0001 right after its status changed because billing dispute 00001038 is on that account, and the case rule shares disputes with reps. The Collections Team group had no members until Oct 14, 8:46 PM CT, so until then the status rule reached nobody. After that, the closed-deal rule hid whether it worked.
+- Results doc: DEF-07's related list marked finished (Steward #13), and a doubled divider removed.
+- Security model: the case-comment question is persona check step 8, not 7.
+- Case study: the D-08 paragraph no longer says the Phase 7 test proved it. New lesson, *A test can pass for the wrong reason*. The results row now says what it measures: past-due accounts still marked Current.
+
+### Docs
+- Persona checks: delete the old rule first. Step 1 says where the payment fields are, step 2 checks High Value and explains why the fields are read-only, and step 3 tests DEF-10 too.
+- Support runbook: entry 16, a rep can open an account that isn't in collections. Entries 15 and 16 added to the summary table, and entry 3's Phase 7 note corrected.
+- Security model: the sharing rules as built, implicit sharing and the two paths kept on purpose, record reach in the access matrix, and `UserRecordAccess` under how it's tested.
+- Decision log: an implementation note under D-08. README: DEF-10 and the sharing in the Security row.
+
+### Repository
+- `sharingRules/`: the account rule's opportunity access and the new opportunity rule, matching what the org returns. `Closed_Won_to_Collections` stays in source until it's deleted in the org.
+
 ## v1.0.2 — 2026-10-25 — Persona access fixes, scheduled results, repository restored
 
 A Steward hand check found that collections personas couldn't log a contact attempt (DEF-08). Checking that fix found that the Minimum Access profile was granting field access the design gives only to permission sets (DEF-09). The scheduled checks left open by the system test have now run, and the repository has the metadata back that it lost in Phase 6.

@@ -59,7 +59,7 @@ The rows overlap: UAT-10 and 11 appear as Pass and as Pass after fix, and UAT-19
 | After UAT-03's in-policy promise | Crystal Stinson gone from the list: 35 → 34 |
 | Out-of-policy (pending) promise | Sandra Hargrove stays on the list — correct, no hold until approved |
 | Do Not Contact on William Okafor | Gone from the list: 34 → 33 |
-| Step 4 (mismatch account hidden from a rep) | Needs persona login. Status correction itself was proven in Phase 7 |
+| Step 4 (mismatch account hidden from a rep) | Needs persona login. The Phase 7 check that seemed to prove it didn't: see DEF-10 |
 
 ### UAT-07 — Guided dispute intake · **Pass**
 | Step | Result | Evidence |
@@ -184,14 +184,14 @@ Made the evening of Oct 14, about 8:48 PM CT, after the v1.0.1 docs were written
 
 **Fix:** lookup `Commitment__c.Account__c` (read-only to every persona) and the before-save flow `Commitment_BeforeSave_StampAccount`, which copies the opportunity's account onto each commitment on every save, so the opportunity stays the source of truth. All 31 commitments were stamped. Steward's commitments read service filters on this field.
 
-**Still open:** the Residential Agreement layout never got the Commitments related list, so the goal isn't met on the page. The layout is now maintained in Steward's repository (Steward S-21), so the related list goes in through Steward's pipeline.
+**Finished 2026-10-25:** the Residential Agreement layout never got the Commitments related list, so the goal wasn't met on the page. The layout is maintained in Steward's repository (Steward S-21), so the list went in through Steward's pull request #13 (deploy `0Afaj00000p7b8jCAA`). Checked in the org: the list shows each commitment's type, value and status.
 
 **Numbering:** the flow cites DEF-07, but DEF-02 to DEF-06 were never written down. The same 20 minutes of the audit trail hold the four other changes below; they may be those defects, but the numbers can't be matched to them, so they're recorded without numbers.
 
 ### Changes made the same evening (recorded 2026-10-24 from the audit trail)
 - **Minimum Access profile:** field-level security on Lease Payment Method and External Reference changed from Read/Write to No Access (8:30 PM CT). Before this, every persona on the profile could read payment details that only `PS_Payment_Detail` should grant (UAT-01's expectation). Rechecked 2026-10-24: only `PS_Payment_Detail` and the Collections Supervisor group read those two fields.
 - **`PS_Sales_Core`:** Read, Create and Edit on Account and Contact, the Convert Leads and Edit Tasks permissions, and Delete removed from Opportunity (8:30–8:31 PM CT). Converting a lead creates an account, a contact and an opportunity, so a Sales Rep couldn't convert one without them.
-- **Collections Team public group:** Collections Supervisor role and subordinates added (8:46 PM CT).
+- **Collections Team public group:** Collections Supervisor role and subordinates added (8:46 PM CT). Until then the group had no members, so neither sharing rule that shares with it reached anyone (DEF-10).
 
 ### DEF-08 — Collections personas couldn't see Log Contact Attempt · High · **Fixed 2026-10-24**
 **Found:** 2026-10-24, by Steward's Phase 5 hand check. Logged in as Test Persona (Collections Rep), Zana saw Steward's Briefing and Follow-up Draft on Sandra Barnett Household but not Log Contact Attempt, which sits between them in the layout's action list. It was the first time anyone had used the console as a collections persona since the action was built in Phase 8. The system test ran as the admin, who can run every flow, and UAT-06 was still on the persona-check list.
@@ -236,7 +236,29 @@ Payment Method and External Reference had been removed from the profile on Oct 1
 - Test Persona (Collections Rep), field by field through `UserFieldAccess`: every collections field on the account readable, with Account Status, Broken Promises (90d) and Collection Hold Until now read-only; Do Not Contact and Primary Contact editable; statement and commitment fields read-only; a promise's statement editable; adjustments and every Legacy Id unreadable; a case's description still unreadable, as designed.
 - Steward's rep assistant reads many of these fields as the user. Test Persona still reads every field its templates read ([Steward's agent governance doc](https://github.com/zana-yocum/Lumenfield-steward/blob/main/docs/agent-governance.md)), and Steward's full test suite ran against the changed org in its pull request #13 validation (`0Afaj00000p4HeQCAU`): 159 of 159 tests passed.
 
----
+
+### DEF-10 — Collections reps could read every customer account · High · **Fix in progress 2026-10-25: two of three steps done**
+**Found:** 2026-10-25, while checking the persona checks' expected results against the org before handing them over. UAT-05 step 4 expects a rep not to find an account in the *Current* bucket. `UserRecordAccess` said Test Persona (Collections Rep) could read Regina Mundy Household, which is Current and has no cases. Across all 100 accounts, Test Persona could read 100 and edit 34. The 34 are exactly the accounts in Delinquent, Hardship Review or Default Review.
+
+**Cause:** `Closed_Won_to_Collections` shared every Closed Won opportunity, read-only, with the Collections Team group, so collections could see commitments, which are master-detail children of the deal. Salesforce gives anyone who can read an opportunity, case or contact read access to its account (implicit sharing), and no setting turns that off. Every account has a closed deal, so every member of Collections Team could read every account. `AccountShare` shows it: an `ImplicitParent` row for Collections Team on each account, created when the deals were loaded on Sep 30.
+
+**History, from the Setup Audit Trail and the share tables**
+- Collections Team was created on Sep 27 with no members. Its one member, the Collections Supervisor role and its subordinates, was added on Oct 14 at 8:46 PM CT, in the evening changes above. Until then, neither rule that shares with the group reached anyone: not the status rule (D-08), and not the closed-deal rule.
+- So the Phase 7 check on Oct 9 didn't prove D-08. Test Persona could read ACC-0001 right after its status changed because billing dispute 00001038, loaded the evening before, is on that account. The case rule shares billing disputes with the Collections Rep role, and the dispute brings its account along. ACC-0002 had no dispute.
+- From Oct 14, 8:46 PM, the status rule gave reps edit on accounts in collections, and the closed-deal rule gave them read on all the rest. D-08's "a current account stays out of reach" was never true in the org.
+
+**Effect:** any collections rep could open any customer's account, with its contacts (Contact is controlled by its parent), statements, balances and promises, whether or not the account was in collections. Field-level security still hid the payment method, and nobody could edit an account outside collections. Dispute specialists and supervisors are meant to read every customer, because a dispute can come from anyone, so for them nothing changes.
+
+**Fix, in an order that never took away access a persona needed:**
+1. **Done.** `Delinquent_Accounts_to_Collections` also grants read on the account's opportunities (Opportunity Access: Read Only). A rep sees the deal, and its commitments, on every account in collections, and loses them when the account leaves. Applied through the Metadata API at 8:45 PM CT; recalculation finished a few seconds later.
+2. **Done.** New rule `Closed_Won_to_Dispute_Specialists`: closed deals, read-only, to the Dispute Specialist role. Supervisors get it through the role hierarchy. Specialists still need it for a dispute on an account that isn't in collections. Applied the same way at 8:46 PM CT.
+3. **Pending:** delete `Closed_Won_to_Collections`. The metadata API Claude uses can't delete a sharing rule, so this is a Setup step (open items). Until it's done, reps can still read every account.
+
+**Verified so far (2026-10-25):** both rules read back from the org as written. `AccountShare` for Patrick Boone Household and Sandra Barnett Household shows Opportunity Access Read for Collections Team. `OpportunityShare` shows all 100 closed deals shared with the Dispute Specialist role.
+
+**Expected after step 3:** Test Persona reads 40 accounts and edits 34: the 34 in collections, plus the 6 Current accounts with a billing dispute, which the dispute brings along, read-only. It can't read Regina Mundy Household. Reps keep the deals and commitments on accounts in collections.
+
+**Accepted:** a billing dispute on a current account is visible to reps, and so is that account, read-only. Reps need to see disputes, and narrowing it would mean copying the account's status onto every case. Six accounts today.
 
 ---
 
@@ -244,7 +266,7 @@ Payment Method and External Reference had been removed from the profile on Oct 1
 
 | Script | Who / when | What to check |
 |---|---|---|
-| 01, 05 step 4, 06, 08, 12 negative, 13 criterion 3, 18, and DEF-09 in the console | You, as Test Persona (about 20 min, `docs/persona-checks.md`) | What each persona can and can't see; case comment as a Sales Input team member. UAT-06 is now possible (DEF-08) |
+| 01, 05 step 4, 06, 08, 12 negative, 13 criterion 3, 18, and DEF-09 in the console | You, as Test Persona (about 20 min, `docs/persona-checks.md`), after deleting the old closed-deal rule (DEF-10) | What each persona can and can't see; case comment as a Sales Input team member. UAT-06 is now possible (DEF-08) |
 | 14, email part | You, in the supervisor's inbox | "Dispute Milestone Violation" for 00001049 around Oct 15, 5 PM CT and Oct 19, 5 PM CT. Then delete 00001049 |
 | 04 step 2, 15 step 4, 20 | When data allows | A promise kept on a scheduled run; a review cured by payment; the reminder 7 days before a first due date (the Oct 14 test contract was deleted before Oct 21, so its reminder never ran) |
 | All | 3–5 outside testers | Actual UAT |

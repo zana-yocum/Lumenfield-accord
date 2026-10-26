@@ -6,9 +6,9 @@
         <accountSettings>
             <caseAccessLevel>None</caseAccessLevel>
             <contactAccessLevel>Edit</contactAccessLevel>
-            <opportunityAccessLevel>None</opportunityAccessLevel>
+            <opportunityAccessLevel>Read</opportunityAccessLevel>
         </accountSettings>
-        <description>Grants collections access to accounts once they go delinquent, without moving ownership away from sales. Access ends automatically when status returns to Current. D-08.</description>
+        <description>Grants collections access to accounts once they go delinquent, and read on their deals so the commitments made at signing are visible, without moving ownership away from sales. Access ends automatically when status returns to Current. D-08, DEF-10.</description>
         <label>Delinquent Accounts to Collections</label>
         <sharedTo>
             <group>Collections_Team</group>

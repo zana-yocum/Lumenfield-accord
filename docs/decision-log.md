@@ -178,6 +178,8 @@ Every entry uses the same format: context, options considered, decision, rationa
 
 **Decided by / date.** Zana Yocum, 2026-09-26.
 
+**Implementation note (2026-10-25, DEF-10).** As built, the closed-deal rule shared with the same Collections Team group, and read access to a deal gives read access to its account. So once the group had members, every rep could read every customer account, current or not. Reps now get deal access from the account rule itself, which grants read on the account's opportunities, so it follows Account Status. The closed-deal rule shares with dispute specialists only. The decision stands; the implementation now matches it once the old rule is deleted.
+
 ---
 
 ## D-09 — Legacy ID fields stay in the org after the data load

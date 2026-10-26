@@ -20,6 +20,8 @@ How to work the problems Accord's users are most likely to report. Every entry c
 | 12 | A rep can't open a report or sees an empty folder | Run Reports missing, or the folder isn't shared to their role |
 | 13 | A sales rep can't convert a lead | Create on Account and Contact, or Convert Leads, missing |
 | 14 | A data load rejects most rows | Restricted picklist mismatch, active duplicate rules or relationship column syntax |
+| 15 | A user can edit or see a field their role shouldn't | The profile grants the field, not just the permission sets |
+| 16 | A rep can open an account that isn't in collections | A child record shared with the rep (a deal or a dispute) brings its account with it |
 
 ---
 
@@ -60,7 +62,7 @@ How to work the problems Accord's users are most likely to report. Every entry c
 
 **Prevent:** don't change the sharing rule's criteria without changing the status flow with it; together they're the security control.
 
-**Happened:** Phase 7, 2026-10-09: right after a debug run, Test Persona could read the corrected account and still not the one waiting for the nightly run (CHANGELOG v0.6).
+**Happened:** Phase 7, 2026-10-09: right after a debug run, Test Persona could read the corrected account and still not the one waiting for the nightly run (CHANGELOG v0.6). *Correction, 2026-10-25:* that read came through a billing dispute on the account, not its status. The Collections Team group the status rule shares with had no members until Oct 14, so the rule reached nobody (DEF-10, entry 16). If a rep can't find an account, also check that the group still has its member.
 
 ## 4. A case is shared to a rep, but opening it says "insufficient privileges"
 
@@ -166,8 +168,23 @@ Read the job's error file before changing anything; it names the cause.
 
 **Happened:** DEF-09, found 2026-10-24: the profile granted access to 74 Accord fields, so reps and sales reps could edit Account Status, which drives the collections sharing rule. Fixed 2026-10-25 (results doc).
 
+## 16. A rep can open an account that isn't in collections
+
+**Reported as:** "I can see customers who are current. Should I?"
+
+**Check**
+1. As admin, query what the user can actually reach: `UserRecordAccess` for the user and the account says whether they can read or edit it. A rep should edit accounts in collections and nothing else, and read a current account only if it has a billing dispute.
+2. Find where the access comes from: query the account's `AccountShare` rows. `Rule` is the status rule. `ImplicitParent` means the user can read a child record (an opportunity, case or contact), and Salesforce gives read on the parent account with it. No setting turns that off.
+3. Follow the child: which opportunity or case is shared with the user, and by which rule (`OpportunityShare`, `CaseShare`).
+
+**Fix:** narrow the rule that shares the child, not the account rule. In DEF-10, the closed-deal rule shared every deal with the whole collections team, so every rep could read every account. Reps now get deal access from the account rule, so it follows Account Status, and the closed-deal rule shares with dispute specialists only. Add the new access before removing the old, so nobody loses what they need in between.
+
+**Prevent:** before sharing a child object with a group, ask who that also opens the parent account to. Check one user's reach with `UserRecordAccess` after any sharing change, including the negative case: an account they shouldn't reach.
+
+**Happened:** DEF-10, found 2026-10-25: Test Persona, as a rep, could read all 100 accounts instead of the 34 in collections (results doc).
+
 ---
 
 ## Writing up a fix
 
-Every fix gets a line in `CHANGELOG.md` and, if it was a defect, a write-up with what was found, the cause, the effect, the fix and how it was verified (see DEF-01, DEF-08 and DEF-09 in the results doc). A change made in Setup is retrieved into `force-app/` the same day (`manifest/accord.xml`). A change with no record is how DEF-02 to DEF-06 were lost.
+Every fix gets a line in `CHANGELOG.md` and, if it was a defect, a write-up with what was found, the cause, the effect, the fix and how it was verified (see DEF-01 and DEF-08 to DEF-10 in the results doc). A change made in Setup is retrieved into `force-app/` the same day (`manifest/accord.xml`). A change with no record is how DEF-02 to DEF-06 were lost.
