@@ -2,6 +2,8 @@
 
 These are the checks the admin can't make, because they test what a role *can't* see or do. Each block runs as **Test Persona**, the one persona user, switched to a different role and permission set group between blocks. Write Pass or Fail next to each line, with anything that looked wrong, then hand it back to be folded into the results.
 
+**Before you start:** delete the old closed-deal sharing rule (DEF-10, step in `docs/open-items.md`). Until it's gone, every rep can still read every account, and step 3 fails.
+
 ## Switching Test Persona between personas
 
 Do this as yourself, before each block.
@@ -15,9 +17,9 @@ Do this as yourself, before each block.
 
 Test Persona is set up this way already.
 
-1. **UAT-01** Open any Delinquent account in Collections Console. The Collections section shows balance, days past due, bucket, priority score, broken promises and primary contact. Open one of its Lease Payments: Method and External Reference are **not** shown. ☐
-2. **DEF-09** On the same account, click **Edit**. Account Status, Broken Promises (90d) and Collection Hold Until are read-only; Do Not Contact and Primary Contact can be changed. Click **Cancel**. ☐
-3. **UAT-05 step 4** Global search for **Patrick Boone Household** (Delinquent): found. Then search for an account in the dashboard's *Current* bucket, such as **Regina Mundy Household**: **not found**. Reps reach accounts only through the sharing rule on Delinquent, Hardship Review and Default Review (D-08). ☐
+1. **UAT-01** In Collections Console, open a Delinquent account such as **Patrick Boone Household**. The Collections section shows the balances, days past due, bucket, priority score and broken promises, and Primary Contact is filled in above it. In **Billing Statements**, open a statement with a payment, then open the payment under **Lease Payments**: Method and External Reference are **not** shown. ☐
+2. **DEF-09** Back on the account, click **Edit**. Account Status, High Value and Collection Hold Until are read-only. The layout allows editing them, so this is field-level security at work. Do Not Contact and Primary Contact can be changed. Click **Cancel**. ☐
+3. **UAT-05 step 4 and DEF-10** Global search for **Patrick Boone Household** (Delinquent): found. Then search for **Regina Mundy Household** (Current, no disputes): **not found**. A rep reaches an account through its status (Delinquent, Hardship Review or Default Review, D-08), or read-only through a billing dispute on it. ☐
 4. **UAT-06** On a Delinquent account, click **Log Contact Attempt** and finish with no outcome: blocked. Then log **Requested No Further Contact**: the account shows Do Not Contact. Afterwards, as yourself, untick Do Not Contact on that account. ☐
 5. **UAT-12 negative** App Launcher → **Reports** → Collections → **Default Review Timeliness**: shows **0** cases, since reps can't see default reviews. ☐
 6. Reports open at all (Run Reports, granted 2026-10-14). ☐

@@ -1,6 +1,6 @@
 # Security Model — Accord
 
-Who can see what, why, and how it was verified. Updated for v1.0.2 (2026-10-25); the object and field tables were read from the org that day.
+Who can see what, why, and how it was verified. Updated for v1.0.3 (2026-10-25); the object and field tables and the sharing rules were read from the org that day.
 
 The guiding rule is least privilege: nobody gets access because it's convenient, and every grant traces to something a persona actually has to do in a user story.
 
@@ -61,7 +61,7 @@ Since Steward (2026-10-23), the three collections groups also hold Steward's rep
 |---|---|---|
 | Account | Private | Financial and delinquency data. Access is granted deliberately, not inherited from everyone. |
 | Contact | Controlled by Parent | A contact is only as visible as the account it belongs to. |
-| Opportunity | Private | Sales data, with collections granted narrow read through a sharing rule. |
+| Opportunity | Private | Sales data. Collections reads deals only through sharing rules: reps on accounts in collections, specialists on every closed deal. |
 | Case | Private | Disputes name individual reps and carry payment detail. Private is what makes the expiring case team access in US-08 meaningful — without it, everyone sees every dispute anyway. |
 | Service Contract | Private | Agreement terms. |
 | Lead | Private | Owned by the assigned rep. |
@@ -96,13 +96,20 @@ The hard problem in this org: **sales owns the account, but collections has to w
 
 | Rule | Shares | With | Access | Why |
 |---|---|---|---|---|
-| `Delinquent_Accounts_to_Collections` | Accounts where Account Status is Delinquent, Hardship Review, or Default Review | Public group Collections Team | Read/Write | Collections works accounts it doesn't own, and only once they're delinquent. A current account stays out of reach. |
-| `Closed_Won_to_Collections` | Opportunities where Stage equals Closed Won | Public group Collections Team | Read Only | Commitments are master-detail children of Opportunity, so without this a dispute specialist literally cannot see what was promised at signing. |
+| `Delinquent_Accounts_to_Collections` | Accounts where Account Status is Delinquent, Hardship Review, or Default Review | Public group Collections Team | Read/Write on the account, Read on its opportunities | Collections works accounts it doesn't own, and only once they're delinquent. The deal access shows reps the commitments on those accounts, and goes when the account leaves collections (DEF-10). |
+| `Closed_Won_to_Dispute_Specialists` | Opportunities where Stage equals Closed Won | Dispute Specialist role (supervisors through the hierarchy) | Read Only | Commitments are master-detail children of Opportunity, so without this a dispute specialist can't see what was promised at signing when a current customer disputes a bill. |
 | `Billing_Disputes_to_Collections` | Cases with the Billing Dispute record type | Collections Rep role | Read Only | Reps need to know a dispute is open before calling. Editing stays with the specialist who owns it. Supervisors already see disputes through the hierarchy. |
+| `Closed_Won_to_Collections` | Opportunities where Stage equals Closed Won | Public group Collections Team | Read Only | **Being deleted (DEF-10).** It gave every rep read on every account (below). Until it's deleted in Setup, it still does. |
 
-**Public groups:** `Collections_Team` is the Collections Supervisor role and its subordinates (supervisors, reps, specialists). `Sales_Team` is the sales chain. Default Review cases aren't shared: they belong to the Default Reviews queue, whose member is the Collections Supervisor role. Billing disputes route to the Dispute Specialists queue (the Dispute Specialist role).
+**Public groups:** `Collections_Team` is the Collections Supervisor role and its subordinates (supervisors, reps, specialists). It had no members from Phase 4 until Oct 14, 8:46 PM CT, so until then the rules that share with it reached nobody (DEF-10). `Sales_Team` is the sales chain. Default Review cases aren't shared: they belong to the Default Reviews queue, whose member is the Collections Supervisor role. Billing disputes route to the Dispute Specialists queue (the Dispute Specialist role).
 
-The Closed Won rule is worth pausing on. Master-detail inheritance means a relationship decision made in Phase 3 created a security requirement in Phase 4. If commitments had been a lookup instead, they'd need their own sharing — and the validation rule in US-02 wouldn't work. The trade-off runs in both directions.
+The closed-deal rule is worth pausing on. Master-detail inheritance means a relationship decision made in Phase 3 created a security requirement in Phase 4. If commitments had been a lookup instead, they'd need their own sharing — and the validation rule in US-02 wouldn't work. The trade-off runs in both directions.
+
+**Implicit sharing reaches the account.** Anyone who can read an opportunity, a case or a contact can read its account. Salesforce does this on its own, and no setting turns it off. As first built, the closed-deal rule shared every deal with the whole Collections Team, so every rep could read every customer account, including all the current ones D-08 keeps out of reach (DEF-10). Reps now get deal access through the account rule, so it follows Account Status. Two implicit paths remain on purpose:
+- Dispute specialists, and supervisors through the hierarchy, read every customer account, through the closed deals. Any customer can dispute a bill.
+- Reps read an account that has a billing dispute, read-only, through the case rule. Six current accounts had one on 2026-10-25. Narrowing that would mean copying the account's status onto every case.
+
+To check one user and one record, query `UserRecordAccess`. To see why the access exists, query the account's `AccountShare` rows: a row cause of `ImplicitParent` means it came from a child record.
 
 **Object access has to exist before sharing does anything.** The case rule created Read shares from day one, but reps still couldn't open a dispute because `PS_Collections_Core` had no Read on Case. Sharing decides *which* records; object permissions decide *whether* the object is reachable at all.
 
@@ -164,7 +171,7 @@ US-08 needs a sales rep to answer questions on a dispute naming their deal, then
 - *Criteria-based sharing rules* can't be revoked per record — a rule broad enough to grant access would grant it to every matching case, permanently.
 - *Manual sharing* would work but relies on someone remembering to remove it, which is how orgs accumulate access nobody can explain.
 
-**Open question:** US-08 also says the sales rep adds comments. Whether a team member with Read can add a case comment hasn't been confirmed in the console yet (`docs/persona-checks.md`, step 7).
+**Open question:** US-08 also says the sales rep adds comments. Whether a team member with Read can add a case comment hasn't been confirmed in the console yet (`docs/persona-checks.md`, step 8).
 
 ---
 
@@ -217,7 +224,7 @@ Naming the control you *didn't* implement, and what covers for it, is worth more
 
 Developer Edition provides very few full Salesforce licenses, so four persona users aren't possible. One test user, Test Persona, stands in for each persona in turn.
 
-1. **Through the API, as the admin:** object and field access read per persona from each group's own permissions, and per user through `UserFieldAccess`. This is fast and exact, and it's how DEF-09 was found and its fix counted field by field.
+1. **Through the API, as the admin:** object and field access read per persona from each group's own permissions, and per user through `UserFieldAccess`. This is fast and exact, and it's how DEF-09 was found and its fix counted field by field. Record reach is checked the same way, per user and record, through `UserRecordAccess`; that's how DEF-10 was found.
 2. **In the console, as the persona:** Setup → Users → Test Persona → **Login**, with the group switched between rounds. This is the only test of what the persona actually sees. It's how DEF-08 was found: every API check had run as the admin, who can run any flow, so a missing action never showed.
 3. **The negative test is the one that matters.** Confirming a dispute specialist can open a case proves little; confirming a sales rep hits an insufficient-privileges error opening someone else's dispute proves the model works. The Phase 6 negative test did exactly that for US-08 and US-18.
 
@@ -229,13 +236,13 @@ Results: `docs/system-test-results-2026-10-14.md`. The console checks still to r
 
 ## Access matrix
 
-C = Create · R = Read · U = Update · D = Delete. Read from each group's permissions in the org on 2026-10-25. No persona can delete any of these records.
+C = Create · R = Read · U = Update · D = Delete. Read from each group's permissions in the org on 2026-10-25. No persona can delete any of these records. Which records each persona reaches comes from sharing: reps edit accounts in collections and read accounts with a billing dispute; specialists and supervisors also read every customer account through the closed deals.
 
 | Object | Collections Rep | Dispute Specialist | Supervisor | Sales Rep |
 |---|---|---|---|---|
 | Account | R U | R U | R U | C R U |
 | Contact | R U | R U | R U | C R U |
-| Opportunity | R (Closed Won) | R (Closed Won) | R (Closed Won) | C R U (own) |
+| Opportunity | R (accounts in collections) | R (Closed Won) | R (Closed Won) | C R U (own) |
 | Commitment | R | R | R | C R U |
 | Service Contract | R | R | R | R |
 | Billing Statement | R | R | R | — |

@@ -41,7 +41,7 @@ Ten phases, each closed with a changelog and an open-items review before the nex
 
 **Disputes are Cases, not a custom object (D-03).** That choice bought entitlements, milestones, queues, assignment rules, case teams and the console for free. The dispute SLA — acknowledge in 1 business day, evidence in 3, resolve in 10 — runs on business hours and skips weekends without a line of code.
 
-**Collections reaches accounts through a sharing rule on Account Status, not ownership (D-08).** It means status is a security control. The Phase 5 baseline found three accounts that were 45 days past due but still marked Current. That isn't a data hygiene issue — those accounts were invisible to the reps who should have been calling them. The nightly status flow fixed them, and the test proved it: the first account processed became visible to a rep immediately; the second stayed hidden until its turn.
+**Collections reaches accounts through a sharing rule on Account Status, not ownership (D-08).** It means status is a security control. The Phase 5 baseline found three accounts that were 45 days past due but still marked Current. That isn't a data hygiene issue: by design, those accounts were out of reach of the reps who should have been calling them. The nightly status flow fixed them. Proving that reps reach exactly the right accounts turned out to be harder than building the rule (below, *A test can pass for the wrong reason*).
 
 **Minimum Access plus permission set groups, no custom profiles (D-07).** Four personas, each a group of small permission sets. For objects it held from the start, with one documented exception: a profile is the only place a default record type can live, and lead conversion needs one. For fields it didn't hold until v1.0.2 (below).
 
@@ -59,6 +59,8 @@ Ten phases, each closed with a changelog and an open-items review before the nex
 
 **An admin login hides access bugs.** Ten days after release, my next project, Steward, used the console as a collections rep for the first time, and the Log Contact Attempt button wasn't there. It runs a screen flow, and a user needs the Run Flows permission or access to that one flow; no rep had either. Every earlier test had run as the admin, who can run anything (DEF-08). The fix grants that one flow to the collections permission set instead of Run Flows, which would have opened every future flow too. Checking that fix turned up a bigger one: Setup's new-field wizard makes a field visible to every profile unless the boxes are cleared, so the "empty" Minimum Access profile was granting 74 of Accord's fields, and reps could edit the Account Status that decides who can see an account (DEF-09). Each persona's fields moved into its permission sets, and supervisor overrides into a set of their own. Both are written up with the checks that prove the fix: [`system-test-results-2026-10-14.md`](system-test-results-2026-10-14.md).
 
+**A test can pass for the wrong reason.** In Phase 7 I checked that a rep could read an account the moment the status flow moved it into collections, and could. Two weeks later, a record-by-record check of what Test Persona could reach told a different story. That account had a billing dispute, which reps can see, and the dispute brought the account with it. The group the status rule shares with had no members until Oct 14, so the rule had reached nobody. Once it did, the rule sharing closed deals with the same group, so reps could see commitments, let every rep read every customer account, because read access to a deal gives read access to its account (DEF-10). Reps now get deal access through the status rule, and the closed-deal rule goes to dispute specialists only. A check that confirms the access you expect can't tell you why it's there. Asking which path granted it, and rerunning the negative case after every sharing change, would have caught both problems.
+
 **Source control drifted from the org.** A Phase 6 commit deleted most of the repository's metadata, and nobody noticed for two weeks because the org itself was fine. Everything Accord owns was retrieved again from the org with one manifest (`manifest/accord.xml`), and usernames in that metadata were replaced with placeholders before it went into the repository.
 
 ## Results
@@ -66,7 +68,7 @@ Ten phases, each closed with a changelog and an open-items review before the nex
 | Measure | Before | After |
 |---|---|---|
 | Duplicate contact pairs | 7 | 0 |
-| Accounts invisible to collections | 3 | 0, kept at 0 nightly |
+| Past-due accounts still marked Current, out of collections' reach | 3 | 0, kept at 0 nightly |
 | Residential accounts with no one to contact | 88 | 0, enforced by rule |
 | Statement date errors | 2 | 0, enforced by rule |
 | Security Health Check | 66% | 96% |

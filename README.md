@@ -26,7 +26,7 @@ Declarative only — flows, validation rules, approvals, sharing, entitlements a
 | Area | Built |
 |---|---|
 | Data model | Commitment, Billing Statement, Payment, Promise to Pay, Adjustment; Policy Setting and Dispute Evidence Requirement custom metadata |
-| Security | Minimum Access profile with no Accord access of its own; 7 permission sets in 4 permission set groups (Collections Rep, Collections Supervisor, Dispute Specialist, Sales Rep); criteria-based sharing on Account Status; case teams for sales input |
+| Security | Minimum Access profile with no Accord access of its own; 7 permission sets in 4 permission set groups (Collections Rep, Collections Supervisor, Dispute Specialist, Sales Rep); criteria-based sharing on Account Status, which also brings the account's deals and commitments; closed deals shared with dispute specialists; case teams for sales input |
 | Service | Billing Dispute and Default Review case record types, two queues, assignment rules, a 3-milestone entitlement process on business hours, warning and breach alerts, Collections Console app |
 | Automation | 13 flows (record-triggered, scheduled and one screen flow), credit approval process, 12 validation rules |
 | Sales | Web-to-lead form, lead routing to a queue, duplicate alert against existing customers, concession-to-commitment enforcement at Closed Won |
@@ -40,14 +40,14 @@ Personas, stories and the components that implement each one: [`docs/requirement
 2. Pick a story in [`requirements.md`](docs/requirements.md) and follow its traceability row to the flow or rule in `force-app/`.
 3. Read a changelog entry to see how a phase actually went, including what broke: `CHANGELOG.md`.
 4. Read the [root cause analysis](docs/rca-balance-formula.md) for the defect that made every balance $0.
-5. Read the [system test results](docs/system-test-results-2026-10-14.md): what passed, the defects found (DEF-01, DEF-07, DEF-08, DEF-09) and what's still to run.
+5. Read the [system test results](docs/system-test-results-2026-10-14.md): what passed, the defects found (DEF-01 and DEF-07 to DEF-10) and what's still to run.
 6. Read the [support runbook](docs/support-runbook.md): how to work the problems users report, each one taken from something that happened in this org.
 
 Field and rule descriptions reference user stories (`US-xx`) and decisions (`D-xx`). Both are in `/docs`, so any component can be traced back to why it exists.
 
 ## Source and the org
 
-`force-app/` was retrieved from the org on 2026-10-24 with [`manifest/accord.xml`](manifest/accord.xml). Accord was built in Setup, through the API and by CLI deploys from source, and has no CI pipeline, so the retrieve is what keeps this folder matching the org.
+`force-app/` was retrieved from the org on 2026-10-24 with [`manifest/accord.xml`](manifest/accord.xml). Fixes since then were written to match the org and checked against what the org returns (`CHANGELOG.md`). Accord was built in Setup, through the API and by CLI deploys from source, and has no CI pipeline, so the retrieve is what keeps this folder matching the org.
 
 - **Placeholders:** nine files name an org user (the approval process, two dashboards, four folders and the assignment rules), so they carry `example.com` placeholders instead. Put a real username back before deploying one of them. `scripts/check_personal_details.sh force-app` keeps real addresses out of the repository.
 - **Steward:** [Steward](https://github.com/zana-yocum/Lumenfield-steward), the second project, builds on this org. Since 2026-10-23 it maintains the Residential Agreement and Billing Dispute layouts and the Collections Rep, Collections Supervisor and Dispute Specialist permission set groups in its own repository and deploys them through its pipeline. The copies here are snapshots. Every change Steward makes to an Accord component is listed in this repository's `CHANGELOG.md`.

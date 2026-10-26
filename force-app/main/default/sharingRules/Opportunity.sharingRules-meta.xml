@@ -15,4 +15,19 @@
         </criteriaItems>
         <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>
     </sharingCriteriaRules>
+    <sharingCriteriaRules>
+        <fullName>Closed_Won_to_Dispute_Specialists</fullName>
+        <accessLevel>Read</accessLevel>
+        <description>Dispute specialists check what was promised at signing on any customer&apos;s dispute, and commitments are master-detail children of Opportunity. Read-only, closed deals only; supervisors get it through the role hierarchy. Collections reps read deals only on accounts in collections, through the account rule. D-02, US-07, DEF-10.</description>
+        <label>Closed Won to Dispute Specialists</label>
+        <sharedTo>
+            <role>DisputeSpecialist</role>
+        </sharedTo>
+        <criteriaItems>
+            <field>StageName</field>
+            <operation>equals</operation>
+            <value>Closed Won</value>
+        </criteriaItems>
+        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>
+    </sharingCriteriaRules>
 </SharingRules>
