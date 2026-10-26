@@ -12,7 +12,7 @@ Checking the persona checks' expected results against the org, record by record,
   2. New `Closed_Won_to_Dispute_Specialists`: closed deals, read-only, to the Dispute Specialist role. Supervisors get it through the role hierarchy.
   3. `Closed_Won_to_Collections` is deleted in Setup, because the API used here can't delete a sharing rule. **Pending**: until then, reps can still read every account.
 
-  Steps 1 and 2 were applied through the Metadata API at 8:45 and 8:46 PM CT, read back from the org and recalculated. Nobody lost access in between. Expected once step 3 is done: Test Persona reads 40 accounts (the 34 in collections, plus 6 current accounts with a billing dispute) and edits 34.
+  Steps 1 and 2 were applied through the Metadata API at 8:45 and 8:46 PM CT, read back from the org and recalculated. Nobody lost access in between. The org's 159 Apex tests, all Steward's, passed against the changed sharing. Expected once step 3 is done: Test Persona reads 40 accounts (the 34 in collections, plus 6 current accounts with a billing dispute) and edits 34.
 
 ### Corrections
 - **The Phase 7 proof of D-08 (v0.6) didn't prove it.** Test Persona could read ACC-0001 right after its status changed because billing dispute 00001038 is on that account, and the case rule shares disputes with reps. The Collections Team group had no members until Oct 14, 8:46 PM CT, so until then the status rule reached nobody. After that, the closed-deal rule hid whether it worked.
