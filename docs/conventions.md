@@ -78,7 +78,7 @@ Never commit credentials, security tokens, `.env` files, or org auth URLs.
 
 ## Screenshots
 
-`media/screenshots/phase04-permission-set-group-collections-rep.png`
+`media/screenshots/phase04-permission-set-group-supervisor.png`
 
 - Prefix with the phase so the folder sorts in build order.
 - Crop to the panel that matters. No full desktop, no browser chrome, no taskbar.

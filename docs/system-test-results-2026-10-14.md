@@ -234,7 +234,7 @@ Payment Method and External Reference had been removed from the profile on Oct 1
 | Sales Rep | 29 | 12 |
 
 - Test Persona (Collections Rep), field by field through `UserFieldAccess`: every collections field on the account readable, with Account Status, Broken Promises (90d) and Collection Hold Until now read-only; Do Not Contact and Primary Contact editable; statement and commitment fields read-only; a promise's statement editable; adjustments and every Legacy Id unreadable; a case's description still unreadable, as designed.
-- Steward's rep assistant reads many of these fields as the user. Test Persona still reads every field its templates read (Steward's `docs/agent-governance.md`), and Steward's full test suite ran against the changed org in its pull request #13 validation (`0Afaj00000p4HeQCAU`): 159 of 159 tests passed.
+- Steward's rep assistant reads many of these fields as the user. Test Persona still reads every field its templates read ([Steward's agent governance doc](https://github.com/zana-yocum/Lumenfield-steward/blob/main/docs/agent-governance.md)), and Steward's full test suite ran against the changed org in its pull request #13 validation (`0Afaj00000p4HeQCAU`): 159 of 159 tests passed.
 
 ---
 
