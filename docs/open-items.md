@@ -34,6 +34,8 @@ Steward's Phase 5 hand check found that collections personas couldn't see **Log 
   - Steward's portal screenshots moved to Steward.
   - README counts corrected.
 - ☑ **DEF-07's Commitments related list** is on the Residential Agreement layout: Steward's pull request #13, deployed 2026-10-25 (`0Afaj00000p7b8jCAA`) and checked in the org. The same deploy put `PS_Collections_Overrides` in the supervisor group's source.
+- ☑ **Collection Hold Until editable on the Residential Agreement layout** (Steward #14, `0Afaj00000p7cPlCAI`), so a supervisor's override works from the record page. Checked in the org: the layout field is Edit; field-level security keeps it read-only for the rep and specialist groups and hidden from sales reps; Test Persona still reads it as read-only.
+- ☑ This repository's copies of the two Steward-owned layouts and three groups refreshed to match Steward's source (2026-10-25)
 - ☑ **Security model rewritten as built** (2026-10-25): object and field tables read from the org, the Phase 6–10 additions folded in, and the drifted claims corrected (case sharing goes to the Collections Rep role; no deletes on promises or cases; specialists don't see Default Reviews; a specialist, not a flow, adds sales input to a case team)
 - ☑ `Mute_Rep_Promise_Delete` restored to source from v0.4, matching the org
 - ☑ `Collection_Hold_Until__c`'s description, which repeated `Do_Not_Contact__c`'s, rewritten in the org and in source
