@@ -181,7 +181,7 @@ Read the job's error file before changing anything; it names the cause.
 
 **Prevent:** before sharing a child object with a group, ask who that also opens the parent account to. Check one user's reach with `UserRecordAccess` after any sharing change, including the negative case: an account they shouldn't reach.
 
-**Happened:** DEF-10, found 2026-10-25: Test Persona, as a rep, could read all 100 accounts instead of the 34 in collections (results doc).
+**Happened:** DEF-10, found 2026-10-25: Test Persona, as a rep, could read all 100 accounts instead of the 34 in collections. Fixed 2026-10-26: it reads 40, the 34 in collections and 6 current accounts with a billing dispute (results doc).
 
 ---
 

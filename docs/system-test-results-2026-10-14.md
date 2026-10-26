@@ -237,7 +237,7 @@ Payment Method and External Reference had been removed from the profile on Oct 1
 - Steward's rep assistant reads many of these fields as the user. Test Persona still reads every field its templates read ([Steward's agent governance doc](https://github.com/zana-yocum/Lumenfield-steward/blob/main/docs/agent-governance.md)), and Steward's full test suite ran against the changed org in its pull request #13 validation (`0Afaj00000p4HeQCAU`): 159 of 159 tests passed.
 
 
-### DEF-10 — Collections reps could read every customer account · High · **Fix in progress 2026-10-25: two of three steps done**
+### DEF-10 — Collections reps could read every customer account · High · **Fixed 2026-10-26**
 **Found:** 2026-10-25, while checking the persona checks' expected results against the org before handing them over. UAT-05 step 4 expects a rep not to find an account in the *Current* bucket. `UserRecordAccess` said Test Persona (Collections Rep) could read Regina Mundy Household, which is Current and has no cases. Across all 100 accounts, Test Persona could read 100 and edit 34. The 34 are exactly the accounts in Delinquent, Hardship Review or Default Review.
 
 **Cause:** `Closed_Won_to_Collections` shared every Closed Won opportunity, read-only, with the Collections Team group, so collections could see commitments, which are master-detail children of the deal. Salesforce gives anyone who can read an opportunity, case or contact read access to its account (implicit sharing), and no setting turns that off. Every account has a closed deal, so every member of Collections Team could read every account. `AccountShare` shows it: an `ImplicitParent` row for Collections Team on each account, created when the deals were loaded on Sep 30.
@@ -252,11 +252,22 @@ Payment Method and External Reference had been removed from the profile on Oct 1
 **Fix, in an order that never took away access a persona needed:**
 1. **Done.** `Delinquent_Accounts_to_Collections` also grants read on the account's opportunities (Opportunity Access: Read Only). A rep sees the deal, and its commitments, on every account in collections, and loses them when the account leaves. Applied through the Metadata API at 8:45 PM CT; recalculation finished a few seconds later.
 2. **Done.** New rule `Closed_Won_to_Dispute_Specialists`: closed deals, read-only, to the Dispute Specialist role. Supervisors get it through the role hierarchy. Specialists still need it for a dispute on an account that isn't in collections. Applied the same way at 8:46 PM CT.
-3. **Pending:** delete `Closed_Won_to_Collections`. The metadata API Claude uses can't delete a sharing rule, so this is a Setup step (open items). Until it's done, reps can still read every account.
+3. **Done 2026-10-26.** `Closed_Won_to_Collections` deleted. The metadata API Claude uses can't delete a sharing rule, so Zana deleted it in Setup at 1:47 PM CT; recalculation finished seven seconds later.
 
-**Verified so far (2026-10-25):** both rules read back from the org as written. `AccountShare` for Patrick Boone Household and Sandra Barnett Household shows Opportunity Access Read for Collections Team. `OpportunityShare` shows all 100 closed deals shared with the Dispute Specialist role. The org's 159 Apex tests, all Steward's, ran against the changed sharing: 159 passed (test run `05maj000001ZBRRAA4`).
+**Verified after steps 1 and 2 (2026-10-25):** both rules read back from the org as written. `AccountShare` for Patrick Boone Household and Sandra Barnett Household shows Opportunity Access Read for Collections Team. `OpportunityShare` shows all 100 closed deals shared with the Dispute Specialist role. The org's 159 Apex tests, all Steward's, ran against the changed sharing: 159 passed (test run `05maj000001ZBRRAA4`).
 
-**Expected after step 3:** Test Persona reads 40 accounts and edits 34: the 34 in collections, plus the 6 Current accounts with a billing dispute, which the dispute brings along, read-only. It can't read Regina Mundy Household. Reps keep the deals and commitments on accounts in collections.
+**Verified after step 3 (2026-10-26), for Test Persona through `UserRecordAccess`:**
+
+| What | Before (2026-10-25) | After (2026-10-26) |
+|---|---|---|
+| Accounts it can read | 100 | 40: the 34 in collections, and the 6 current accounts with a billing dispute |
+| Accounts it can edit | 34 | 34, the accounts in collections |
+| Regina Mundy Household (Current, no disputes), its contact and its deal | Readable | Not readable, nor its statements |
+| Sandra Barnett Household (Delinquent): its contact, a statement and its deal | — | Readable; the contact editable |
+| Commitments COM-00001 and COM-00002, on delinquent accounts | — | Readable |
+| Commitments COM-00007 and COM-00004, on current accounts | — | Not readable |
+
+The six read-only accounts are exactly the current accounts with a billing dispute: 00001030, 00001031, 00001037, 00001041, 00001049 and 00001053. In the share tables, Collections Team now holds 34 account shares, all from the status rule, and no implicit ones. Closed deals are shared only with the Dispute Specialist role: 100 of them. The old rule no longer exists in the org. The 159 Apex tests ran again after the deletion, and all 159 passed (test job `707aj00001O2HPx`).
 
 **Accepted:** a billing dispute on a current account is visible to reps, and so is that account, read-only. Reps need to see disputes, and narrowing it would mean copying the account's status onto every case. Six accounts today.
 
@@ -266,7 +277,7 @@ Payment Method and External Reference had been removed from the profile on Oct 1
 
 | Script | Who / when | What to check |
 |---|---|---|
-| 01, 05 step 4, 06, 08, 12 negative, 13 criterion 3, 18, and DEF-09 in the console | You, as Test Persona (about 20 min, `docs/persona-checks.md`), after deleting the old closed-deal rule (DEF-10) | What each persona can and can't see; case comment as a Sales Input team member. UAT-06 is now possible (DEF-08) |
+| 01, 05 step 4, 06, 08, 12 negative, 13 criterion 3, 18, and DEF-09 and DEF-10 in the console | You, as Test Persona (about 20 min, `docs/persona-checks.md`) | What each persona can and can't see; case comment as a Sales Input team member. UAT-06 is now possible (DEF-08) |
 | 14, email part | You, in the supervisor's inbox | "Dispute Milestone Violation" for 00001049 around Oct 15, 5 PM CT and Oct 19, 5 PM CT. Then delete 00001049 |
 | 04 step 2, 15 step 4, 20 | When data allows | A promise kept on a scheduled run; a review cured by payment; the reminder 7 days before a first due date (the Oct 14 test contract was deleted before Oct 21, so its reminder never ran) |
 | All | 3–5 outside testers | Actual UAT |

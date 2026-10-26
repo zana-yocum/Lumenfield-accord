@@ -2,8 +2,6 @@
 
 These are the checks the admin can't make, because they test what a role *can't* see or do. Each block runs as **Test Persona**, the one persona user, switched to a different role and permission set group between blocks. Write Pass or Fail next to each line, with anything that looked wrong, then hand it back to be folded into the results.
 
-**Before you start:** delete the old closed-deal sharing rule (DEF-10, step in `docs/open-items.md`). Until it's gone, every rep can still read every account, and step 3 fails.
-
 ## Switching Test Persona between personas
 
 Do this as yourself, before each block.
