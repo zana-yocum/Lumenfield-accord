@@ -15,12 +15,12 @@ Steward's Phase 5 hand check found that collections personas couldn't see **Log 
 - ☑ 2. **Public (2026-10-25).** The portfolio's Accord links work once v1.0.2 is merged into `main`
 - ☐ **Your copy on your computer is out of date** since the rewrite: its commits no longer match GitHub's. In File Explorer, rename `C:\Lumenfield-accord` to `C:\Lumenfield-accord-old`. In GitHub Desktop: **File** → **Clone repository** → `zana-yocum/Lumenfield-accord` → local path `C:\Lumenfield-accord`. Copy back anything you made that isn't in the new copy (for example files in `data\regen`), then delete the old folder
 - ☑ **Old closed-deal sharing rule deleted (DEF-10), 2026-10-26, 1:47 PM CT**, in Setup. Claude measured the result: Test Persona reads 40 accounts instead of 100
-- ☐ 3. **Persona checks:** `docs/persona-checks.md`, about 20 minutes as Test Persona, with step-by-step switching between personas. UAT-06 is possible now that DEF-08 is fixed, and step 2 checks DEF-09 in the console. Steward's hand check covers Log Contact Attempt for the Collections Rep.
+- ☐ 3. **Persona checks:** `docs/persona-checks.md`, about 20 minutes as Test Persona, with step-by-step switching between personas. UAT-06 is possible now that DEF-08 is fixed, and step 2 checks DEF-09 in the console. Steward's hand check already confirmed the Log Contact Attempt button for the Collections Rep (2026-10-26).
 - ☐ 4. **UAT-14 email:** search the supervisor's inbox (yours) for **Dispute Milestone Violation**, around Oct 15, 5 PM CT and Oct 19, 5 PM CT, and tell Claude what's there. Then dispute 00001049 can be deleted.
 - ☐ 5. If `docs/release-readiness-winter27.md` is still on your computer, add it to `docs/`. It was never committed, so the README no longer lists it.
 
 **Mine (2026-10-24 to 26)**
-- ☑ **DEF-08 fixed in the org:** `Account_Screen_LogContactAttempt` version 3 restricts access to enabled permission sets, and `PS_Collections_Core` grants it. Verified through the API on the three collections groups; Sales Rep excluded. Waiting on the console check.
+- ☑ **DEF-08 fixed in the org:** `Account_Screen_LogContactAttempt` version 3 restricts access to enabled permission sets, and `PS_Collections_Core` grants it. Verified through the API on the three collections groups; Sales Rep excluded. Confirmed in the console on 2026-10-26: Steward's hand check logged a contact attempt as Test Persona.
 - ☑ **Scheduled results:**
   - UAT-04 step 3 passed: six promises were broken on schedule.
   - UAT-14 passed on the org side.
