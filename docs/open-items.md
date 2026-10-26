@@ -14,7 +14,7 @@ Steward's Phase 5 hand check found that collections personas couldn't see **Log 
 - ☑ 1. **History (2026-10-25): rewritten**, your choice (b). Every commit now carries the placeholder instead of the org username, and GitHub's noreply address instead of your personal email; all 26 commits and their messages kept. `main` and `release/v1.0.2` replaced on GitHub. Optional: GitHub keeps the old commits reachable by their IDs until it cleans up. To have them removed sooner, open a ticket at support.github.com → **Removing sensitive data**, naming `zana-yocum/Lumenfield-accord`. Nobody has those IDs (no forks or pull requests), so this is low priority
 - ☑ 2. **Public (2026-10-25).** The portfolio's Accord links work once v1.0.2 is merged into `main`
 - ☐ **Your copy on your computer is out of date** since the rewrite: its commits no longer match GitHub's. In File Explorer, rename `C:\Lumenfield-accord` to `C:\Lumenfield-accord-old`. In GitHub Desktop: **File** → **Clone repository** → `zana-yocum/Lumenfield-accord` → local path `C:\Lumenfield-accord`. Copy back anything you made that isn't in the new copy (for example files in `data\regen`), then delete the old folder
-- ☐ 3. **Persona checks:** `docs/persona-checks.md`, about 15 minutes as Test Persona. UAT-06 is possible now that DEF-08 is fixed. Steward's hand check covers Log Contact Attempt for the Collections Rep.
+- ☐ 3. **Persona checks:** `docs/persona-checks.md`, about 20 minutes as Test Persona, with step-by-step switching between personas. UAT-06 is possible now that DEF-08 is fixed, and step 2 checks DEF-09 in the console. Steward's hand check covers Log Contact Attempt for the Collections Rep.
 - ☐ 4. **UAT-14 email:** search the supervisor's inbox (yours) for **Dispute Milestone Violation**, around Oct 15, 5 PM CT and Oct 19, 5 PM CT, and tell Claude what's there. Then dispute 00001049 can be deleted.
 - ☐ 5. If `docs/release-readiness-winter27.md` is still on your computer, add it to `docs/`. It was never committed, so the README no longer lists it.
 
@@ -34,6 +34,8 @@ Steward's Phase 5 hand check found that collections personas couldn't see **Log 
   - Steward's portal screenshots moved to Steward.
   - README counts corrected.
 - ☑ **DEF-07's Commitments related list** is on the Residential Agreement layout: Steward's pull request #13, deployed 2026-10-25 (`0Afaj00000p7b8jCAA`) and checked in the org. The same deploy put `PS_Collections_Overrides` in the supervisor group's source.
+- ☑ **Collection Hold Until editable on the Residential Agreement layout** (Steward #14, `0Afaj00000p7cPlCAI`), so a supervisor's override works from the record page. Checked in the org: the layout field is Edit; field-level security keeps it read-only for the rep and specialist groups and hidden from sales reps; Test Persona still reads it as read-only.
+- ☑ This repository's copies of the two Steward-owned layouts and three groups refreshed to match Steward's source (2026-10-25)
 - ☑ **Security model rewritten as built** (2026-10-25): object and field tables read from the org, the Phase 6–10 additions folded in, and the drifted claims corrected (case sharing goes to the Collections Rep role; no deletes on promises or cases; specialists don't see Default Reviews; a specialist, not a flow, adds sales input to a case team)
 - ☑ `Mute_Rep_Promise_Delete` restored to source from v0.4, matching the org
 - ☑ `Collection_Hold_Until__c`'s description, which repeated `Do_Not_Contact__c`'s, rewritten in the org and in source
@@ -106,7 +108,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☑ **Org verification via the Salesforce connector (2026-10-03)** caught three items marked done that weren't: the `.cm` typo and both placeholder emails were never fixed (one placeholder had been changed to `.cm`, which is why the duplicate chart looked clean), and the Sample Account for Entitlements was still present. Also found and removed 17 sample products, 10 sample solutions, and a sample price book. All fixed and re-verified.
 - ☑ 4 sample campaigns (2001–2002) deleted. The first attempt failed with insufficient access: deleting campaigns requires the **Marketing User** checkbox on the user record, which was then enabled.
 - ☑ Four validation rule error messages reworded to name the fix (2026-10-14, through the Tooling API)
-- ☐ Remaining Phase 5 screenshots if not yet taken: `phase05-duplicate-rule-config.png`, `phase05-duplicate-alert-in-action.png`, `phase05-data-loader-success.png`
+- ☐ Remaining Phase 5 screenshots, optional: `phase05-duplicate-rule-config.png`, `phase05-data-loader-success.png`. (`phase05-duplicate-alert-in-action.png` is in the repository; every screenshot is captioned in `media/screenshots/README.md`)
 - ☑ `data-plan.md` after numbers added — every target met (2026-10-14)
 
 ### Phase 6 — service ☑ closed 2026-10-08

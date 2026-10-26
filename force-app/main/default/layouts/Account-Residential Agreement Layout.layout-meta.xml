@@ -45,7 +45,7 @@
                 <field>High_Value__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Readonly</behavior>
+                <behavior>Edit</behavior>
                 <field>Collection_Hold_Until__c</field>
             </layoutItems>
         </layoutColumns>
@@ -136,8 +136,6 @@
         <detailHeading>false</detailHeading>
         <editHeading>false</editHeading>
         <layoutColumns/>
-        <layoutColumns/>
-        <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>
@@ -196,6 +194,13 @@
     <relatedLists>
         <fields>NAME</fields>
         <relatedList>Adjustment__c.Account__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>Type__c</fields>
+        <fields>Value__c</fields>
+        <fields>Status__c</fields>
+        <relatedList>Commitment__c.Account__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>TASK.SUBJECT</fields>

@@ -184,7 +184,9 @@ One record per threshold from the requirements policy table.
 | Text Value | `Text_Value__c` | Text (255) |
 | Notes | `Notes__c` | Text (255) |
 
-Records: `Promise_Window_Days` (30) · `Promise_Grace_Days` (2) · `Contact_Attempt_Threshold` (3) · `Rep_Credit_Limit` (100) · `Supervisor_Credit_Limit` (500) · `Default_Threshold_DPD` (90) · `Default_Review_Window_Days` (3) · `Welcome_Offset_Days` (7) · `Pre_Due_Offset_Days` (7)
+Records: `Promise_Window_Days` (30) · `Promise_Grace_Days` (3) · `Contact_Attempt_Threshold` (3) · `Rep_Credit_Limit` (100) · `Supervisor_Credit_Limit` (500) · `Default_Threshold_DPD` (90) · `Default_Review_Window_Days` (3) · `Welcome_Offset_Days` (7) · `Pre_Due_Offset_Days` (7). Values as in the org on 2026-10-25.
+
+Steward adds three records of its own, kept in Steward's repository: `Self_Service_Broken_Promise_Limit` (2) and `Self_Service_Min_Coverage_Pct` (100) for ST-04, and `Production_Guarantee_Pct` (90) for ST-14.
 
 ### `Dispute_Evidence_Requirement__mdt`
 

@@ -36,11 +36,13 @@ A Steward hand check found that collections personas couldn't log a contact atte
 - **Found:** `Collection_Hold_Until__c`'s description was a copy of `Do_Not_Contact__c`'s. Rewritten in the org 2026-10-24 (below).
 - **Ownership:** from this point, those two layouts and three groups are maintained in Steward's repository and deployed by its pipeline. The copies here are snapshots; change them through Steward, or Steward's next deploy undoes the change.
 
-### Changed by Steward (2026-10-25, pull request #13)
+### Changed by Steward (2026-10-25, pull requests #13 and #14)
 - **Residential Agreement account layout:** Commitments related list (type, value, status), finishing DEF-07.
 - **Collections Supervisor group:** `PS_Collections_Overrides` added (DEF-09). It was added in the org first; Steward's source now holds it, so later deploys keep it.
 - **The three collections groups' descriptions** no longer mention the Promise to Pay delete that OBS-01 removed, and the rep group's names the Log Contact Attempt flow.
-- Deployed by Steward's pipeline (`0Afaj00000p7b8jCAA`) and checked in the org.
+- **Collection Hold Until is editable on the Residential Agreement layout** (#14). The layout had it read-only, which overrode the edit access `PS_Collections_Overrides` gives supervisors. Field-level security still decides who can change it: supervisors can, reps and dispute specialists can only read it, and sales reps don't see it. Checked in the org after the deploy: Test Persona, in the rep group, still has it read-only.
+- Deployed by Steward's pipeline (#13 as `0Afaj00000p7b8jCAA`, #14 as `0Afaj00000p7cPlCAI`) and checked in the org.
+- **Snapshots refreshed:** this repository's copies of the two layouts and three groups now match Steward's source, so deploying Accord's manifest wouldn't undo these changes.
 
 ### Repository
 - **Metadata restored.** The Phase 6 commit (`6b523b5`, 2026-10-07) deleted 655 files from `force-app`. Among them were every custom object, Accord's custom fields on standard objects, five permission sets, the permission set groups, the custom metadata records, the global value sets, the Account and Opportunity sharing rules, and the Data Quality reports and dashboard. The org wasn't affected; only the repository lost them. Accord's components were retrieved again from the org on 2026-10-24 (`manifest/accord.xml`).
