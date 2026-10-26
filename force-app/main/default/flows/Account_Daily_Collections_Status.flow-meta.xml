@@ -1,6 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>67.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>Default_Stamps_Needed</name>
+        <label>Default Stamps Needed?</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Get_Review_Record_Type</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Already stamped</defaultConnectorLabel>
+        <rules>
+            <name>Needs_Threshold_Date</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Threshold_Crossed_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Default_Review_And_Date</targetReference>
+            </connector>
+            <label>Threshold date missing</label>
+        </rules>
+        <rules>
+            <name>Needs_Status</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Account_Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Default Review</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Default_Review</targetReference>
+            </connector>
+            <label>Status not Default Review</label>
+        </rules>
+    </decisions>
     <decisions>
         <name>Is_Residential</name>
         <label>Is Residential?</label>
@@ -21,6 +62,28 @@
                 <targetReference>Get_Default_Threshold</targetReference>
             </connector>
             <label>Residential</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Review_Exists</name>
+        <label>Open Review Exists?</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>Yes, leave it</defaultConnectorLabel>
+        <rules>
+            <name>No_Open_Review</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Open_Review</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Default_Review_Queue</targetReference>
+            </connector>
+            <label>No open review</label>
         </rules>
     </decisions>
     <decisions>
@@ -94,68 +157,6 @@
                 <targetReference>Set_Current</targetReference>
             </connector>
             <label>Not past due, not marked Current</label>
-        </rules>
-    </decisions>
-    <decisions>
-        <name>Default_Stamps_Needed</name>
-        <label>Default Stamps Needed?</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <defaultConnector>
-            <targetReference>Get_Review_Record_Type</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Already stamped</defaultConnectorLabel>
-        <rules>
-            <name>Needs_Threshold_Date</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Threshold_Crossed_Date__c</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Set_Default_Review_And_Date</targetReference>
-            </connector>
-            <label>Threshold date missing</label>
-        </rules>
-        <rules>
-            <name>Needs_Status</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Account_Status__c</leftValueReference>
-                <operator>NotEqualTo</operator>
-                <rightValue>
-                    <stringValue>Default Review</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Set_Default_Review</targetReference>
-            </connector>
-            <label>Status not Default Review</label>
-        </rules>
-    </decisions>
-    <decisions>
-        <name>Review_Exists</name>
-        <label>Open Review Exists?</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <defaultConnectorLabel>Yes, leave it</defaultConnectorLabel>
-        <rules>
-            <name>No_Open_Review</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Get_Open_Review</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Get_Default_Review_Queue</targetReference>
-            </connector>
-            <label>No open review</label>
         </rules>
     </decisions>
     <description>Daily. Sets Account Status on Residential Agreement accounts from Days Past Due: Current, Delinquent, or Default Review at the threshold in Policy_Setting__mdt (Default_Threshold_DPD). Stamps Threshold Crossed Date the first time an account reaches the threshold and opens a Default Review case owned by the Default Reviews queue if none is open. This is a security control as well as a convenience: the collections sharing rule depends on Account Status (D-08). Skips Closed and Hardship Review, which are set by people. US-05, US-15.</description>

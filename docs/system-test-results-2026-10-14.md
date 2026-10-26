@@ -24,6 +24,8 @@
 | Needs persona login | 5 | 01, 06, 08, 12 negative, 18 |
 | Not applicable | 1 | 17 (cut) |
 
+The rows overlap: UAT-10 and 11 appear as Pass and as Pass after fix, and UAT-19 as Pass and Partial. **Distinct scripts passed: 11.** (The v1.0.1 changelog first said 12, counting DEF-01's retest twice; corrected 2026-10-24.) Later results, from the scheduled runs and from persona use, are below under *Confirmed after 2026-10-14*.
+
 ---
 
 ## Results
@@ -114,6 +116,36 @@ Activating a contract on a Do Not Contact account: Welcome Sent On stayed blank 
 
 ---
 
+## Confirmed after 2026-10-14
+
+Checked through the API on 2026-10-24, from records the scheduled flows and the SLA clock changed on their own.
+
+### UAT-04 step 3 — Broken promise · **Pass**
+Six promises passed their grace date with nothing received between Oct 15 and Oct 24. Each was set to Broken by `Promise_Daily_Evaluate` the morning after grace ended, and the next day `Account_Daily_BrokenPromiseCount` raised the account's Broken Promises (90d) to 1. Each account's Collection Hold Until is empty, so the hold was released.
+
+| Promise | Grace ended | Broken on | Account |
+|---|---|---|---|
+| PTP-00075 | Oct 14 | Oct 15 | Melissa Abernathy Household (ACC-0087) |
+| PTP-00073 | Oct 16 | Oct 17 | Anthony Coffey Household (ACC-0006) |
+| PTP-00078 | Oct 17 | Oct 18 | Tonya Boone Household (ACC-0082) |
+| PTP-00076, PTP-00077 | Oct 20 | Oct 21 | Carla Vance Household (ACC-0047), Sandra Mabry Household (ACC-0061) |
+| PTP-00079 | Oct 23 | Oct 24 | Derek Fitch Household (ACC-0065) |
+
+Step 2 (a promise judged Kept on a scheduled run) still has no example: none of the promises that came due had a payment against them. The Kept branch was proven by a debug run in Phase 7.
+
+### UAT-14 — Milestone alerts · **Pass in the org; email arrival not checked**
+Dispute **00001049** was opened Oct 14 at 8:06 PM CT and left untouched. Acknowledge Dispute (target Oct 15, 6:00 PM ET) and Request Evidence (target Oct 19, 6:00 PM ET) are both flagged violated and not completed, so Milestone Status reads Open Violation. Resolve Dispute (target Oct 28) isn't violated yet. The warning and violation emails go to the owning queue's members and the Collections Supervisor role; an email alert leaves no record the API can read, so arrival is a check in the supervisor's inbox. For the negative step, the seven test disputes acknowledged before their target (00001032 to 00001038) show Acknowledge completed and not violated, so no violation alert was due for them.
+
+### UAT-15 — Default threshold and review timeliness · **Pass (steps 1–3)**
+| Account | Crossed 90 DPD | Default Review | Owner | Opened on time |
+|---|---|---|---|---|
+| Melissa Sanders Household (ACC-0051) | Oct 18 | 00001051, created by the nightly run Oct 18 | Default Reviews queue | ✓ |
+| Brittany Abernathy Household (ACC-0026) | Oct 19 | 00001052, created by the nightly run Oct 19 | Default Reviews queue | ✓ |
+
+Account Status moved to Default Review and Threshold Crossed Date was stamped on both. Each account has exactly one Default Review, after more nightly runs (step 3). These are the first two reviews opened on time; the five from before the automation stay as late. The scheduled runs are recorded as the org's default workflow user (OrgFarm EPIC). Step 4 (cured by payment) wasn't run.
+
+---
+
 ## Defects and observations
 
 ### DEF-01 — Posted credits don't reduce the statement balance · **High · Fixed and retested 2026-10-14**
@@ -145,14 +177,74 @@ Deleting PTP-00139 left Crystal Stinson's Collection Hold Until = Oct 24, keepin
 - UAT-11 and the quick reference said Adjustment type "Credit." The real values are Billing Correction, Goodwill Credit and Production Guarantee.
 - UAT-21 step 2 expected a follow-up task the requirement doesn't call for.
 
+### DEF-07 — Commitments didn't show on the account page · Medium · **Fixed in the org Oct 14; written up 2026-10-24**
+Made the evening of Oct 14, about 8:48 PM CT, after the v1.0.1 docs were written, and not recorded anywhere until now; the details come from the Setup Audit Trail and the components' own descriptions.
+
+**Gap:** commitments are detail records of the opportunity, so collections and dispute staff working an account couldn't see what was promised at signing without opening the deal. That's the problem Accord exists to solve (US-01).
+
+**Fix:** lookup `Commitment__c.Account__c` (read-only to every persona) and the before-save flow `Commitment_BeforeSave_StampAccount`, which copies the opportunity's account onto each commitment on every save, so the opportunity stays the source of truth. All 31 commitments were stamped. Steward's commitments read service filters on this field.
+
+**Still open:** the Residential Agreement layout never got the Commitments related list, so the goal isn't met on the page. The layout is now maintained in Steward's repository (Steward S-21), so the related list goes in through Steward's pipeline.
+
+**Numbering:** the flow cites DEF-07, but DEF-02 to DEF-06 were never written down. The same 20 minutes of the audit trail hold the four other changes below; they may be those defects, but the numbers can't be matched to them, so they're recorded without numbers.
+
+### Changes made the same evening (recorded 2026-10-24 from the audit trail)
+- **Minimum Access profile:** field-level security on Lease Payment Method and External Reference changed from Read/Write to No Access (8:30 PM CT). Before this, every persona on the profile could read payment details that only `PS_Payment_Detail` should grant (UAT-01's expectation). Rechecked 2026-10-24: only `PS_Payment_Detail` and the Collections Supervisor group read those two fields.
+- **`PS_Sales_Core`:** Read, Create and Edit on Account and Contact, the Convert Leads and Edit Tasks permissions, and Delete removed from Opportunity (8:30–8:31 PM CT). Converting a lead creates an account, a contact and an opportunity, so a Sales Rep couldn't convert one without them.
+- **Collections Team public group:** Collections Supervisor role and subordinates added (8:46 PM CT).
+
+### DEF-08 — Collections personas couldn't see Log Contact Attempt · High · **Fixed 2026-10-24**
+**Found:** 2026-10-24, by Steward's Phase 5 hand check. Logged in as Test Persona (Collections Rep), Zana saw Steward's Briefing and Follow-up Draft on Sandra Barnett Household but not Log Contact Attempt, which sits between them in the layout's action list. It was the first time anyone had used the console as a collections persona since the action was built in Phase 8. The system test ran as the admin, who can run every flow, and UAT-06 was still on the persona-check list.
+
+**Cause:** the action launches the screen flow `Account_Screen_LogContactAttempt`. A user can run a flow only with the Run Flows permission or with access to that flow, since Salesforce enforced its *Restrict User Access to Run Flows* release update. Minimum Access doesn't include Run Flows, no Accord permission set granted it, and the flow had no access list, so Lightning hid the action. Checked through the API: Run Flows false on the profile and on the Collections Rep group; the flow had no access entries.
+
+**Effect:** no rep, specialist or supervisor could log a contact attempt, so US-06 and the promise path from a call (US-03) didn't work for the people they're for. Steward's Follow-up Draft waits for a logged attempt, so it was blocked too.
+
+**Fix, least privilege:** the flow now restricts who can run it (version 3, *Override default behavior and restrict access to enabled profiles or permission sets*), and `PS_Collections_Core` grants access to that one flow. Run Flows wasn't granted: it opens every current and future flow to the holder, and this flow runs in system context with sharing, which Salesforce's own warning on save points out. Sales reps don't get the action, by design.
+
+**Verified through the API (2026-10-24):** version 3 active with the restriction, version 2 obsolete, nothing else changed; flow access on `PS_Collections_Core` and, after recalculation, on the Collections Rep, Collections Supervisor and Dispute Specialist groups; none on Sales Rep. **In the console:** to be confirmed by the rest of Steward's hand check (Log Contact Attempt as Test Persona).
+
+### DEF-09 — The Minimum Access profile granted field access the design gives to permission sets · High · **Fixed 2026-10-25**
+**Found:** 2026-10-24, while checking DEF-08's fix: the field permissions on Test Persona's profile, Minimum Access - Salesforce, were listed through the API.
+
+**What was there:** the profile granted field-level security on **74 of Accord's custom fields, 58 of them Read/Edit**. Setup's new-field wizard makes a field visible to every profile unless the boxes are cleared, and Accord's fields were created in Setup. Accord's permission sets granted almost no field access of their own (`PS_Collections_Core` had 14 field permissions, mostly on activities), so nearly everything collections personas read reached them through the profile. D-07 says all access comes from permission sets; for objects that was true, for fields it wasn't.
+
+**Effect, in order of risk**
+- Reps could edit **Account Status**, the field the collections sharing rule reads (D-08). Sales reps could edit it too, through their Account access. Only automation and supervisors should set it.
+- Reps and sales reps could edit **Broken Promises (90d)** and **Collection Hold Until**, which feed the priority score and the work list.
+- Sales reps could read account balances, days past due and priority score. The security model's field table says those are hidden from sales.
+- Sales reps could edit **Do Not Contact**, which the design gives them as read-only.
+
+Payment Method and External Reference had been removed from the profile on Oct 14, so UAT-01's check held throughout.
+
+**Fix (2026-10-25), in an order that never took away access a persona needed:**
+1. **Granted through permission sets first.** `PS_Collections_Core`: 54 fields, read-only except Do Not Contact, Primary Contact, a promise's statement and a contact's role. `PS_Dispute_Management`: 14, the dispute fields and adjustment fields, with the posted date read-only. `PS_Sales_Core`: 29, commitments, opportunities and leads, with no balances, days past due or priority.
+2. **A new supervisor-only permission set, `PS_Collections_Overrides`,** for the three account fields a supervisor still has to change by hand: Account Status (to release Hardship Review or close an account), Collection Hold Until and High Value. It's in the Collections Supervisor group. That group's source lives in Steward's repository, so its change is in Steward's pull request #13.
+3. **Removed from the profile:** all 74 Accord field permissions. The eight Legacy Id fields now belong to no persona; they exist for data loads.
+
+**Verified in the org (2026-10-25):**
+- The profile holds no field permission on any Accord field; 109 permissions on standard objects remain, as Salesforce ships them.
+- Each group's own field permissions on Accord's fields, counted against the plan, match exactly:
+
+| Group | Accord fields readable | Of those, editable |
+|---|---|---|
+| Collections Rep | 56 | 4 |
+| Dispute Specialist | 63 | 17 |
+| Collections Supervisor | 63 | 20 |
+| Sales Rep | 29 | 12 |
+
+- Test Persona (Collections Rep), field by field through `UserFieldAccess`: every collections field on the account readable, with Account Status, Broken Promises (90d) and Collection Hold Until now read-only; Do Not Contact and Primary Contact editable; statement and commitment fields read-only; a promise's statement editable; adjustments and every Legacy Id unreadable; a case's description still unreadable, as designed.
+- Steward's rep assistant reads many of these fields as the user. Test Persona still reads every field its templates read ([Steward's agent governance doc](https://github.com/zana-yocum/Lumenfield-steward/blob/main/docs/agent-governance.md)), and Steward's full test suite ran against the changed org in its pull request #13 validation (`0Afaj00000p4HeQCAU`): 159 of 159 tests passed.
+
+---
+
 ---
 
 ## Still to run
 
 | Script | Who / when | What to check |
 |---|---|---|
-| 01, 05 step 4, 06, 08, 12 negative, 13 criterion 3, 18 | You, as Test Persona (≈15 min) | What each persona can and can't see; case comment as a Sales Input team member |
-| 14 | Thu Oct 15, business hours | Dispute **00001049** left untouched: warning email ≈ 3:30 PM ET, violation at 6:00 PM ET. Delete the case afterward |
-| 15 | ≈ Oct 18–19 | Default Review opens on its own for the first account past 90 DPD |
-| 04, 20 | After a promise's grace date / Oct 21 | Promise judged Kept/Broken on schedule; reminder fires 7 days before first due |
+| 01, 05 step 4, 06, 08, 12 negative, 13 criterion 3, 18 | You, as Test Persona (≈15 min, `docs/persona-checks.md`) | What each persona can and can't see; case comment as a Sales Input team member. UAT-06 is now possible (DEF-08) |
+| 14, email part | You, in the supervisor's inbox | "Dispute Milestone Violation" for 00001049 around Oct 15, 5 PM CT and Oct 19, 5 PM CT. Then delete 00001049 |
+| 04 step 2, 15 step 4, 20 | When data allows | A promise kept on a scheduled run; a review cured by payment; the reminder 7 days before a first due date (the Oct 14 test contract was deleted before Oct 21, so its reminder never ran) |
 | All | 3–5 outside testers | Actual UAT |

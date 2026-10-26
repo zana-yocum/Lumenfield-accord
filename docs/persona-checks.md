@@ -5,7 +5,7 @@ These are the only scripts the admin can't prove, because they test what a role 
 ## As Collections Rep (role Collections Rep, PSG Collections Rep)
 1. **UAT-01** Open any Delinquent account in Collections Console. Collections section shows balance, DPD, bucket, priority, broken promises, primary contact. Open one of its Lease Payments: Method and External Reference are **not** shown. ☐
 2. **UAT-05 step 4** Global search for **Patrick Boone Household** (Delinquent) — found. Then search for an account on the dashboard's *Current* bucket, e.g. **Regina Mundy Household** — **not found**. Reps reach accounts only through the Delinquent / Default Review sharing rule (D-08). ☐
-3. **UAT-06** On a Delinquent account, Log Contact Attempt with no outcome → blocked. Log "Requested No Further Contact" → account shows Do Not Contact. (Untick it afterward as admin.) ☐
+3. **UAT-06** (possible since 2026-10-24: before DEF-08 was fixed, collections personas couldn't see this action) On a Delinquent account, Log Contact Attempt with no outcome → blocked. Log "Requested No Further Contact" → account shows Do Not Contact. (Untick it afterward as admin.) ☐
 4. **UAT-12 negative** Reports → Collections → Default Review Timeliness: shows **0** cases. ☐
 5. Reports open at all (Run Reports was just granted). ☐
 

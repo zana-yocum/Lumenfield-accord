@@ -4,11 +4,7 @@
     <description>Status path for default reviews opened when an account crosses the 90+ days past due threshold. Ends Cured (account brought current) or Default Confirmed. Closed is for reviews opened in error. US-15.</description>
     <isActive>true</isActive>
     <values>
-        <fullName>New</fullName>
-        <default>true</default>
-    </values>
-    <values>
-        <fullName>Under Review</fullName>
+        <fullName>Closed</fullName>
         <default>false</default>
     </values>
     <values>
@@ -20,7 +16,11 @@
         <default>false</default>
     </values>
     <values>
-        <fullName>Closed</fullName>
+        <fullName>New</fullName>
+        <default>true</default>
+    </values>
+    <values>
+        <fullName>Under Review</fullName>
         <default>false</default>
     </values>
 </BusinessProcess>

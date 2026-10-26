@@ -27,3 +27,9 @@ desktop.ini
 
 # LWC tooling
 **/lwc/jsconfig.json
+
+# Bulk API job results and scratch ID lists belong in data/load-results/ or nowhere
+/*-failed-records.csv
+/*-success-records.csv
+/*-sample.csv
+/*-partial.csv

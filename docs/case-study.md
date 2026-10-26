@@ -43,7 +43,7 @@ Ten phases, each closed with a changelog and an open-items review before the nex
 
 **Collections reaches accounts through a sharing rule on Account Status, not ownership (D-08).** It means status is a security control. The Phase 5 baseline found three accounts that were 45 days past due but still marked Current. That isn't a data hygiene issue — those accounts were invisible to the reps who should have been calling them. The nightly status flow fixed them, and the test proved it: the first account processed became visible to a rep immediately; the second stayed hidden until its turn.
 
-**Minimum Access plus permission set groups, no custom profiles (D-07).** Four personas, each a group of small permission sets. It held with one documented exception: a profile is the only place a default record type can live, and lead conversion needs one.
+**Minimum Access plus permission set groups, no custom profiles (D-07).** Four personas, each a group of small permission sets. For objects it held from the start, with one documented exception: a profile is the only place a default record type can live, and lead conversion needs one. For fields it didn't hold until v1.0.2 (below).
 
 **Consent gates promotional messages, not servicing ones (D-05).** A customer who never opted into marketing still gets their welcome email and payment reminder. Blocking those would stop people hearing about their own bills. Do Not Contact stops everything.
 
@@ -57,6 +57,10 @@ Ten phases, each closed with a changelog and an open-items review before the nex
 
 **Verification beats memory.** Connecting to the org and checking found three cleanup items marked done that weren't, a permission set that gave reps Case sharing but no Case read (so sharing did nothing), and a role hierarchy where sample roles sat under Dispute Specialist and would have handed specialists upward visibility into sales records.
 
+**An admin login hides access bugs.** Ten days after release, my next project, Steward, used the console as a collections rep for the first time, and the Log Contact Attempt button wasn't there. It runs a screen flow, and a user needs the Run Flows permission or access to that one flow; no rep had either. Every earlier test had run as the admin, who can run anything (DEF-08). The fix grants that one flow to the collections permission set instead of Run Flows, which would have opened every future flow too. Checking that fix turned up a bigger one: Setup's new-field wizard makes a field visible to every profile unless the boxes are cleared, so the "empty" Minimum Access profile was granting 74 of Accord's fields, and reps could edit the Account Status that decides who can see an account (DEF-09). Each persona's fields moved into its permission sets, and supervisor overrides into a set of their own. Both are written up with the checks that prove the fix: [`system-test-results-2026-10-14.md`](system-test-results-2026-10-14.md).
+
+**Source control drifted from the org.** A Phase 6 commit deleted most of the repository's metadata, and nobody noticed for two weeks because the org itself was fine. Everything Accord owns was retrieved again from the org with one manifest (`manifest/accord.xml`), and usernames in that metadata were replaced with placeholders before it went into the repository.
+
 ## Results
 
 | Measure | Before | After |
@@ -67,6 +71,7 @@ Ten phases, each closed with a changelog and an open-items review before the nex
 | Statement date errors | 2 | 0, enforced by rule |
 | Security Health Check | 66% | 96% |
 | Stories delivered | — | 20 of 21 (US-17 cut) |
+| Accord fields granted by the profile instead of a permission set | 74 | 0 (DEF-09) |
 
 The supervisor dashboard on release day showed 35 accounts to work, $10,619 past due, 10 open disputes and 69% milestone compliance over 30 days. The 31% that missed were test disputes nobody worked between loads — which is exactly what that tile exists to make visible.
 
@@ -84,6 +89,8 @@ The supervisor dashboard on release day showed 35 accounts to work, $10,619 past
 | Requirements and traceability | [`requirements.md`](requirements.md) |
 | Every decision and why | [`decision-log.md`](decision-log.md) |
 | Security model | [`security-model.md`](security-model.md) |
+| Test results and defects | [`system-test-results-2026-10-14.md`](system-test-results-2026-10-14.md) |
+| Support runbook | [`support-runbook.md`](support-runbook.md) |
 | Data plan and load history | [`data-plan.md`](data-plan.md) |
 | UAT scripts | [`uat-scripts.md`](uat-scripts.md) |
 | What's built, phase by phase | `CHANGELOG.md` |
