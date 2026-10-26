@@ -106,7 +106,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☑ **Org verification via the Salesforce connector (2026-10-03)** caught three items marked done that weren't: the `.cm` typo and both placeholder emails were never fixed (one placeholder had been changed to `.cm`, which is why the duplicate chart looked clean), and the Sample Account for Entitlements was still present. Also found and removed 17 sample products, 10 sample solutions, and a sample price book. All fixed and re-verified.
 - ☑ 4 sample campaigns (2001–2002) deleted. The first attempt failed with insufficient access: deleting campaigns requires the **Marketing User** checkbox on the user record, which was then enabled.
 - ☑ Four validation rule error messages reworded to name the fix (2026-10-14, through the Tooling API)
-- ☐ Remaining Phase 5 screenshots if not yet taken: `phase05-duplicate-rule-config.png`, `phase05-duplicate-alert-in-action.png`, `phase05-data-loader-success.png`
+- ☐ Remaining Phase 5 screenshots, optional: `phase05-duplicate-rule-config.png`, `phase05-data-loader-success.png`. (`phase05-duplicate-alert-in-action.png` is in the repository; every screenshot is captioned in `media/screenshots/README.md`)
 - ☑ `data-plan.md` after numbers added — every target met (2026-10-14)
 
 ### Phase 6 — service ☑ closed 2026-10-08

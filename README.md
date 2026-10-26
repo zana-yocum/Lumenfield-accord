@@ -60,7 +60,7 @@ manifest/             accord.xml (everything Accord owns), phase retrieves, dest
 data/                 Seed CSVs, load results, billing re-age generator (data/regen)
 scripts/              check_personal_details.sh
 web/                  Web-to-lead inquiry form
-media/screenshots/    Phase screenshots
+media/screenshots/    Phase screenshots, each captioned in its README
 docs/
   brief.md            The business problem
   requirements.md     21 user stories, acceptance criteria, traceability
