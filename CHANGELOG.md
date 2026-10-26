@@ -14,6 +14,9 @@ Checking the persona checks' expected results against the org, record by record,
 
   Steps 1 and 2 were applied through the Metadata API on Oct 25 at 8:45 and 8:46 PM CT, read back from the org and recalculated, so nobody lost access in between. Verified after step 3 through `UserRecordAccess`: Test Persona reads 40 accounts instead of 100 (the 34 in collections, plus the 6 current accounts that have a billing dispute, read-only) and edits the same 34. It can't read a current account with no dispute, or that account's contacts, statements, deal or commitments. It still reads the deals and commitments on accounts in collections. The org's 159 Apex tests, all Steward's, passed after each change.
 
+### Confirmed
+- **DEF-08 in the console (2026-10-26).** Steward's hand check, logged in as Test Persona, found Log Contact Attempt on the page and logged a Left Voicemail attempt on Sandra Barnett Household. Until then the fix was verified only through the API.
+
 ### Corrections
 - **The Phase 7 proof of D-08 (v0.6) didn't prove it.** Test Persona could read ACC-0001 right after its status changed because billing dispute 00001038 is on that account, and the case rule shares disputes with reps. The Collections Team group had no members until Oct 14, 8:46 PM CT, so until then the status rule reached nobody. After that, the closed-deal rule hid whether it worked.
 - Results doc: DEF-07's related list marked finished (Steward #13), and a doubled divider removed.
