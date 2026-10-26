@@ -244,7 +244,7 @@ Payment Method and External Reference had been removed from the profile on Oct 1
 
 | Script | Who / when | What to check |
 |---|---|---|
-| 01, 05 step 4, 06, 08, 12 negative, 13 criterion 3, 18 | You, as Test Persona (≈15 min, `docs/persona-checks.md`) | What each persona can and can't see; case comment as a Sales Input team member. UAT-06 is now possible (DEF-08) |
+| 01, 05 step 4, 06, 08, 12 negative, 13 criterion 3, 18, and DEF-09 in the console | You, as Test Persona (about 20 min, `docs/persona-checks.md`) | What each persona can and can't see; case comment as a Sales Input team member. UAT-06 is now possible (DEF-08) |
 | 14, email part | You, in the supervisor's inbox | "Dispute Milestone Violation" for 00001049 around Oct 15, 5 PM CT and Oct 19, 5 PM CT. Then delete 00001049 |
 | 04 step 2, 15 step 4, 20 | When data allows | A promise kept on a scheduled run; a review cured by payment; the reminder 7 days before a first due date (the Oct 14 test contract was deleted before Oct 21, so its reminder never ran) |
 | All | 3–5 outside testers | Actual UAT |

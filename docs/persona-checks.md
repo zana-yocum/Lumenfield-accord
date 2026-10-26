@@ -1,21 +1,36 @@
-# Persona checks — 15 minutes
+# Persona checks — about 20 minutes
 
-These are the only scripts the admin can't prove, because they test what a role *can't* see. Log in as **Test Persona** (Setup → Users → Test Persona → Login, or a private window). Switch the role and permission set group between blocks. Write Pass/Fail next to each line, then hand it back and I'll fold it into the results.
+These are the checks the admin can't make, because they test what a role *can't* see or do. Each block runs as **Test Persona**, the one persona user, switched to a different role and permission set group between blocks. Write Pass or Fail next to each line, with anything that looked wrong, then hand it back to be folded into the results.
 
-## As Collections Rep (role Collections Rep, PSG Collections Rep)
-1. **UAT-01** Open any Delinquent account in Collections Console. Collections section shows balance, DPD, bucket, priority, broken promises, primary contact. Open one of its Lease Payments: Method and External Reference are **not** shown. ☐
-2. **UAT-05 step 4** Global search for **Patrick Boone Household** (Delinquent) — found. Then search for an account on the dashboard's *Current* bucket, e.g. **Regina Mundy Household** — **not found**. Reps reach accounts only through the Delinquent / Default Review sharing rule (D-08). ☐
-3. **UAT-06** (possible since 2026-10-24: before DEF-08 was fixed, collections personas couldn't see this action) On a Delinquent account, Log Contact Attempt with no outcome → blocked. Log "Requested No Further Contact" → account shows Do Not Contact. (Untick it afterward as admin.) ☐
-4. **UAT-12 negative** Reports → Collections → Default Review Timeliness: shows **0** cases. ☐
-5. Reports open at all (Run Reports was just granted). ☐
+## Switching Test Persona between personas
 
-## As Dispute Specialist (role Dispute Specialist, PSG Dispute Specialist)
-6. **UAT-13 criterion 3** Create a $150 adjustment on an open dispute, Submit for Approval. In the approval request, there's **no Approve button** for you. (Approve or recall it as admin afterward.) ☐
+Do this as yourself, before each block.
 
-## As Sales Rep (role Sales Rep, PSG Sales Rep)
-7. **UAT-08 / 18** As admin, add Test Persona to an open dispute's Case Team as Sales Input. As Test Persona: case opens; **add a case comment** — does it save? ☐ (this is the open question)
-8. Payment Method / External Reference not visible from the case's account. ☐
-9. As admin, close the case. As Test Persona, reopen the link → no access. ☐
-10. A dispute you're not on → no access. ☐
+1. Gear icon → **Setup** → Quick Find `Users` → **Users** → click **Test Persona** (the name, not Login).
+2. **Role:** click **Edit**, set **Role** to the block's role, **Save**.
+3. **Group:** scroll to **Permission Set Group Assignments** → **Edit Assignments**. Move the old group to *Available* and the block's group to *Enabled*, then **Save**.
+4. Back on the Users list, click **Login** next to Test Persona. When the block is done, top right → **Log out as Test Persona**.
 
-When done: set Test Persona back to Collections Rep.
+## As Collections Rep (role Collections Rep, group Collections Rep)
+
+Test Persona is set up this way already.
+
+1. **UAT-01** Open any Delinquent account in Collections Console. The Collections section shows balance, days past due, bucket, priority score, broken promises and primary contact. Open one of its Lease Payments: Method and External Reference are **not** shown. ☐
+2. **DEF-09** On the same account, click **Edit**. Account Status, Broken Promises (90d) and Collection Hold Until are read-only; Do Not Contact and Primary Contact can be changed. Click **Cancel**. ☐
+3. **UAT-05 step 4** Global search for **Patrick Boone Household** (Delinquent): found. Then search for an account in the dashboard's *Current* bucket, such as **Regina Mundy Household**: **not found**. Reps reach accounts only through the sharing rule on Delinquent, Hardship Review and Default Review (D-08). ☐
+4. **UAT-06** On a Delinquent account, click **Log Contact Attempt** and finish with no outcome: blocked. Then log **Requested No Further Contact**: the account shows Do Not Contact. Afterwards, as yourself, untick Do Not Contact on that account. ☐
+5. **UAT-12 negative** App Launcher → **Reports** → Collections → **Default Review Timeliness**: shows **0** cases, since reps can't see default reviews. ☐
+6. Reports open at all (Run Reports, granted 2026-10-14). ☐
+
+## As Dispute Specialist (role Dispute Specialist, group Dispute Specialist)
+
+7. **UAT-13 criterion 3** On an open billing dispute, create a $150 adjustment and click **Submit for Approval**. In the approval request there's **no Approve button** for you. Afterwards, as yourself, approve it or recall it. ☐
+
+## As Sales Rep (role Sales Rep, group Sales Rep)
+
+8. **UAT-08 / 18** As yourself, add Test Persona to an open dispute's **Case Team** as **Sales Input**. As Test Persona: the case opens; **add a case comment**. Does it save? ☐ (this is the open question)
+9. On that case, Payment Method and External Reference aren't visible anywhere. ☐
+10. As yourself, close the case. As Test Persona, open the case link again: no access. ☐
+11. A dispute Test Persona isn't on: no access. ☐
+
+**When done:** switch Test Persona back to role **Collections Rep** and group **Collections Rep**.
