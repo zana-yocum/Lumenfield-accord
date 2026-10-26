@@ -52,11 +52,11 @@ How to work the problems Accord's users are most likely to report. Every entry c
 **Reported as:** "Global search doesn't find Melissa Sanders, but she's on the dashboard."
 
 **Check**
-1. Collections reps reach accounts only through the criteria-based sharing rule on **Account Status** (Delinquent or Default Review, D-08). Open the account as admin and look at Account Status and Days Past Due.
+1. Collections reps reach accounts only through the criteria-based sharing rule on **Account Status** (Delinquent, Hardship Review or Default Review, D-08). Open the account as admin and look at Account Status and Days Past Due.
 2. If Days Past Due says delinquent but Status says Current, the status is stale. `Account_Daily_Collections_Status` corrects it every night at 1 AM ET. Check Setup → Flows → the flow's recent runs, or the account's Last Modified By (the nightly run shows as the org's default workflow user).
 3. Hardship Review and Closed accounts are skipped on purpose.
 
-**Fix:** wait for the nightly run, or ask a supervisor to set the status (they reach accounts through the role hierarchy).
+**Fix:** wait for the nightly run, or have an admin set the status. Supervisors can edit Account Status (`PS_Collections_Overrides`), but only on accounts they can already see, and a stale Current account isn't shared with collections yet.
 
 **Prevent:** don't change the sharing rule's criteria without changing the status flow with it; together they're the security control.
 
@@ -94,7 +94,7 @@ How to work the problems Accord's users are most likely to report. Every entry c
 
 **Check:** the account's **Collection Hold Until**. An in-policy promise sets it to the promise's grace end; `Promise_Daily_Evaluate` clears it the morning after grace, when it judges the promise Kept or Broken. The Collections Work List leaves out accounts on hold.
 
-**Fix:** if the promise was deleted rather than cancelled, the hold stays: clear Collection Hold Until by hand. Cancelled is the supported way out of a promise; no persona can delete one.
+**Fix:** if the promise was deleted rather than cancelled, the hold stays: an admin or a supervisor clears Collection Hold Until by hand (supervisors have edit through `PS_Collections_Overrides`). Cancelled is the supported way out of a promise; no persona can delete one.
 
 **Happened:** OBS-01, 2026-10-14: a deleted promise left a customer on hold for ten more days (CHANGELOG v1.0.1). Confirmed working on schedule 2026-10-24: six broken promises released their holds.
 
