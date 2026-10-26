@@ -6,20 +6,20 @@ Everything deferred, flagged, or half-finished. Updated at the end of every sitt
 
 ---
 
-## Release follow-up — 2026-10-24 and 25
+## Release follow-up — 2026-10-24 to 26
 
-Steward's Phase 5 hand check found that collections personas couldn't see **Log Contact Attempt** (DEF-08). Claude fixed it in the org and checked the clock-dependent results. Claude also found that `main` had been missing most of Accord's metadata since the Phase 6 commit, and retrieved it again from the org. A record-by-record access check on Oct 25 then found that reps could read every customer account (DEF-10). Everything is in `CHANGELOG.md` v1.0.2 and v1.0.3 and `docs/system-test-results-2026-10-14.md`.
+Steward's Phase 5 hand check found that collections personas couldn't see **Log Contact Attempt** (DEF-08). Claude fixed it in the org and checked the clock-dependent results. Claude also found that `main` had been missing most of Accord's metadata since the Phase 6 commit, and retrieved it again from the org. A record-by-record access check on Oct 25 then found that reps could read every customer account (DEF-10), fixed Oct 26. Everything is in `CHANGELOG.md` v1.0.2 and v1.0.3 and `docs/system-test-results-2026-10-14.md`.
 
 **Your steps**
 - ☑ 1. **History (2026-10-25): rewritten**, your choice (b). Every commit now carries the placeholder instead of the org username, and GitHub's noreply address instead of your personal email; all 26 commits and their messages kept. `main` and `release/v1.0.2` replaced on GitHub. Optional: GitHub keeps the old commits reachable by their IDs until it cleans up. To have them removed sooner, open a ticket at support.github.com → **Removing sensitive data**, naming `zana-yocum/Lumenfield-accord`. Nobody has those IDs (no forks or pull requests), so this is low priority
 - ☑ 2. **Public (2026-10-25).** The portfolio's Accord links work once v1.0.2 is merged into `main`
 - ☐ **Your copy on your computer is out of date** since the rewrite: its commits no longer match GitHub's. In File Explorer, rename `C:\Lumenfield-accord` to `C:\Lumenfield-accord-old`. In GitHub Desktop: **File** → **Clone repository** → `zana-yocum/Lumenfield-accord` → local path `C:\Lumenfield-accord`. Copy back anything you made that isn't in the new copy (for example files in `data\regen`), then delete the old folder
-- ☐ **Delete one sharing rule (DEF-10), about 1 minute, before the persona checks.** Setup → Quick Find `Sharing Settings` → **Sharing Settings** → scroll to **Opportunity Sharing Rules** → **Del** next to *Closed Won to Collections* → **OK**. Leave *Closed Won to Dispute Specialists* in place. Then tell Claude, who measures what Test Persona can reach and closes DEF-10
-- ☐ 3. **Persona checks:** `docs/persona-checks.md`, about 20 minutes as Test Persona, after the rule deletion above, with step-by-step switching between personas. UAT-06 is possible now that DEF-08 is fixed, and step 2 checks DEF-09 in the console. Steward's hand check covers Log Contact Attempt for the Collections Rep.
+- ☑ **Old closed-deal sharing rule deleted (DEF-10), 2026-10-26, 1:47 PM CT**, in Setup. Claude measured the result: Test Persona reads 40 accounts instead of 100
+- ☐ 3. **Persona checks:** `docs/persona-checks.md`, about 20 minutes as Test Persona, with step-by-step switching between personas. UAT-06 is possible now that DEF-08 is fixed, and step 2 checks DEF-09 in the console. Steward's hand check covers Log Contact Attempt for the Collections Rep.
 - ☐ 4. **UAT-14 email:** search the supervisor's inbox (yours) for **Dispute Milestone Violation**, around Oct 15, 5 PM CT and Oct 19, 5 PM CT, and tell Claude what's there. Then dispute 00001049 can be deleted.
 - ☐ 5. If `docs/release-readiness-winter27.md` is still on your computer, add it to `docs/`. It was never committed, so the README no longer lists it.
 
-**Mine (2026-10-24 and 25)**
+**Mine (2026-10-24 to 26)**
 - ☑ **DEF-08 fixed in the org:** `Account_Screen_LogContactAttempt` version 3 restricts access to enabled permission sets, and `PS_Collections_Core` grants it. Verified through the API on the three collections groups; Sales Rep excluded. Waiting on the console check.
 - ☑ **Scheduled results:**
   - UAT-04 step 3 passed: six promises were broken on schedule.
@@ -40,7 +40,7 @@ Steward's Phase 5 hand check found that collections personas couldn't see **Log 
 - ☑ **Security model rewritten as built** (2026-10-25): object and field tables read from the org, the Phase 6–10 additions folded in, and the drifted claims corrected (case sharing goes to the Collections Rep role; no deletes on promises or cases; specialists don't see Default Reviews; a specialist, not a flow, adds sales input to a case team)
 - ☑ `Mute_Rep_Promise_Delete` restored to source from v0.4, matching the org
 - ☑ `Collection_Hold_Until__c`'s description, which repeated `Do_Not_Contact__c`'s, rewritten in the org and in source
-- ☐ **DEF-10 (High), found 2026-10-25: collections reps could read every customer account.** The closed-deal rule shared every deal with Collections Team, and read access to a deal gives read access to its account. Test Persona could read 100 accounts and edit 34. Two of three fix steps are in the org: the account rule now shares the deals on accounts in collections, and a new rule shares closed deals with dispute specialists only. The old rule's deletion is your step above; then Claude measures the result (expected: read 40, edit 34) and closes it. Also found: Collections Team had no members until Oct 14, so the Phase 7 check of D-08 proved nothing (below)
+- ☑ **DEF-10 (High), found 2026-10-25, fixed 2026-10-26: collections reps could read every customer account.** The closed-deal rule shared every deal with Collections Team, and read access to a deal gives read access to its account. Now the account rule shares the deals on accounts in collections, a new rule shares closed deals with dispute specialists only, and the old rule is deleted. Checked through `UserRecordAccess`: Test Persona reads 40 accounts (was 100) and edits 34, the 40 being the accounts in collections plus 6 current accounts with a billing dispute; deals and commitments still readable on accounts in collections; the 159 Apex tests pass. Also found: Collections Team had no members until Oct 14, so the Phase 7 check of D-08 proved nothing (below)
 
 ---
 

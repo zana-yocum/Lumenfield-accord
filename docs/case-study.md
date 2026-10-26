@@ -74,6 +74,7 @@ Ten phases, each closed with a changelog and an open-items review before the nex
 | Security Health Check | 66% | 96% |
 | Stories delivered | — | 20 of 21 (US-17 cut) |
 | Accord fields granted by the profile instead of a permission set | 74 | 0 (DEF-09) |
+| Current accounts a collections rep could read | 66 | 6, read-only, each with a billing dispute (DEF-10) |
 
 The supervisor dashboard on release day showed 35 accounts to work, $10,619 past due, 10 open disputes and 69% milestone compliance over 30 days. The 31% that missed were test disputes nobody worked between loads — which is exactly what that tile exists to make visible.
 
