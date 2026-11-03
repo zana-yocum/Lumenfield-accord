@@ -152,7 +152,7 @@ Every story has an ID. That ID is referenced in the configuration that implement
 - **Given** the sales rep is on the case team, **when** the case closes, **then** their access to the case is removed.
 - **Given** a sales rep who isn't on the case team, **when** they try to open the dispute case, **then** they can't see it.
 
-**Notes:** The third criterion is the negative test deferred from Phase 4 for lack of cases.
+**Notes:** The third criterion is the negative test deferred from Phase 4 for lack of cases. As built, the first criterion is met for reading but not for comments: a case comment needs edit access to the case, and the sales rep has Read (DEF-11, 2026-10-26). A post to the case's feed works; how sales input should be saved is an open decision.
 
 ---
 
@@ -352,7 +352,7 @@ Filled in as the build progresses. This table turns a pile of config into a deli
 | US-02 | Phase 3, 7 | `VR_Opp_ConcessionNeedsCommitment`, `Opportunity_AfterSave_CreateServiceContract` | UAT-02 |
 | US-03 | Phase 3, 5, 7 | `Promise_to_Pay__c`, `Out_of_Policy__c`, `Policy_Setting__mdt`, `VR_Promise_AmountPositive`, `Promise_AfterSave_ApplyPolicy` | UAT-03 |
 | US-04 | Phase 3, 5, 7 | `VR_Payment_AmountPositive`, `VR_Payment_DateNotFuture`, `Promise_Daily_Evaluate`, `Account_Daily_BrokenPromiseCount` | UAT-04 |
-| US-05 | Phase 3, 7, 9 | `Priority_Score__c`, sharing rule (D-08), `Account_Daily_Collections_Status`, Collections Work List report | UAT-05 |
+| US-05 | Phase 3, 7, 9 | `Priority_Score__c`, sharing rule (D-08), `Billing_Statement_Daily_Status` (DEF-12), `Account_Daily_Collections_Status`, Collections Work List report | UAT-05 |
 | US-06 | Phase 3, 8 | Contact Outcome value set, `Task.Contact_Outcome__c`, `Account_Screen_LogContactAttempt`, `Account.Log_Contact_Attempt` quick action | UAT-06 |
 | US-07 | Phase 6, 7, 9 | Billing Dispute record type and support process, `Dispute_Evidence_Requirement__mdt` (16 records), `Case_AfterSave_DisputeLifecycle` (statement flag), `VR_Case_DisputeNeedsStatement` | UAT-07 |
 | US-08 | Phase 4, 6, 7 | Case team role Sales Input, `Case_AfterSave_DisputeLifecycle` (team removed at close) | UAT-08 |
@@ -362,7 +362,7 @@ Filled in as the build progresses. This table turns a pile of config into a deli
 | US-12 | Phase 9 | Collections Supervisor dashboard (runs as supervisor), Collections Home page, 8 reports in `Collections` | UAT-12 |
 | US-13 | Phase 7 | Credit Approval process (allowed submitters), `Adjustment_AfterSave_Lifecycle` | UAT-13 |
 | US-14 | Phase 6 | Milestone warning and violation email alerts, Milestone Status | UAT-14 |
-| US-15 | Phase 6, 7, 9 | Default Review record type, Default Reviews queue, `Account_Daily_Collections_Status`, `Review_Opened_On_Time__c`, Default Review Timeliness report | UAT-15 |
+| US-15 | Phase 6, 7, 9 | Default Review record type, Default Reviews queue, `Billing_Statement_Daily_Status` (DEF-12), `Account_Daily_Collections_Status`, `Review_Opened_On_Time__c`, Default Review Timeliness report | UAT-15 |
 | US-16 | Phase 8 | `web/lumenfield-solar-inquiry.html`, `Accord Lead Routing` → Inbound Leads, `Lead_Matches_Existing_Customer` (alert), `VR_Lead_EmailOrPhoneRequired` | UAT-16 |
 | US-17 | — | **Cut.** The only Could story; forecasts don't touch the lead-to-cash gap Accord addresses | N/A |
 | US-18 | Phase 4, 6, 7 | Case team role Sales Input, `PS_Sales_Core` Case Read, team removal at close | UAT-18 |

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Priority_Score__c</fullName>
+    <description>Ranks accounts on the rep work list. Days past due count double, every $50 past due adds a point, and each broken promise in the last 90 days adds 25, so aging matters most and a broken promise costs about two weeks of aging. The weights are a judgment call, to tune against what reps actually collect. US-05.</description>
     <externalId>false</externalId>
     <formula>(Days_Past_Due__c * 2) +
 (Past_Due_Balance__c / 50) +

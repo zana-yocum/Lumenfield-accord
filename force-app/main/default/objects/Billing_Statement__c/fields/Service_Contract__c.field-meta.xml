@@ -2,6 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Service_Contract__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
+    <description>The lease this statement bills for. A lookup rather than the master, because balances roll up to the account, where reps work (D-06). Reports group by it for contract-level totals.</description>
     <label>Service Contract</label>
     <referenceTo>ServiceContract</referenceTo>
     <relationshipLabel>Billing Statements</relationshipLabel>

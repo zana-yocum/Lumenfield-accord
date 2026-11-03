@@ -2,6 +2,38 @@
 
 Newest first. Each phase of the build is a version, v1.0 is the release, and later versions are fixes found in testing and in use. Entries record what changed in the org, how it was verified, and what went wrong.
 
+## v1.0.4 — 2026-11-03 — Statements go past due; the docs match the org
+
+Persona checks through the API (Oct 26), then a line-by-line reconcile of the data model, data dictionary and conventions against the org (Nov 3). The reconcile found that no automation ever moved an unpaid statement to Past Due (DEF-12), and that the scheduled flows run four hours later than the docs said.
+
+### Fixed
+- **DEF-12 (High): unpaid statements never became past due.** The data model said a nightly flow stamps statement status, because the account's past-due roll-ups filter on it. None existed. Bills loaded as Open stayed Open after their due dates, so on Nov 3, 35 overdue bills on 35 accounts ($6,235.80) counted for nothing: 12 of those customers read 0 days past due and Current, off the work list and out of collections' reach. New scheduled flow `Billing_Statement_Daily_Status`, each morning at 4:30 AM Eastern, before the account run: nothing owed → Paid, still owing after the due date → Past Due. Verified on a one-off run at 9:20 AM ET on Nov 3: the 35 statements turned Past Due and nothing else did, and two throwaway statements proved the other branches (paid in full → Paid; not yet due → stays Open) before they were deleted. The 12 accounts now read 7 to 24 days past due, and the Nov 4 account run moves them to Delinquent.
+- **The scheduled flows' run time.** The docs said 1 AM ET. The flow files say `05:00:00.000Z`, and Salesforce reads that in the org's time zone: the account run is at 5:00 AM Eastern and the promise runs at 5:30, as `CronTrigger` and every Default Review's creation time show. Docs corrected (support runbook, UAT-15, open items).
+
+### Found (DEF-11, open)
+- **A Sales Input team member can read a dispute but can't comment on it.** A case comment needs edit access to the case, and sales reps have Read. Proved on Oct 26 by a short Apex test run as Test Persona in user mode, created, run once and deleted: refused with read-only sharing and as a Sales Input team member; a post to the case feed saved. Three options in the results doc; it waits on a decision.
+
+### Confirmed
+- **Persona checks through the API (Oct 26):** UAT-01, UAT-05 step 4, UAT-12 step 4, UAT-13 criterion 3 and UAT-18 pass as Test Persona; UAT-06 partly (its outcomes are confirmed in the flow's definition, and the console run is optional); UAT-08 fails at step 2a (DEF-11).
+- **UAT-15, more scheduled runs:** five more accounts crossed 90 days past due between Oct 28 and Nov 2, and the morning run opened a Default Review for each, on time, owned by the queue (00001055 to 00001059).
+
+### Changed in the org
+- Descriptions on the five custom fields that had none (Priority Score, a statement's Days Past Due and Service Contract, Review Opened On Time, Grace Ends), so all 95 custom fields in this repository have one, as `conventions.md` requires. High Value's description promised an escalation that was never built; it now says what the field does.
+- The Residential Agreement record type's description said Primary Contact "becomes required in Phase 7"; it now names the rule that requires it. Its picklist values were compared before and after: unchanged.
+
+### Docs
+- `data-model.md` rewritten as built: the ERD with every lookup in the org (Commitment → Account, Adjustment → Billing Statement, the three Case lookups, entitlements on the account), the consent objects shown as enabled but unused, and the plan's leftovers removed.
+- `data-dictionary.md` checked against the org field by field: the Balance formula (DEF-01), Credits Applied, Date Integrity Issue and Commitment's Account lookup added; Adjustment's name is text, not the planned auto-number; Lease Payment's label; Legacy Id on seven objects, not four.
+- `conventions.md`: a Testing section, with the RCA's known-answer rule; flow, permission set and custom metadata naming as the org has it; the repository map as it is.
+- Decision log: implementation notes under D-05 (no promotional automation yet, so no consent records), D-06 (DEF-12) and D-09 (seven Legacy Id objects).
+- Support runbook: entry 17 (a case comment needs edit access, DEF-11) and entry 18 (a missed payment that leaves the account Current, DEF-12). UAT-05 step 5 waits for a bill to go overdue, as a regression check for DEF-12.
+- Case study: the DEF-12 lesson, *A design document isn't a build*.
+- Persona checks rewritten around what the API proved; README defect list to DEF-12.
+
+### Repository
+- `flows/Billing_Statement_Daily_Status.flow-meta.xml`, the five field descriptions, High Value and the record type, all written to match what the org returns.
+- `data/regen/del_*.csv` no longer tracked: the runbook calls them scratch.
+
 ## v1.0.3 — 2026-10-26 — Account visibility follows Account Status
 
 Checking the persona checks' expected results against the org, record by record, found that collections reps could read every customer account, not just the ones in collections (DEF-10). Fixed in three steps over two days; the last was a Setup step.

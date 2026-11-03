@@ -1,8 +1,10 @@
 # Data Dictionary — Accord
 
-Every field, what it's for, and how it's configured. Build straight from this.
+Every custom field, what it's for, and how it's configured. Written as the build plan in Phase 3 and checked against the org on 2026-11-03: field lists, types, picklist values and formulas match the org, and where the build departed from the plan the entry says so.
 
-**Description column doubles as the field description in Setup** — paste it in when you create the field. Per `conventions.md`, every field gets one.
+The description column summarizes each field's description in Setup. Per `conventions.md`, every field has one; five that didn't were filled in on 2026-11-03.
+
+**Legacy Id.** Account, Contact, Opportunity, Service Contract, Billing Statement, Case and Lead each carry `Legacy_Id__c` (Text 20, External ID, unique): the seed dataset's identifier, kept so the data can be reloaded (D-09). Product2 has one too, though the org has no products. They're left out of the tables below.
 
 ---
 
@@ -12,18 +14,18 @@ Record types: **Residential Agreement**, **Organization**
 
 | Field | API name | Type | Description (paste into Setup) |
 |---|---|---|---|
-| Primary Contact | `Primary_Contact__c` | Lookup (Contact) | The person automation contacts. Required on Residential Agreement, per D-01, since a household can have two people on the lease. |
+| Primary Contact | `Primary_Contact__c` | Lookup (Contact) | The person automation contacts, since a household can have two people on the lease (D-01). Stamped by `Contact_AfterSave_StampPrimaryContact`; required on Residential Agreement accounts that aren't closed, after the first save (`VR_Account_PrimaryContactRequired`). |
 | Current Balance | `Current_Balance__c` | Roll-up (SUM of Billing Statement Balance) | Total owed across all statements. Drives the collections panel in US-01. |
 | Past Due Balance | `Past_Due_Balance__c` | Roll-up (SUM of Balance, filter Status = Past Due) | What's actually late. Filter requires the stamped status field, not a formula. |
 | Oldest Past Due Date | `Oldest_Past_Due_Date__c` | Roll-up (MIN of Due Date, filter Status = Past Due) | Anchor for days past due. |
 | Days Past Due | `Days_Past_Due__c` | Formula (Number) | `TODAY() - Oldest_Past_Due_Date__c`. Zero when nothing is past due. |
-| DPD Bucket | `DPD_Bucket__c` | Formula (Text) | Current, 1-30, 31-60, 61-90, 90+. Used for aging reports and the default threshold in US-15. |
+| DPD Bucket | `DPD_Bucket__c` | Formula (Text) | Current, 1-30, 31-60, 61-90, 90+. Groups the Past Due by DPD Bucket report. The default threshold in US-15 compares Days Past Due itself with `Default_Threshold_DPD`. |
 | Collection Hold Until | `Collection_Hold_Until__c` | Date | Set by an approved promise. Outreach and escalation skip this account through this date, per US-03. |
 | Do Not Contact | `Do_Not_Contact__c` | Checkbox | Customer asked for no further contact. Suppresses every channel, per US-21. Set by US-06, never by automation. |
 | Account Status | `Account_Status__c` | Picklist | Current, Delinquent, Hardship Review, Default Review, Closed. |
 | Broken Promises (90d) | `Broken_Promises_90d__c` | Number | Rolling count stamped nightly. Can't be a roll-up — filter criteria can't use a dynamic date. |
 | Priority Score | `Priority_Score__c` | Formula (Number) | Ranks accounts for the rep work list. Weighted `(Days Past Due × 2) + (Past Due Balance ÷ 50) + (Broken Promises 90d × 25)` — aging matters most, every $50 owed adds a point, a broken promise costs about two weeks of aging. Weights are a judgment call and should be tuned against what reps actually collect on. US-05. |
-| High Value | `High_Value__c` | Checkbox | Escalates SLA breach alerts in US-14. |
+| High Value | `High_Value__c` | Checkbox | A supervisor's flag for an account worth extra attention, on the Residential Agreement layout. Planned to escalate breach alerts (US-14); not built, so no automation reads it. |
 | Threshold Crossed Date | `Threshold_Crossed_Date__c` | Date | Stamped when the account first crosses the default threshold. The clock US-15 audits against. |
 
 ---
@@ -33,7 +35,7 @@ Record types: **Residential Agreement**, **Organization**
 | Field | API name | Type | Description |
 |---|---|---|---|
 | Role on Agreement | `Role_on_Agreement__c` | Picklist | Primary, Co-signer, Authorized Third Party. Determines who automation can contact and who a rep may discuss the account with. |
-| Individual | `IndividualId` | Standard lookup | Appears once Data Protection and Privacy is enabled. Links to the consent records behind US-21. |
+| Individual | `IndividualId` | Standard lookup | Appears once Data Protection and Privacy is enabled. Unused: no contact is linked to an Individual, because no promotional automation exists yet (D-05, `data-model.md`). |
 
 ---
 
@@ -69,6 +71,7 @@ Master-detail → Opportunity · Auto-number `COM-{00000}`
 
 | Field | API name | Type | Description |
 |---|---|---|---|
+| Account | `Account__c` | Lookup (Account) | Stamped from the opportunity by `Commitment_BeforeSave_StampAccount`, so commitments show on the account page where servicing works. Read-only to every persona. Added for DEF-07. |
 | Type | `Type__c` | Picklist (global value set) | Payment Coverage, Promotional Credit, Delayed Billing Start, Referral Bonus, Other. |
 | Value | `Value__c` | Currency | Dollar value of what was promised. Blank for non-monetary terms. |
 | Months Covered | `Months_Covered__c` | Number | For payment coverage commitments. |
@@ -92,16 +95,18 @@ Master-detail → Account · Auto-number `STMT-{00000}`
 | Due Date | `Due_Date__c` | Date | Payment due. |
 | Amount Due | `Amount_Due__c` | Currency | Billed amount. |
 | Amount Paid | `Amount_Paid__c` | Roll-up (SUM of Payment Amount) | Total received against this statement. |
-| Balance | `Balance__c` | Formula (Currency) | `Amount_Due__c - Amount_Paid__c`. |
-| Status | `Status__c` | Picklist | Open, Paid, Past Due, In Dispute, Written Off. Stamped by a nightly flow, not a formula — roll-up filters can't use dynamic formulas. |
+| Credits Applied | `Credits_Applied__c` | Currency | Total of posted adjustments against this statement, kept by `Adjustment_AfterSave_ApplyCredits`. A lookup can't roll up, so a flow sums them. Added for DEF-01. |
+| Balance | `Balance__c` | Formula (Currency) | `MAX(0, Amount_Due__c - Amount_Paid__c - Credits_Applied__c)`. Credits came in with DEF-01. |
+| Status | `Status__c` | Picklist | Open, Past Due, In Dispute, Paid, Written Off. A stored field, not a formula, because the account roll-ups filter on it and roll-up filters can't use dynamic formulas. Kept current each morning by `Billing_Statement_Daily_Status`, which was missing until DEF-12. |
 | Days Past Due | `Days_Past_Due__c` | Formula (Number) | Statement-level aging for reports. |
 | Dispute Open | `Dispute_Open__c` | Checkbox | Stamped when a dispute case opens. Suppresses the reminder in US-20. |
+| Date Integrity Issue | `Date_Integrity_Issue__c` | Formula (Checkbox) | Due date before the statement date. Feeds the Data Quality dashboard; `VR_Statement_DueAfterStatementDate` stops new ones. |
 
 ---
 
-## Payment `Payment__c`
+## Lease Payment `Payment__c`
 
-Master-detail → Billing Statement · Auto-number `PAY-{00000}`
+Master-detail → Billing Statement · Auto-number `PAY-{00000}` · Labelled Payment in the plan; relabelled Lease Payment on 2026-10-14
 
 | Field | API name | Type | Description |
 |---|---|---|---|
@@ -130,7 +135,7 @@ Master-detail → Account · Auto-number `PTP-{00000}`
 
 ## Adjustment `Adjustment__c`
 
-Master-detail → Account · Auto-number `ADJ-{00000}`
+Master-detail → Account · Text name. The plan had auto-number `ADJ-{00000}`; as built the name is typed in, and a record saved without one shows its record ID, as the 12 seeded adjustments do (`data-model.md`, Gotchas)
 
 | Field | API name | Type | Description |
 |---|---|---|---|
@@ -146,7 +151,7 @@ Master-detail → Account · Auto-number `ADJ-{00000}`
 
 ## Case
 
-Record types: **Billing Dispute**, **Default Review** (built in Phase 6, fields now)
+Record types: **Billing Dispute**, **Default Review**
 
 | Field | API name | Type | Description |
 |---|---|---|---|
@@ -202,7 +207,7 @@ One record per reason-and-evidence pair. The dynamic checklist in US-07 reads th
 
 ## Global value sets
 
-Build these before the picklist fields that use them:
+Shared across objects, and built before the picklist fields that use them:
 
 - **Contact Outcome** — Right Party Contact, Third Party on Agreement, Wrong Number, No Answer, Left Voicemail, Promise Made, Refused to Pay, Disputed Balance, Requested No Further Contact, Hardship or Bankruptcy Mentioned
 - **Dispute Reason** — as listed under Case
@@ -235,7 +240,7 @@ IF(Days_Past_Due__c <= 90, "61-90", "90+"))))
 
 **Billing_Statement__c.Balance__c**
 ```
-Amount_Due__c - Amount_Paid__c
+MAX(0, Amount_Due__c - Amount_Paid__c - Credits_Applied__c)
 ```
 
 **Billing_Statement__c.Days_Past_Due__c**
@@ -264,4 +269,4 @@ AND(
 )
 ```
 
-Four of these read policy values from custom metadata rather than hardcoding them. Changing the grace period, the promise window, or the review window is a data edit, not a formula edit.
+Three of these read policy values from custom metadata rather than hardcoding them. Changing the grace period, the promise window, or the review window is a data edit, not a formula edit.

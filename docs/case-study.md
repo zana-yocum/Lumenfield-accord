@@ -61,6 +61,8 @@ Ten phases, each closed with a changelog and an open-items review before the nex
 
 **A test can pass for the wrong reason.** In Phase 7 I checked that a rep could read an account the moment the status flow moved it into collections, and could. Two weeks later, a record-by-record check of what Test Persona could reach told a different story. That account had a billing dispute, which reps can see, and the dispute brought the account with it. The group the status rule shares with had no members until Oct 14, so the rule had reached nobody. Once it did, the rule sharing closed deals with the same group, so reps could see commitments, let every rep read every customer account, because read access to a deal gives read access to its account (DEF-10). Reps now get deal access through the status rule, and the closed-deal rule goes to dispute specialists only. A check that confirms the access you expect can't tell you why it's there. Asking which path granted it, and rerunning the negative case after every sharing change, would have caught both problems.
 
+**A design document isn't a build.** The data model said statement status was "stamped by a nightly flow," because the account's past-due roll-ups filter on it and roll-up filters can't use formulas. Three weeks after release, reconciling that page with the org line by line, I found the flow had never been built. Bills loaded as Open stayed Open after their due dates: 35 overdue bills on 35 accounts never counted as past due, and 12 of those customers showed as Current, outside collections' reach (DEF-12). The seed data hid it, because every status was right on the day it was loaded, and the account-level flow I kept checking was doing its job on stale inputs. Every test had started from data that was already right; none waited for a due date to pass. The flow now runs each morning before the account run, and a UAT step waits for a bill to go overdue.
+
 **Source control drifted from the org.** A Phase 6 commit deleted most of the repository's metadata, and nobody noticed for two weeks because the org itself was fine. Everything Accord owns was retrieved again from the org with one manifest (`manifest/accord.xml`), and usernames in that metadata were replaced with placeholders before it went into the repository.
 
 ## Results
@@ -68,7 +70,7 @@ Ten phases, each closed with a changelog and an open-items review before the nex
 | Measure | Before | After |
 |---|---|---|
 | Duplicate contact pairs | 7 | 0 |
-| Past-due accounts still marked Current, out of collections' reach | 3 | 0, kept at 0 nightly |
+| Past-due accounts still marked Current, out of collections' reach | 3 at the Phase 5 baseline; 12 more found Nov 3, hidden by stale bill statuses (DEF-12) | 0, kept at 0 by the morning runs |
 | Residential accounts with no one to contact | 88 | 0, enforced by rule |
 | Statement date errors | 2 | 0, enforced by rule |
 | Security Health Check | 66% | 96% |

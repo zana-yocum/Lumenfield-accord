@@ -70,6 +70,7 @@ One script per user story. Each script names the persona to log in as, the recor
 | 2 | Set Do Not Contact on one listed account, rerun | Account gone from the list | | |
 | 3 | Give a listed account an Active in-policy promise, rerun | Gone until the hold date passes | | |
 | 4 | **Negative:** an account past due but marked Current | Not visible to the rep. After the daily status flow runs, status = Delinquent and it appears | | |
+| 5 | An unpaid bill passes its due date (any current account's newest bill, a few days after re-aging) | Next morning the bill reads Past Due (4:30 AM ET run) and the account Delinquent (5 AM run), and it appears on the list. Regression check for DEF-12 | | |
 
 ### UAT-06 — Structured contact attempt (US-06)
 **Persona:** Collections Rep · **Start:** a Delinquent account
@@ -103,7 +104,7 @@ One script per user story. Each script names the persona to log in as, the recor
 |---|---|---|---|---|
 | 1 | Add the deal's sales rep to the case team as Sales Input | Saves | | |
 | 2 | As Sales Rep, open the case | Can read it | | |
-| 2a | As Sales Rep, add a case comment with your account of the sale | Comment saves. If refused, log it — US-08 says "read and add comments" and Read-only team access may not allow it | | |
+| 2a | As Sales Rep, add a case comment with your account of the sale | Comment saves. If refused, log it — US-08 says "read and add comments" and Read-only team access may not allow it. *Refused as of 2026-10-26: DEF-11* | | |
 | 3 | Close the case; as Sales Rep, reopen the link | No access | | |
 | 4 | **Negative:** a sales rep not on the team opens any dispute | No access | | |
 
@@ -175,7 +176,7 @@ One script per user story. Each script names the persona to log in as, the recor
 
 | # | Step | Expected | Pass/Fail | Notes |
 |---|---|---|---|---|
-| 1 | After the account crosses 90 DPD and the 1 AM ET run | Status = Default Review; Threshold Crossed Date stamped; Default Review case owned by Default Reviews queue | | |
+| 1 | After the account crosses 90 DPD and the 5 AM ET run | Status = Default Review; Threshold Crossed Date stamped; Default Review case owned by Default Reviews queue | | |
 | 2 | Run Default Review Timeliness | New case counted as opened on time | | |
 | 3 | **Negative:** run the status flow again on the same account | No second case | | |
 | 4 | Payment brings it under 90; close the review as Cured | Saves | | |

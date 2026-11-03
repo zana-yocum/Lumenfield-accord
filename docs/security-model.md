@@ -30,7 +30,7 @@ Access comes from function-based permission sets, assembled into persona-based g
 | `PS_Credit_Approval` | Adjustment read/edit for the approver · the approval authority itself is the Credit Approval process, which routes to the supervisor |
 | `PS_Collections_Reporting` | Create and customize reports, manage dashboards, manage public list views |
 | `PS_Payment_Detail` | Read on a payment's method and processor reference |
-| `PS_Collections_Overrides` | Edit on the account fields automation maintains: Account Status, Collection Hold Until, High Value (DEF-09) |
+| `PS_Collections_Overrides` | Edit on the account fields reps mustn't change: Account Status and Collection Hold Until, which automation maintains, and High Value, which a supervisor sets (DEF-09) |
 | `PS_Sales_Core` | Lead, Opportunity, Account, Contact and Commitment create/read/edit · Case, Service Contract, Product and Price Book read · lead conversion · both account record types · edit on commitments, opportunity and lead fields, with no balances |
 
 | Permission set group | Contains | Muted |
@@ -112,7 +112,7 @@ To check one user and one record, query `UserRecordAccess`. To see why the acces
 
 **Object access has to exist before sharing does anything.** The case rule created Read shares from day one, but reps still couldn't open a dispute because `PS_Collections_Core` had no Read on Case. Sharing decides *which* records; object permissions decide *whether* the object is reachable at all.
 
-**Account Status is a security field.** Because the account rule reads it, whoever can edit Account Status can widen or narrow who sees the account. That's why it's read-only to everyone but supervisors (DEF-09) and set by the daily status flow.
+**Account Status is a security field.** Because the account rule reads it, whoever can edit Account Status can widen or narrow who sees the account. That's why it's read-only to everyone but supervisors (DEF-09) and set by the daily status flow. That flow reads Days Past Due, which comes from the statements marked Past Due, so a statement's status is part of the same chain: until `Billing_Statement_Daily_Status` was built, an unpaid bill never turned Past Due, and 12 customers who'd missed a payment stayed out of collections' reach (DEF-12).
 
 ---
 
@@ -170,7 +170,7 @@ US-08 needs a sales rep to answer questions on a dispute naming their deal, then
 - *Criteria-based sharing rules* can't be revoked per record — a rule broad enough to grant access would grant it to every matching case, permanently.
 - *Manual sharing* would work but relies on someone remembering to remove it, which is how orgs accumulate access nobody can explain.
 
-**Open question:** US-08 also says the sales rep adds comments. Whether a team member with Read can add a case comment hasn't been confirmed in the console yet (`docs/persona-checks.md`, step 8).
+**Answered 2026-10-26: a case comment needs edit access to the case (DEF-11).** US-08 also says the sales rep adds comments. With Read on Case, a team member is refused a case comment, though a post to the case's feed saves. Which way sales input should go in is an open decision; the options are in the results doc under DEF-11.
 
 ---
 
@@ -225,7 +225,8 @@ Developer Edition provides very few full Salesforce licenses, so four persona us
 
 1. **Through the API, as the admin:** object and field access read per persona from each group's own permissions, and per user through `UserFieldAccess`. This is fast and exact, and it's how DEF-09 was found and its fix counted field by field. Record reach is checked the same way, per user and record, through `UserRecordAccess`; that's how DEF-10 was found.
 2. **In the console, as the persona:** Setup → Users → Test Persona → **Login**, with the group switched between rounds. This is the only test of what the persona actually sees. It's how DEF-08 was found: every API check had run as the admin, who can run any flow, so a missing action never showed.
-3. **The negative test is the one that matters.** Confirming a dispute specialist can open a case proves little; confirming a sales rep hits an insufficient-privileges error opening someone else's dispute proves the model works. The Phase 6 negative test did exactly that for US-08 and US-18.
+3. **In a test that runs as the persona:** for a question only an action can answer, such as whether a role can save something, a short Apex test runs as Test Persona and saves in user mode, so object access and sharing apply exactly as in the console. Created, run once and deleted; nothing it saved is kept. That's how DEF-11 was found.
+4. **The negative test is the one that matters.** Confirming a dispute specialist can open a case proves little; confirming a sales rep hits an insufficient-privileges error opening someone else's dispute proves the model works. The Phase 6 negative test did exactly that for US-08 and US-18.
 
 Results: `docs/system-test-results-2026-10-14.md`. The console checks still to run are in `docs/persona-checks.md`.
 
