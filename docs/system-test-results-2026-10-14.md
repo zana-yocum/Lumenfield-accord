@@ -144,6 +144,22 @@ Dispute **00001049** was opened Oct 14 at 8:06 PM CT and left untouched. Acknowl
 
 Account Status moved to Default Review and Threshold Crossed Date was stamped on both. Each account has exactly one Default Review, after more nightly runs (step 3). These are the first two reviews opened on time; the five from before the automation stay as late. The scheduled runs are recorded as the org's default workflow user (OrgFarm EPIC). Step 4 (cured by payment) wasn't run.
 
+**More runs, checked 2026-11-03.** Five more accounts crossed 90 days past due as the data aged, and the morning run opened a review for each, on time and owned by the queue: 00001055 and 00001056 (ACC-0009, ACC-0021) on Oct 28, 00001057 (ACC-0067) on Oct 31, 00001058 (ACC-0083) on Nov 1 and 00001059 (ACC-0084) on Nov 2. Each was created between 5:00 and 5:10 AM Eastern, which is how the run time was found to be 5 AM, not the 1 AM the docs said (DEF-12, below).
+
+
+### Persona checks through the API (2026-10-26)
+The scripts that need a persona login, checked as Test Persona (Collections Rep) without logging in: what it can read and edit, record by record (`UserRecordAccess`) and field by field (`UserFieldAccess`), the permissions and folder shares behind it, and, for the one question only an action can answer, a short Apex test run as Test Persona that saves in user mode, so object access and sharing apply as they do in the console. The test was created in the org, run once and deleted; nothing it saved was kept. Steward's hand check, the same day, covers the console itself.
+
+| Script | Result | Evidence |
+|---|---|---|
+| UAT-01 — one screen for a past-due account | **Pass** | Residential Agreement accounts open on the Residential Agreement layout for Test Persona's profile. Balances, days past due, bucket, priority score and broken promises readable, read-only; Primary Contact and Do Not Contact editable; the layout lists promises, statements, cases and commitments, and commitments on accounts in collections are readable. A current account's fields read $0, 0 days and Current rather than blank (Jeffrey Naylor Household, reachable through dispute 00001049). Payment Method and External Reference not readable; amount and date readable. Steward's hand check opened a delinquent account in Collections Console as Test Persona |
+| UAT-05 step 4 — a stale status hides the account | **Pass** | Patrick Boone Household (Delinquent) readable and editable; Regina Mundy Household (Current, no disputes) not readable, nor its contacts, statements or deal (DEF-10) |
+| UAT-06 — structured contact attempt | **Partly** | Step 1 in the console: Test Persona logged a Left Voicemail attempt on Sandra Barnett Household (completed task, outcome recorded, owned by Test Persona, Oct 26). Steps 2–5 confirmed in the flow's definition: the outcome is required, Promise Made continues into the promise screen, Requested No Further Contact sets Do Not Contact and Hardship sets Hardship Review, in system mode with sharing. Not yet run as a rep |
+| UAT-08 — the sales rep's side | **Fail at step 2a (DEF-11)** | A case comment needs edit access to the case. Test Persona, with Case Read, was refused a comment both with read-only sharing and as a Sales Input team member: "insufficient access rights on cross-reference id". A post to the case's feed saved. Steps 1, 2, 3 and 4 hold: the Sales Input team role exists; the Phase 6 negative test showed a team member reads the case and a non-member can't; the Phase 7 test showed the team is removed at close |
+| UAT-12 step 4 — reps don't see default reviews | **Pass** | None of the 7 Default Review cases readable by Test Persona, so Default Review Timeliness shows it none. The Collections report folder is shared for viewing with VP Customer Operations and subordinates, and the rep group has Run Reports |
+| UAT-13 criterion 3 — no approving your own credit | **Pass (configuration)** | The Credit Approval process takes submissions from the Collections Rep and Dispute Specialist roles and assigns every request to one named approver, the supervisor. A specialist who submits is never the approver |
+| UAT-18 — a sales rep on a dispute naming their deal | **Pass** | The Sales Rep group has no access to Lease Payment, Billing Statement or Adjustment, so no payment detail can show inside a case team. Case fields are read-only to it, the disputed statement hidden. Team access ends at close (Phase 7) |
+
 ---
 
 ## Defects and observations
@@ -271,13 +287,44 @@ The six read-only accounts are exactly the current accounts with a billing dispu
 
 **Accepted:** a billing dispute on a current account is visible to reps, and so is that account, read-only. Reps need to see disputes, and narrowing it would mean copying the account's status onto every case. Six accounts today.
 
+
+### DEF-11 — A Sales Input team member can read a dispute but can't add a case comment · Medium · **Open: needs a decision**
+**Found:** 2026-10-26, by the persona check for UAT-08 step 2a, which had been an open question since Phase 6 (US-08 says the sales rep can "read the case and add comments").
+
+**What happens:** a case comment needs edit access to its case. Sales reps have Read on Case (`PS_Sales_Core`), so the Sales Input team role's Read/Write is capped at Read, and saving a comment is refused. The same is true for collections reps reading a dispute through the sharing rule. Posting to the case's feed only needs read access, and it saved.
+
+**Effect:** the sales rep can see the dispute but can't put their account of the sale on it as a comment. Steward's dispute summary reads case comments, not feed posts, so feed posts wouldn't reach it either.
+
+**Options**
+1. **A Sales Input action (recommended):** a small screen flow on the Billing Dispute layout that saves the rep's text as a case comment, run in system mode with sharing and granted to the Sales Rep group only, the same pattern as Log Contact Attempt (DEF-08). Least privilege, and comments stay where the specialist and Steward's summary look.
+2. **The case feed:** works today with read access, nothing to build. Steward's summary would need to read feed posts too, and the comment history is split across two places.
+3. **Edit on Case for sales reps:** not recommended. Edit would let a sales rep change the dispute's status or close it.
+
+Recorded in open items; the fix follows the decision.
+
+
+### DEF-12 — Unpaid statements never became past due · High · **Fixed 2026-11-03**
+**Found:** 2026-11-03, reconciling `data-model.md` with the org. The page said Billing Statement's `Status__c` is "stamped by a nightly flow," because the account roll-ups filter on it. No such flow existed. Two flows write a statement's status on specific events: `Adjustment_AfterSave_ApplyCredits` marks it Paid when posted credits clear it (DEF-01), and `Case_AfterSave_DisputeLifecycle` flags it In Dispute and restores it when the dispute closes. Nothing reacted to a due date passing, or to a payment clearing the balance.
+
+**What happened:** a statement's status was whatever the data load gave it. The re-age on Oct 8 stamped each one correctly for that day, including the next month's bills as Open. When those due dates passed unpaid, nothing changed them. On Nov 3, 35 statements on 35 accounts were still Open past their due dates (Oct 10 to Oct 28), $6,235.80 unpaid.
+
+**Effect:** Past Due Balance and Oldest Past Due Date only count statements marked Past Due, and Days Past Due, Account Status and the collections sharing rule all follow from them (D-06, D-08). For 12 of the 35 accounts the overdue bill was the only one, so they read 0 days past due and Current: off the work list and invisible to reps. For the other 23, already in collections, Past Due Balance was short by the open bill. A customer who stopped paying would never have reached collections, and one who paid a past-due bill in full would have stayed past due, because a payment didn't change the status either (no such payment exists in the data yet). It went unseen because every test started from loaded data, which was right on the day it was loaded; the account flow that was checked was working correctly on stale inputs.
+
+**Fix:** `Billing_Statement_Daily_Status`, a scheduled flow on Open and Past Due statements, runs each morning at 4:30 AM Eastern, half an hour before `Account_Daily_Collections_Status`. Nothing owed → Paid; still owing after the due date → Past Due; otherwise unchanged. In Dispute and Written Off are left alone. The rule is the one the re-age generator and the dispute flow already use. Built through the Tooling API: version 1 was scheduled for one run at 9:20 AM ET on Nov 3 to produce evidence today, version 2 moved it to 4:30 AM.
+
+**Verified (Nov 3, the 9:20 AM ET run):** the run started at 9:20:13 AM ET as the org's default workflow user (OrgFarm EPIC). It moved all 35 overdue Open statements to Past Due ($6,235.80) and left the 68 already past due alone; the field history shows 36 status changes, all at 9:20:14. Two throwaway statements on ACC-0053 tested the other branches: one marked Past Due but paid in full ($25 due, a $25 payment) became Paid, and one Open and due Nov 20 stayed Open. Both were deleted afterwards. The 12 Current accounts now read 7 to 24 days past due, each bill counted in Past Due Balance; the 5 AM account run on Nov 4 moves them to Delinquent, which puts them on the work list and in reps' reach. Version 2, at 4:30 AM, is active: `CronTrigger` shows it at 4:30, the account run at 5:00 and the promise runs at 5:30, all America/New_York.
+
+**Also found while checking this:** the scheduled flows don't run when the docs said. Their start times read `05:00:00.000Z` and `05:30:00.000Z` in the metadata, and the docs said 1 AM ET, but Salesforce reads the time in the org's time zone: `CronTrigger` shows 5:00 and 5:30 AM America/New_York, and every Default Review so far was created between 5:00 and 5:10 AM Eastern. Docs corrected; nothing depended on 1 AM.
+
 ---
 
 ## Still to run
 
 | Script | Who / when | What to check |
 |---|---|---|
-| 01, 05 step 4, 06, 08, 12 negative, 13 criterion 3, 18, and DEF-09 and DEF-10 in the console | You, as Test Persona (about 20 min, `docs/persona-checks.md`) | What each persona can and can't see; case comment as a Sales Input team member. UAT-06 is now possible (DEF-08) |
+| 06 steps 2–5 | You, as Test Persona (about 5 min, `docs/persona-checks.md`) | Promise Made, Requested No Further Contact and Hardship from the console, and the block with no outcome. Everything else that needed a persona login was checked through the API on Oct 26 (above) |
+| 08 step 2a | After the DEF-11 decision | Sales input saved on the dispute by a Sales Rep |
 | 14, email part | You, in the supervisor's inbox | "Dispute Milestone Violation" for 00001049 around Oct 15, 5 PM CT and Oct 19, 5 PM CT. Then delete 00001049 |
 | 04 step 2, 15 step 4, 20 | When data allows | A promise kept on a scheduled run; a review cured by payment; the reminder 7 days before a first due date (the Oct 14 test contract was deleted before Oct 21, so its reminder never ran) |
+| DEF-12, account side | Claude, Nov 4 after 5 AM ET | The 12 accounts DEF-12 surfaced move from Current to Delinquent, and the 4:30 statement run finds nothing new to change |
 | All | 3–5 outside testers | Actual UAT |

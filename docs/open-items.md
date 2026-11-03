@@ -6,6 +6,29 @@ Everything deferred, flagged, or half-finished. Updated at the end of every sitt
 
 ---
 
+## Reconcile sitting — 2026-11-03
+
+Claude reconciled the data model, data dictionary and conventions with the org, line by line. That found DEF-12: no automation ever moved an unpaid statement to Past Due, so customers who missed a payment never reached collections. Fixed the same day. Everything is in `CHANGELOG.md` v1.0.4 and the results doc.
+
+**Your steps**
+- ☐ **Before you record the walkthrough or run outside UAT: re-age the data** (`data/regen/RUNBOOK.md`, about 15 minutes in PowerShell). As of Nov 3 the book has aged three and a half weeks: 12 accounts at 90+ days past due (the plan has 5) and 1 at 1–30 (the plan has 14). Now that unpaid bills turn Past Due on their own (DEF-12), the next month's bills go overdue a few weeks after any re-age, so do it within a day or two of recording
+- ☐ **Decide the Organization accounts.** The 12 Organization accounts (HOAs and property managers) each have a Closed Won deal (about $435,000 in all, one with a commitment), the active lease that closing created ($120–$198 a month), and no bills. The record type says "a relationship account, not a lease holder." (a) **Recommended:** keep the data and change the description to match it: an HOA or property manager whose lease covers shared property, not billed through residential statements or worked by collections. (b) Delete the 12 leases and the 12 deals behind them, so the data matches the old description; that also deletes the commitment and the sales history. Answer a or b; Claude does either
+- ☐ DEF-11 and the other steps in the release follow-up below are still open
+
+**Mine (2026-11-03)**
+- ☑ **DEF-12 (High) found and fixed:** 35 statements on 35 accounts were Open past their due dates, $6,235.80; 12 of the accounts read Current with 0 days past due. `Billing_Statement_Daily_Status` now runs each morning at 4:30 AM ET before the account run. Verified on a one-off 9:20 AM ET run the same day: 35 statements to Past Due and nothing else changed; a paid-in-full test bill went to Paid and a not-yet-due one stayed Open (both deleted)
+- ☐ **Nov 4, after 5 AM ET:** check that the account run moved the 12 accounts to Delinquent and that the statement run found nothing new to change (Claude)
+- ☑ **Scheduled run times corrected:** the docs said 1 AM ET; `CronTrigger` and the Default Reviews' creation times show 5:00 AM ET for the account run and 5:30 for the promise runs. Salesforce reads a scheduled flow's start time in the org's time zone, whatever the `Z` in the file says
+- ☑ **UAT-15, more evidence:** Default Reviews 00001055 to 00001059 opened on time by the morning run, Oct 28 to Nov 2
+- ☑ `data-model.md` rewritten as built; `data-dictionary.md` checked against the org field by field (field lists, types, active picklist values and formulas now match); `conventions.md` gets a Testing section and the naming the org actually follows
+- ☑ Five custom fields had no description; written in the org and in source. High Value's description promised an escalation that was never built; corrected. The Residential Agreement record type's description no longer says Primary Contact "becomes required in Phase 7"
+- ☑ Decision log: implementation notes under D-05, D-06 and D-09
+- ☑ `data/regen/del_*.csv` no longer tracked, as the runbook says
+- ☐ **Adjustment names (Claude, next):** the plan's auto-number `ADJ-{00000}` was built as a text name, so the 12 seeded adjustments show their record IDs. Converting the name field needs Steward's test data changed first, because its tests set the name. Two pull requests, Steward's first
+- ☐ Optional cleanup: `Product2.Legacy_Id__c` exists, though the org has no products. Delete it in Setup or leave it
+
+---
+
 ## Release follow-up — 2026-10-24 to 26
 
 Steward's Phase 5 hand check found that collections personas couldn't see **Log Contact Attempt** (DEF-08). Claude fixed it in the org and checked the clock-dependent results. Claude also found that `main` had been missing most of Accord's metadata since the Phase 6 commit, and retrieved it again from the org. A record-by-record access check on Oct 25 then found that reps could read every customer account (DEF-10), fixed Oct 26. Everything is in `CHANGELOG.md` v1.0.2 and v1.0.3 and `docs/system-test-results-2026-10-14.md`.
@@ -15,11 +38,13 @@ Steward's Phase 5 hand check found that collections personas couldn't see **Log 
 - ☑ 2. **Public (2026-10-25).** The portfolio's Accord links work once v1.0.2 is merged into `main`
 - ☐ **Your copy on your computer is out of date** since the rewrite: its commits no longer match GitHub's. In File Explorer, rename `C:\Lumenfield-accord` to `C:\Lumenfield-accord-old`. In GitHub Desktop: **File** → **Clone repository** → `zana-yocum/Lumenfield-accord` → local path `C:\Lumenfield-accord`. Copy back anything you made that isn't in the new copy (for example files in `data\regen`), then delete the old folder
 - ☑ **Old closed-deal sharing rule deleted (DEF-10), 2026-10-26, 1:47 PM CT**, in Setup. Claude measured the result: Test Persona reads 40 accounts instead of 100
-- ☐ 3. **Persona checks:** `docs/persona-checks.md`, about 20 minutes as Test Persona, with step-by-step switching between personas. UAT-06 is possible now that DEF-08 is fixed, and step 2 checks DEF-09 in the console. Steward's hand check already confirmed the Log Contact Attempt button for the Collections Rep (2026-10-26).
+- ☐ 3. **Persona checks, now optional (about 5 minutes):** `docs/persona-checks.md`. Claude checked the rest through the API as Test Persona on 2026-10-26: UAT-01, 05 step 4, 12, 18 and 13 criterion 3 pass, and DEF-09 and DEF-10 hold in the console's terms. Left: the contact-attempt outcomes (UAT-06 steps 2–5) run as a rep, which the flow's definition already confirms
+- ☐ **Decide DEF-11: how a sales rep's input gets onto a dispute.** A case comment needs edit access to the case, and sales reps have read. (a) **Recommended:** a Sales Input action, a small flow that saves the rep's text as a case comment, granted to the Sales Rep group only, like Log Contact Attempt. (b) The case feed: works today, nothing to build, but Steward's dispute summary doesn't read feed posts. (c) Edit on Case for sales reps: not recommended, since they could change or close the dispute. Answer a, b or c; Claude builds it
 - ☐ 4. **UAT-14 email:** search the supervisor's inbox (yours) for **Dispute Milestone Violation**, around Oct 15, 5 PM CT and Oct 19, 5 PM CT, and tell Claude what's there. Then dispute 00001049 can be deleted.
 - ☐ 5. If `docs/release-readiness-winter27.md` is still on your computer, add it to `docs/`. It was never committed, so the README no longer lists it.
 
 **Mine (2026-10-24 to 26)**
+- ☑ **Persona checks through the API (2026-10-26):** as Test Persona, record by record and field by field, plus a short Apex test run as Test Persona in user mode for the one question only an action answers (created, run once, deleted). UAT-01, 05 step 4, 12, 13 criterion 3 and 18 pass; UAT-06 partly; UAT-08 fails at step 2a, which is DEF-11. Results doc, *Persona checks through the API*
 - ☑ **DEF-08 fixed in the org:** `Account_Screen_LogContactAttempt` version 3 restricts access to enabled permission sets, and `PS_Collections_Core` grants it. Verified through the API on the three collections groups; Sales Rep excluded. Confirmed in the console on 2026-10-26: Steward's hand check logged a contact attempt as Test Persona.
 - ☑ **Scheduled results:**
   - UAT-04 step 3 passed: six promises were broken on schedule.
@@ -67,7 +92,7 @@ Admin-run system test through the API, with evidence: `docs/system-test-results-
 
 - ☑ **DEF-01 (High) fixed and retested 2026-10-14:** `Credits_Applied__c` + `Adjustment_AfterSave_ApplyCredits` + Balance formula; seeded credits backfilled. Was: posted credits don't reduce the statement balance. `Balance__c` = due − paid; adjustments look up to the statement, so no roll-up. A credited customer stays past due and on the work list. Fix: `Credits_Applied__c` on Billing Statement, summed by `Adjustment_AfterSave_Lifecycle` when an adjustment posts; `Balance__c` = due − paid − credits. Retest UAT-10/11.
 - ☑ OBS-01 closed: Delete on Promise to Pay removed from `PS_Collections_Core`; no persona can delete a promise
-- ☐ Persona checks as Test Persona: UAT-01, 05 step 4, 06, 08 (case comment), 12 negative, 13 criterion 3, 18 (your step 3 above)
+- ☑ Persona checks (2026-10-26): through the API as Test Persona. UAT-01, 05 step 4, 12, 13 criterion 3 and 18 pass; UAT-06 partly, its outcomes optional in the console; UAT-08 step 2a fails (DEF-11)
 - ☑ UAT-14: both milestones on **00001049** violated at their targets (checked 2026-10-24). The email arrival check is your step 4; delete the case after that
 - ☑ UAT-04 step 3 confirmed on six promises (2026-10-24). ☐ Step 2 (Kept on a scheduled run) and UAT-20 (reminder) still have no example: the Oct 14 test contract was deleted before its reminder date
 - ☑ UAT-15 steps 1–3: Default Reviews 00001051 and 00001052 opened on time by the nightly run (Oct 18, 19)
@@ -143,7 +168,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☑ Deliverability set to All email (2026-10-14)
 - ☑ System Administrator access to Collections Console (verified)
 - ☑ Email alert descriptions shortened (verified)
-- ☐ Commit `data/regen/`, excluding the `del_*.csv` scratch files. (`Balance__c` is in `manifest/phase9-retrieve.xml`)
+- ☑ `data/regen/` committed, generator included; the `del_*.csv` scratch files untracked and ignored (2026-11-03)
 - ☑ `--line-ending LF` added to the runbook import commands
 - ⊘ Separate sales persona app — sales reps use the standard Sales app; nothing in Accord's sales scope needs its own
 
@@ -152,7 +177,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☑ **Credits (US-11, US-13):** `Adjustment_AfterSave_Lifecycle`, Credit Approval process, `VR_Adjustment_ApprovalRequired`, `VR_Adjustment_AmountLockedAfterApproval`. Tested: $75 posted on its own; $250 blocked from manual approval, approved through the process, posted, dispute back to Under Review; approved amount locked.
 - ☑ **Welcome and reminder (US-19, US-20, US-21):** `ServiceContract_AfterSave_WelcomeAndReminder`. Tested: welcome sent and stamped on activation; reminder scheduled. Fires only when a contract becomes active, so the existing 88 customers weren't emailed.
 - ☑ **First scheduled runs confirmed** (Oct 10): ACC-0002 and ACC-0003 moved to Delinquent, modified by the automated process user; nothing else changed
-- ☐ **Clock-dependent:** ACC-0051 (86 DPD) and ACC-0026 (85 DPD) cross 90 around Oct 18–19. Confirm the 1 AM run opens a Default Review for each, owned by the queue, and that Default Review Timeliness counts them on time. Screenshot the dashboard after.
+- ☑ **Clock-dependent:** ACC-0051 and ACC-0026 crossed 90 on Oct 18 and 19, and the morning run opened a Default Review for each, owned by the queue and on time (00001051, 00001052). Five more followed, Oct 28 to Nov 2. ☐ Optional: a screenshot of the dashboard
 - ☑ **Rejection reason on approval-process rejections** (US-11 criterion 3): approval field updates skip `VR_Adjustment_RejectionReason`, so `Adjustment_AfterSave_Lifecycle` now assigns the approver a high-priority task to record the reason when a credit is rejected without one. The task attaches to the account because activities aren't enabled on Adjustment. Tested: submit → reject with no reason → task created for the approver, dispute back to Under Review. Test records deleted.
 - ☑ Admin self-approval documented (security model additions, README limits)
 - ☑ Duplicated thresholds documented in README known limits
@@ -163,12 +188,12 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☑ **Dispute lifecycle tested end to end** on a throwaway case (Paid statement STM-00452, ACC-0060): created with no entitlement → entitlement attached, routed to Dispute Specialists, 3 milestones started, statement In Dispute. Acknowledged → only Acknowledge completed. Sales rep added to case team, then jumped straight to Resolved → team member removed, both remaining milestones completed, statement back to Paid with Dispute Open cleared. Test case deleted.
 - ☑ **Backfilled the 13 Phase 6 test disputes**: 12 passed milestones completed on open cases, 10 open disputes' statements flagged In Dispute.
 - ☑ **Lesson: milestones lock once their case exits the entitlement process.** Completing milestones on the 3 already-closed test disputes was refused ("can't change the completion date on a milestone that's already exited an entitlement process"). The flow completes them inside the closing save, before they lock, so this only affects cases closed before the flow existed; their milestones stay as an honest record.
-- ☑ **`Account_Daily_Collections_Status`** (scheduled, daily 1 AM ET) deployed from source and active. Sets Account Status from Days Past Due (Current / Delinquent / Default Review at the `Default_Threshold_DPD` policy setting), stamps Threshold Crossed Date, opens a Default Review case owned by the Default Reviews queue when none is open. Skips Closed and Hardship Review. Debug-tested on three accounts: ACC-0082 (14 DPD, Delinquent) and ACC-0060 (0 DPD, Current) took "Already correct" with no update; ACC-0001 (43 DPD, marked Current) moved to Delinquent.
+- ☑ **`Account_Daily_Collections_Status`** (scheduled, daily; 5 AM ET, not 1 AM as first written, corrected 2026-11-03) deployed from source and active. Sets Account Status from Days Past Due (Current / Delinquent / Default Review at the `Default_Threshold_DPD` policy setting), stamps Threshold Crossed Date, opens a Default Review case owned by the Default Reviews queue when none is open. Skips Closed and Hardship Review. Debug-tested on three accounts: ACC-0082 (14 DPD, Delinquent) and ACC-0060 (0 DPD, Current) took "Already correct" with no update; ACC-0001 (43 DPD, marked Current) moved to Delinquent.
 - ☑ **Proved the security effect (D-08):** right after the debug run, Test Persona (Collections Rep) could read ACC-0001 and still could not read ACC-0002, the other mismatch account not yet run. Status drives visibility; the flow is what makes it accurate. *Correction, 2026-10-25 (DEF-10): this proved nothing. ACC-0001 has billing dispute 00001038, which the case rule shares with reps, and Collections Team had no members until Oct 14, so the status rule reached nobody.*
 - ☑ **Case team removed on close** in `Case_AfterSave_DisputeLifecycle`. Done.
 - ☑ **Disputed statement flagged** (Dispute Open, In Dispute) while the case is open; restored on close to Paid / Past Due / Open from its real balance and due date. Done.
-- ☐ Confirm a case team member with Read can add case comments (US-08 says "read the case and add comments"); if comments need Edit, decide between a Sales Input permission and a quick action
-- ☐ Account record types: the 12 Organization accounts each still have a service contract, though Organization is described as "not a lease holder." Remove those contracts or revise the description.
+- ☑ Confirm a case team member with Read can add case comments: **no** (2026-10-26). A case comment needs edit access to the case; a feed post works with read. DEF-11, decision in the release follow-up
+- ☐ Account record types: the 12 Organization accounts each still have a service contract, though Organization is described as "not a lease holder." Options and a recommendation are in the reconcile sitting, at the top
 - ☑ **`Case_BeforeSave_StampEntitlement`**: new Billing Disputes without an entitlement get the account's active one, so the SLA starts. Done.
 - ☑ **Milestones complete from status** in `Case_AfterSave_DisputeLifecycle`: Acknowledged → Acknowledge; Awaiting Evidence or later → Request Evidence; Resolved/Closed → Resolve; skipped stages complete too. Done.
 - ⊘ Entitlement for new Residential Agreement accounts — recorded as a known limit in the README. `Case_BeforeSave_StampEntitlement` only attaches an existing one
@@ -209,7 +234,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☐ **Recruit 3–5 outside UAT testers**, run the scripts, collect sign-off. Re-age the data first.
 - ☐ **Walkthrough video** (5 minutes: console home → work list → log contact attempt → promise → dispute → credit approval → dashboard)
 - ☐ In-app guidance prompt (optional; the quick reference covers the same ground)
-- ☐ Add to `conventions.md` under testing: *"Every formula gets a known-answer test: one record where the expected result is worked out by hand first, then compared."* (from the RCA)
+- ☑ `conventions.md` has a Testing section with the known-answer rule from the RCA (2026-11-03)
 
 ---
 
@@ -263,7 +288,7 @@ Quick confirmations, not real work. Each one is something that may or may not ha
 - ☑ `requirements.md` traceability complete (2026-10-14); US-17 marked cut
 - ☑ `requirements.md` rewritten: acceptance criteria for all 21 stories, a summary table, and traceability filled in for what's built. US-21 retitled to match D-05 (consent gates promotional messages only).
 
-- ☐ `data-model.md` — the object list at the bottom still describes the plan rather than what was built; reconcile after Phase 5
+- ☑ `data-model.md` reconciled with the org (2026-11-03), and `data-dictionary.md` with it
 
 ---
 

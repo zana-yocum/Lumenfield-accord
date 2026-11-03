@@ -22,6 +22,8 @@ How to work the problems Accord's users are most likely to report. Every entry c
 | 14 | A data load rejects most rows | Restricted picklist mismatch, active duplicate rules or relationship column syntax |
 | 15 | A user can edit or see a field their role shouldn't | The profile grants the field, not just the permission sets |
 | 16 | A rep can open an account that isn't in collections | A child record shared with the rep (a deal or a dispute) brings its account with it |
+| 17 | A user can read a case but can't add a comment to it | A case comment needs edit access to the case; read isn't enough |
+| 18 | A customer missed a payment, but the account still says Current with 0 days past due | The unpaid bill is still marked Open, so the account's past-due roll-ups don't count it |
 
 ---
 
@@ -55,10 +57,10 @@ How to work the problems Accord's users are most likely to report. Every entry c
 
 **Check**
 1. Collections reps reach accounts only through the criteria-based sharing rule on **Account Status** (Delinquent, Hardship Review or Default Review, D-08). Open the account as admin and look at Account Status and Days Past Due.
-2. If Days Past Due says delinquent but Status says Current, the status is stale. `Account_Daily_Collections_Status` corrects it every night at 1 AM ET. Check Setup → Flows → the flow's recent runs, or the account's Last Modified By (the nightly run shows as the org's default workflow user).
+2. If Days Past Due says delinquent but Status says Current, the status is stale. `Account_Daily_Collections_Status` corrects it every morning at 5 AM Eastern. Check Setup → Flows → the flow's recent runs, or the account's Last Modified By (the scheduled run shows as the org's default workflow user). If Days Past Due itself reads 0 although a bill is overdue, see 18.
 3. Hardship Review and Closed accounts are skipped on purpose.
 
-**Fix:** wait for the nightly run, or have an admin set the status. Supervisors can edit Account Status (`PS_Collections_Overrides`), but only on accounts they can already see, and a stale Current account isn't shared with collections yet.
+**Fix:** wait for the next morning's run, or have an admin set the status. Supervisors can edit Account Status (`PS_Collections_Overrides`), but only on accounts they can already see, and a stale Current account isn't shared with collections yet.
 
 **Prevent:** don't change the sharing rule's criteria without changing the status flow with it; together they're the security control.
 
@@ -162,7 +164,7 @@ Read the job's error file before changing anything; it names the cause.
 2. Then the user's groups: Setup → Permission Set Groups → the group → **Object Settings** → the object, which shows the group's combined field access.
 3. To check one user without logging in as them, the API answers directly: `UserFieldAccess` for that user and field returns readable and editable.
 
-**Fix:** grant the field in the persona's permission set, then remove it from the profile, in that order so nobody loses access in between. Automation-maintained account fields (Account Status, Collection Hold Until, High Value) are editable only through `PS_Collections_Overrides`, in the supervisor group.
+**Fix:** grant the field in the persona's permission set, then remove it from the profile, in that order so nobody loses access in between. The account fields reps mustn't change (Account Status and Collection Hold Until, which automation maintains, and High Value, a supervisor's flag) are editable only through `PS_Collections_Overrides`, in the supervisor group.
 
 **Prevent:** in Setup's new-field wizard, clear every profile box on the field-level security step. The wizard ticks them all by default.
 
@@ -183,8 +185,40 @@ Read the job's error file before changing anything; it names the cause.
 
 **Happened:** DEF-10, found 2026-10-25: Test Persona, as a rep, could read all 100 accounts instead of the 34 in collections. Fixed 2026-10-26: it reads 40, the 34 in collections and 6 current accounts with a billing dispute (results doc).
 
+## 17. A user can read a case but can't add a comment to it
+
+**Reported as:** "I'm on the case team, but New Comment gives me an insufficient privileges error."
+
+**Check**
+1. The user's access to the case: `UserRecordAccess` for the user and the case. A case comment needs **edit** access to its case; read isn't enough. The error is "insufficient access rights on cross-reference id".
+2. Where edit would come from: a case team role with Read/Write, *and* Edit on Case in the user's permission sets. The team role can't give more than the object permission allows, so a sales rep with Read on Case stays at Read whatever the role says.
+3. Whether the case feed is an option: posting to a case's feed needs only read access.
+
+**Fix:** don't grant Edit on Case to get comments working: that also lets the user change the case's status or close it. Give the user a narrow way in instead, such as an action that saves the comment in system mode, granted to that group only (the Log Contact Attempt pattern), or use the case feed. Accord's choice is open (DEF-11).
+
+**Prevent:** when a story says a role can "add comments", test it as that role before building the access around it.
+
+**Happened:** DEF-11, found 2026-10-26 by a test run as Test Persona: refused with read-only sharing and as a Sales Input team member; a feed post saved (results doc).
+
+---
+
+## 18. A customer missed a payment, but the account still says Current
+
+**Reported as:** "Mrs. Lopez told me she skipped October. Her account says Current, 0 days past due, and she isn't on my list."
+
+**Check**
+1. **The bill's status.** Open the account's Billing Statements. An unpaid bill whose due date has passed should say **Past Due**. If it still says **Open**, the account can't see it as late: Past Due Balance and Oldest Past Due Date only count statements marked Past Due, and Days Past Due, Account Status and collections' access to the account all follow from those.
+2. **The statement run.** `Billing_Statement_Daily_Status` marks overdue Open bills Past Due, and fully paid ones Paid, at 4:30 AM Eastern. The account run follows at 5. Setup → Flows → the flow → check it's active; the bill's history shows the change by the org's default workflow user.
+3. **When the runs really happen.** A scheduled flow's start time is in the org's time zone, whatever the flow file says: `05:00:00.000Z` in the metadata means 5 AM in New York here, not 5 AM UTC. To see the real next run, query `CronTrigger` (`NextFireTime`, `TimeZoneSidKey`) or look at Setup → Scheduled Jobs.
+
+**Fix:** if the flow is active and ran, the bill will be Past Due after tomorrow's run and the account in collections after the account run; an admin can set the bill to Past Due now if the customer is on the phone. If the flow isn't there or isn't active, that's DEF-12 again.
+
+**Prevent:** a stored status that a roll-up filters on needs automation keeping it current, and a test that waits for a due date to pass. The design said this flow existed; nothing checked that it did.
+
+**Happened:** DEF-12, found 2026-11-03 while reconciling the data model with the org: 35 bills on 35 accounts were overdue but still Open, 12 of those accounts showing Current (results doc).
+
 ---
 
 ## Writing up a fix
 
-Every fix gets a line in `CHANGELOG.md` and, if it was a defect, a write-up with what was found, the cause, the effect, the fix and how it was verified (see DEF-01 and DEF-08 to DEF-10 in the results doc). A change made in Setup is retrieved into `force-app/` the same day (`manifest/accord.xml`). A change with no record is how DEF-02 to DEF-06 were lost.
+Every fix gets a line in `CHANGELOG.md` and, if it was a defect, a write-up with what was found, the cause, the effect, the fix and how it was verified (see DEF-01 and DEF-08 to DEF-12 in the results doc). A change made in Setup is retrieved into `force-app/` the same day (`manifest/accord.xml`). A change with no record is how DEF-02 to DEF-06 were lost.

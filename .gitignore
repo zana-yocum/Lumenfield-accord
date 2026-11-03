@@ -33,3 +33,6 @@ desktop.ini
 /*-success-records.csv
 /*-sample.csv
 /*-partial.csv
+
+# Re-age scratch: record IDs listed for deletion (data/regen/RUNBOOK.md)
+data/regen/del_*.csv

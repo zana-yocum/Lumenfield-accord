@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Grace_Ends__c</fullName>
+    <description>Promise date plus the grace period in Policy_Setting__mdt (Promise_Grace_Days). Once this date has passed, the nightly evaluation judges the promise kept or broken. US-04.</description>
     <formula>Promise_Date__c + $CustomMetadata.Policy_Setting__mdt.Promise_Grace_Days.Number_Value__c</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>Grace Ends</label>

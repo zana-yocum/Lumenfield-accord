@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Review_Opened_On_Time__c</fullName>
+    <description>Whether a Default Review opened within the policy window (Default_Review_Window_Days) of the account crossing the default threshold. The audit metric behind the Default Review Timeliness report. US-15.</description>
     <formula>AND(
   NOT(ISBLANK(Threshold_Crossed_Date__c)),
   DATEVALUE(CreatedDate) - Threshold_Crossed_Date__c &lt;= $CustomMetadata.Policy_Setting__mdt.Default_Review_Window_Days.Number_Value__c

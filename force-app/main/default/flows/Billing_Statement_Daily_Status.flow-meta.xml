@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>68.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>Which_Status</name>
+        <label>Which Status?</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>Already correct</defaultConnectorLabel>
+        <rules>
+            <name>Nothing_Owed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Balance__c</leftValueReference>
+                <operator>LessThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>0.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Mark_Paid</targetReference>
+            </connector>
+            <label>Nothing owed</label>
+        </rules>
+        <rules>
+            <name>Unpaid_After_Due_Date</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Open</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Due_Date__c</leftValueReference>
+                <operator>LessThan</operator>
+                <rightValue>
+                    <elementReference>fxToday</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Balance__c</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <numberValue>0.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Mark_Past_Due</targetReference>
+            </connector>
+            <label>Unpaid after due date</label>
+        </rules>
+    </decisions>
+    <description>Daily at 4:30 AM Eastern, before Account - Daily - Collections Status at 5. Keeps each Open or Past Due statement&apos;s status in step with its balance and due date: nothing owed becomes Paid; still owing after the due date becomes Past Due. The account roll-ups Past Due Balance and Oldest Past Due Date filter on this status, and Days Past Due, Account Status and who in collections can see the account all follow from them, so a statement left Open after its due date never reaches collections. In Dispute and Written Off statements are left to their own processes. DEF-12.</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>fxToday</name>
+        <dataType>Date</dataType>
+        <description>Today in the org&apos;s time zone, the same date Days Past Due counts from.</description>
+        <expression>TODAY()</expression>
+    </formulas>
+    <interviewLabel>Billing Statement - Daily - Status {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Billing Statement - Daily - Status</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Mark_Paid</name>
+        <label>Mark Paid</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Paid</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Billing_Statement__c</object>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Mark_Past_Due</name>
+        <label>Mark Past Due</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Past Due</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Billing_Statement__c</object>
+    </recordUpdates>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Which_Status</targetReference>
+        </connector>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Open</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Past Due</stringValue>
+            </value>
+        </filters>
+        <object>Billing_Statement__c</object>
+        <schedule>
+            <frequency>Daily</frequency>
+            <startDate>2026-11-04</startDate>
+            <startTime>04:30:00.000Z</startTime>
+        </schedule>
+        <triggerType>Scheduled</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

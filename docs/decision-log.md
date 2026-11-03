@@ -113,6 +113,8 @@ Every entry uses the same format: context, options considered, decision, rationa
 
 **Decided by / date.** Zana Yocum, 2026-09-24.
 
+**Implementation note (2026-11-03).** No promotional automation was built, so neither the shared consent subflow nor any consent records exist yet: Data Protection and Privacy is on, and the consent objects are empty. The servicing half is built: the welcome and the payment reminder send regardless of marketing consent and stop on Do Not Contact (US-21). The first promotional flow is where the consent subflow gets built. The decision stands; it just hasn't been exercised.
+
 ---
 
 ## D-06 — Billing statements are master-detail to Account, not to Service Contract
@@ -133,6 +135,8 @@ Every entry uses the same format: context, options considered, decision, rationa
 **Revisit if.** Multi-agreement households become common enough that a combined balance misleads reps, or contract-level roll-ups become a real requirement rather than a reporting preference.
 
 **Decided by / date.** Zana Yocum, 2026-09-24.
+
+**Implementation note (2026-11-03, DEF-12).** The stamped status needs automation to keep it current, and none was built: statements loaded as Open stayed Open after their due dates, so a customer who stopped paying never reached the account's past-due roll-ups, and so never reached collections (D-08 depends on the same chain). `Billing_Statement_Daily_Status` now runs each morning before the account status run. The decision stands; its consequence was only half built.
 
 ---
 
@@ -201,6 +205,8 @@ Every entry uses the same format: context, options considered, decision, rationa
 **Revisit if.** The org ever becomes the system of record with no upstream source, at which point the fields are dead weight.
 
 **Decided by / date.** Zana Yocum, 2026-09-27.
+
+**Implementation note (2026-11-03).** As built, `Legacy_Id__c` is on seven loaded objects, not four: Account, Contact, Opportunity, Service Contract, Billing Statement, Case and Lead. Product2 has one too, though the org has no products. Each field's description names it a migration identifier.
 
 ---
 

@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>High_Value__c</fullName>
     <defaultValue>false</defaultValue>
-    <description>Escalates SLA breach alerts and default reviews for accounts worth extra attention. US-14.</description>
+    <description>Flags an account worth extra attention, set by hand by a supervisor (PS_Collections_Overrides) and shown on the Residential Agreement layout. No automation reads it: escalating breach alerts for these accounts was considered for US-14 and not built.</description>
     <label>High Value</label>
     <trackFeedHistory>false</trackFeedHistory>
     <type>Checkbox</type>
