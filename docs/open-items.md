@@ -24,7 +24,7 @@ Claude reconciled the data model, data dictionary and conventions with the org, 
 - ☑ Five custom fields had no description; written in the org and in source. High Value's description promised an escalation that was never built; corrected. The Residential Agreement record type's description no longer says Primary Contact "becomes required in Phase 7"
 - ☑ Decision log: implementation notes under D-05, D-06 and D-09
 - ☑ `data/regen/del_*.csv` no longer tracked, as the runbook says
-- ☐ **Adjustment names (Claude, next):** the plan's auto-number `ADJ-{00000}` was built as a text name, so the 12 seeded adjustments show their record IDs. Converting the name field needs Steward's test data changed first, because its tests set the name. Two pull requests, Steward's first
+- ☑ **Adjustment names (2026-11-03):** the name field is now the planned auto-number, `ADJ-{00000}`. Steward's pull request #18 went first, so Steward's tests no longer name adjustments; then the field was switched in the org. The 12 seeded adjustments keep their record IDs as names, because the switch doesn't renumber existing records. Your next re-age rebuilds them with numbers (CHANGELOG v1.0.5)
 - ☐ Optional cleanup: `Product2.Legacy_Id__c` exists, though the org has no products. Delete it in Setup or leave it
 
 ---

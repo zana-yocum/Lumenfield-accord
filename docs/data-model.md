@@ -129,7 +129,7 @@ Dependencies decided the order. Building out of order means going back.
 - **Master-detail can't be added cleanly later.** Converting a lookup to master-detail requires every child record to already have a parent. Decide before any data loads.
 - **Master-detail children have no owner and no sharing of their own.** They inherit from the parent. That's intentional: it's what keeps the security model simple.
 - **Roll-up filters can't reference dynamic formulas.** Covered above. The stored field it forces on you needs automation behind it, or it quietly goes stale (DEF-12).
-- **Set auto-number formats when you create the object.** Commitment `COM-{00000}`, Billing Statement `STMT-{00000}`, Lease Payment `PAY-{00000}`, Promise to Pay `PTP-{00000}`. Adjustment was planned as `ADJ-{00000}` but was built with a text name, and records created without one show their record ID (the 12 seeded adjustments do). Converting it now needs Steward's test data changed first, because its tests set the name; it's in `open-items.md`.
+- **Set auto-number formats when you create the object.** Commitment `COM-{00000}`, Billing Statement `STMT-{00000}`, Lease Payment `PAY-{00000}`, Promise to Pay `PTP-{00000}`. Adjustment was planned as `ADJ-{00000}` but was built with a text name, and records created without one show their record ID. It was converted on 2026-11-03, after Steward's test data stopped naming adjustments. Converting doesn't renumber records that already exist, so the 12 seeded adjustments keep their record IDs as names until the next re-age rebuilds them.
 - **Descriptions are not optional.** Every field gets one explaining why it exists. Doing it as you go takes seconds; doing it for sixty fields later takes an evening you won't have.
 
 ---
@@ -137,4 +137,4 @@ Dependencies decided the order. Building out of order means going back.
 ## Known gaps
 
 - **Organization accounts have leases.** The 12 Organization accounts each have a Closed Won deal and the lease it created, but no bills, though the record type describes "a relationship account, not a lease holder." Either the description changes or the leases and deals go; the decision is in `open-items.md`.
-- **Adjustment names.** Text, not the planned auto-number (Gotchas, above).
+- **Adjustment names.** The auto-number arrived late, so the 12 seeded adjustments show record IDs until the next re-age (Gotchas, above).
