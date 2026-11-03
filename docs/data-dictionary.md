@@ -135,7 +135,7 @@ Master-detail → Account · Auto-number `PTP-{00000}`
 
 ## Adjustment `Adjustment__c`
 
-Master-detail → Account · Text name. The plan had auto-number `ADJ-{00000}`; as built the name is typed in, and a record saved without one shows its record ID, as the 12 seeded adjustments do (`data-model.md`, Gotchas)
+Master-detail → Account · Auto-number name, `ADJ-{00000}` (Adjustment Number), since 2026-11-03. It was built as plain text, so the 12 seeded adjustments still show their record IDs until the next re-age rebuilds them (`data-model.md`, Gotchas)
 
 | Field | API name | Type | Description |
 |---|---|---|---|

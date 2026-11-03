@@ -2,6 +2,15 @@
 
 Newest first. Each phase of the build is a version, v1.0 is the release, and later versions are fixes found in testing and in use. Entries record what changed in the org, how it was verified, and what went wrong.
 
+## v1.0.5 — 2026-11-03 — Adjustments are numbered
+
+### Changed in the org
+- **Adjustments get the planned auto-number, `ADJ-{00000}`.** The name field, now labelled Adjustment Number, was built as plain text, so the 12 seeded adjustments show their record IDs. Steward's test data named adjustments, so it was changed first, in Steward's pull request #18, deployed the same afternoon, to name one only while the field is plain text. Then the name field was switched in the org through the Metadata API; the org now reports it as Auto Number.
+- **The 12 existing adjustments keep the names they had.** The switch doesn't renumber existing records, and a second attempt with `populateExistingRows` didn't either. The next re-age rebuilds them (`data/regen/RUNBOOK.md`), and from then on every adjustment is numbered. The adjustments CSV has no name column, so the runbook needs no change.
+
+### Docs
+- `data-model.md`, `data-dictionary.md` and `open-items.md` say the name is an auto-number now.
+
 ## v1.0.4 — 2026-11-03 — Statements go past due; the docs match the org
 
 Persona checks through the API (Oct 26), then a line-by-line reconcile of the data model, data dictionary and conventions against the org (Nov 3). The reconcile found that no automation ever moved an unpaid statement to Past Due (DEF-12), and that the scheduled flows run four hours later than the docs said.
