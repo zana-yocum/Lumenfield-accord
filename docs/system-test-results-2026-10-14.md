@@ -303,7 +303,7 @@ The six read-only accounts are exactly the current accounts with a billing dispu
 Recorded in open items; the fix follows the decision.
 
 
-### DEF-12 — Unpaid statements never became past due · High · **Fixed 2026-11-03**
+### DEF-12 — Unpaid statements never became past due · High · **Fixed 2026-11-03; confirmed by the morning runs 2026-11-04**
 **Found:** 2026-11-03, reconciling `data-model.md` with the org. The page said Billing Statement's `Status__c` is "stamped by a nightly flow," because the account roll-ups filter on it. No such flow existed. Two flows write a statement's status on specific events: `Adjustment_AfterSave_ApplyCredits` marks it Paid when posted credits clear it (DEF-01), and `Case_AfterSave_DisputeLifecycle` flags it In Dispute and restores it when the dispute closes. Nothing reacted to a due date passing, or to a payment clearing the balance.
 
 **What happened:** a statement's status was whatever the data load gave it. The re-age on Oct 8 stamped each one correctly for that day, including the next month's bills as Open. When those due dates passed unpaid, nothing changed them. On Nov 3, 35 statements on 35 accounts were still Open past their due dates (Oct 10 to Oct 28), $6,235.80 unpaid.
@@ -313,6 +313,28 @@ Recorded in open items; the fix follows the decision.
 **Fix:** `Billing_Statement_Daily_Status`, a scheduled flow on Open and Past Due statements, runs each morning at 4:30 AM Eastern, half an hour before `Account_Daily_Collections_Status`. Nothing owed → Paid; still owing after the due date → Past Due; otherwise unchanged. In Dispute and Written Off are left alone. The rule is the one the re-age generator and the dispute flow already use. Built through the Tooling API: version 1 was scheduled for one run at 9:20 AM ET on Nov 3 to produce evidence today, version 2 moved it to 4:30 AM.
 
 **Verified (Nov 3, the 9:20 AM ET run):** the run started at 9:20:13 AM ET as the org's default workflow user (OrgFarm EPIC). It moved all 35 overdue Open statements to Past Due ($6,235.80) and left the 68 already past due alone; the field history shows 36 status changes, all at 9:20:14. Two throwaway statements on ACC-0053 tested the other branches: one marked Past Due but paid in full ($25 due, a $25 payment) became Paid, and one Open and due Nov 20 stayed Open. Both were deleted afterwards. The 12 Current accounts now read 7 to 24 days past due, each bill counted in Past Due Balance; the 5 AM account run on Nov 4 moves them to Delinquent, which puts them on the work list and in reps' reach. Version 2, at 4:30 AM, is active: `CronTrigger` shows it at 4:30, the account run at 5:00 and the promise runs at 5:30, all America/New_York.
+
+**Confirmed by the morning runs (Nov 4, checked through the API at 5:30 AM ET):**
+- **Statement run.** `Billing_Statement_Daily_Status` version 2 ran for the first time on schedule. `CronTrigger` shows it fired at 4:35:07 AM ET, five minutes after its 4:30 slot (a scheduled flow can start a few minutes late), and it's set for 4:30 AM on Nov 5. It had nothing to change: no statement was modified on Nov 4 and the status history shows no change. That's the expected answer, because the Nov 3 run had already moved the 35, and no other bill had come due unpaid overnight. The org has 0 Open statements past their due date with a balance, and 0 Past Due statements with nothing owed.
+- **Account run.** `Account_Daily_Collections_Status` fired at 5:00:30 AM ET. All 12 accounts moved to Delinquent at 5:00:36 AM ET, saved by the org's default workflow user (OrgFarm EPIC), with Days Past Due and Past Due Balance filled:
+
+| Account | Household | Days past due | Past due balance | Oldest past due |
+|---|---|---|---|---|
+| ACC-0004 | Vanessa Mercer | 25 | $167.34 | Oct 10 |
+| ACC-0060 | Maria Boone | 23 | $199.99 | Oct 12 |
+| ACC-0069 | Nicole Grissom | 21 | $164.90 | Oct 14 |
+| ACC-0008 | William Radcliff | 20 | $120.27 | Oct 15 |
+| ACC-0079 | William Bruner | 19 | $139.08 | Oct 16 |
+| ACC-0018 | Douglas Coffey | 14 | $157.54 | Oct 21 |
+| ACC-0017 | Michael Coffey | 12 | $187.36 | Oct 23 |
+| ACC-0038 | Ryan Stiles | 12 | $127.31 | Oct 23 |
+| ACC-0045 | Tanya Lattimore | 12 | $143.59 | Oct 23 |
+| ACC-0072 | Tonya Bruner | 10 | $157.65 | Oct 25 |
+| ACC-0080 | Jeffrey Naylor | 9 | $174.67 | Oct 26 |
+| ACC-0081 | Stephanie Ballard | 8 | $183.74 | Oct 27 |
+
+- **The rest of the chain.** No residential account reads Current with any days past due. The collections sharing rule (D-08) now gives Collections Team Edit on 46 accounts, up from 34 on Nov 3, and each of the 12 is among them, so they're in reps' reach. The households are 42 Current, 34 Delinquent and 12 Default Review.
+- **One thing to know.** Tanya Lattimore is one of Steward's portal demo customers, shown in Phase 4 as current with a dispute. She now reads 12 days past due, because her October bill went unpaid in the aged data. The re-age before any recording resets her.
 
 **Also found while checking this:** the scheduled flows don't run when the docs said. Their start times read `05:00:00.000Z` and `05:30:00.000Z` in the metadata, and the docs said 1 AM ET, but Salesforce reads the time in the org's time zone: `CronTrigger` shows 5:00 and 5:30 AM America/New_York, and every Default Review so far was created between 5:00 and 5:10 AM Eastern. Docs corrected; nothing depended on 1 AM.
 
@@ -326,5 +348,4 @@ Recorded in open items; the fix follows the decision.
 | 08 step 2a | After the DEF-11 decision | Sales input saved on the dispute by a Sales Rep |
 | 14, email part | You, in the supervisor's inbox | "Dispute Milestone Violation" for 00001049 around Oct 15, 5 PM CT and Oct 19, 5 PM CT. Then delete 00001049 |
 | 04 step 2, 15 step 4, 20 | When data allows | A promise kept on a scheduled run; a review cured by payment; the reminder 7 days before a first due date (the Oct 14 test contract was deleted before Oct 21, so its reminder never ran) |
-| DEF-12, account side | Claude, Nov 4 after 5 AM ET | The 12 accounts DEF-12 surfaced move from Current to Delinquent, and the 4:30 statement run finds nothing new to change |
 | All | 3–5 outside testers | Actual UAT |
