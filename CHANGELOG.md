@@ -2,6 +2,11 @@
 
 Newest first. Each phase of the build is a version, v1.0 is the release, and later versions are fixes found in testing and in use. Entries record what changed in the org, how it was verified, and what went wrong.
 
+## 2026-11-04 — DEF-12 confirmed (docs only)
+
+### Confirmed
+- **The morning runs did what DEF-12's fix promised.** The 5 AM ET account run moved the 12 accounts DEF-12 surfaced from Current to Delinquent, with days past due and past-due balances filled, and the collections sharing rule now reaches 46 accounts instead of 34. The new statement run fired on schedule at 4:35 AM ET and had nothing to change, because the Nov 3 run had already caught every overdue bill. Evidence in the results doc. Nothing changed in the org.
+
 ## v1.0.5 — 2026-11-03 — Adjustments are numbered
 
 ### Changed in the org
